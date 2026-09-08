@@ -136,6 +136,7 @@ export default function RootLayout({
     >
       <body className="min-h-full flex flex-col font-sans bg-white text-[#14304A] antialiased selection:bg-[#F3F8EE] selection:text-[#69A82F]">
         <script
+          key="schema-jsonld"
           type="application/ld+json"
           id="schema-jsonld"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
