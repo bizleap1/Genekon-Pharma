@@ -1,0 +1,608 @@
+export interface AdminMetric {
+  title: string;
+  value: string;
+  change: string;
+  isPositive: boolean;
+  period: string;
+}
+
+export interface AdminProduct {
+  id: string;
+  sku: string;
+  name: string;
+  brand: string;
+  category: string;
+  image: string;
+  mrp: number;
+  sellingPrice: number;
+  stockQuantity: number;
+  reservedQuantity: number;
+  prescriptionRequired: boolean;
+  status: "Active" | "Low Stock" | "Out of Stock" | "Draft";
+  composition?: string;
+  gstRate?: number;
+  lastUpdated: string;
+}
+
+export interface AdminOrder {
+  id: string;
+  customerName: string;
+  customerPhone: string;
+  customerEmail: string;
+  deliveryAddress: string;
+  orderDate: string;
+  itemCount: number;
+  totalAmount: number;
+  paymentMethod: string;
+  paymentStatus: "Paid" | "Pending" | "Refunded";
+  orderStatus: "Placed" | "Confirmed" | "Processing" | "Packed" | "Shipped" | "Delivered" | "Cancelled";
+  items: {
+    name: string;
+    brand: string;
+    variant: string;
+    quantity: number;
+    price: number;
+    image: string;
+    batchNumber: string;
+  }[];
+}
+
+export interface AdminPrescription {
+  id: string;
+  customerName: string;
+  customerPhone: string;
+  doctorName: string;
+  clinicName: string;
+  uploadDate: string;
+  fileName: string;
+  fileSize: string;
+  status: "Pending Review" | "Approved" | "Rejected" | "Information Requested";
+  notes?: string;
+}
+
+export interface AdminCustomer {
+  id: string;
+  name: string;
+  phone: string;
+  email: string;
+  type: "Retail" | "Wholesale";
+  city: string;
+  totalOrders: number;
+  totalSpend: number;
+  registeredDate: string;
+  status: "Active" | "Blocked";
+}
+
+export interface AdminWholesaleApp {
+  id: string;
+  businessName: string;
+  ownerName: string;
+  businessType: "Retail Pharmacy" | "Clinic / Nursing Home" | "Hospital" | "Distributor";
+  gstNumber: string;
+  drugLicenseNumber: string;
+  phone: string;
+  email: string;
+  city: string;
+  monthlyExpectedVolume: string;
+  applicationDate: string;
+  status: "Pending Verification" | "Approved" | "Rejected";
+}
+
+export interface AdminCoupon {
+  id?: string;
+  code: string;
+  discountType: "Percentage" | "Fixed";
+  discountValue: number;
+  minOrderValue: number;
+  maxDiscount?: number;
+  expiryDate: string;
+  redemptionsCount: number;
+  status: "Active" | "Expired" | "Scheduled";
+}
+
+export const ADMIN_METRICS = {
+  totalRevenue: { title: "Total Revenue", value: "₹14,82,450", change: "+14.8%", isPositive: true, period: "vs last month" },
+  totalOrders: { title: "Total Orders", value: "1,428", change: "+8.2%", isPositive: true, period: "vs last month" },
+  totalCustomers: { title: "Active Patients & Buyers", value: "3,890", change: "+12.4%", isPositive: true, period: "vs last month" },
+  wholesalePartners: { title: "Wholesale Partners", value: "64", change: "+6 new", isPositive: true, period: "this month" },
+  lowStockCount: { title: "Low Stock Alerts", value: "8 Items", change: "Requires reorder", isPositive: false, period: "reorder buffer" },
+  pendingPrescriptions: { title: "Pending Rx Verification", value: "14 Rx", change: "4 urgent", isPositive: false, period: "pharmacist queue" },
+};
+
+export const ADMIN_PRODUCTS: AdminProduct[] = [
+  {
+    id: "prod-1",
+    sku: "MED-CIP-500",
+    name: "Paracetamol 500 mg",
+    brand: "Cipla",
+    category: "Medicines",
+    image: "/images/products/cipla-paracetamol-v2.jpg",
+    mrp: 40,
+    sellingPrice: 32,
+    stockQuantity: 420,
+    reservedQuantity: 18,
+    prescriptionRequired: false,
+    status: "Active",
+    composition: "Paracetamol IP 500mg",
+    gstRate: 12,
+    lastUpdated: "Today, 11:30 AM",
+  },
+  {
+    id: "prod-2",
+    sku: "NUT-HK-60T",
+    name: "Multivitamin Tablets",
+    brand: "HealthKart",
+    category: "Vitamins & Nutrition",
+    image: "/images/products/healthkart-multivitamin-v2.jpg",
+    mrp: 699,
+    sellingPrice: 599,
+    stockQuantity: 185,
+    reservedQuantity: 12,
+    prescriptionRequired: false,
+    status: "Active",
+    composition: "Multivitamin with Ginseng & Minerals",
+    gstRate: 18,
+    lastUpdated: "Yesterday, 04:15 PM",
+  },
+  {
+    id: "prod-3",
+    sku: "DEV-MOR-DIG",
+    name: "Digital Thermometer",
+    brand: "Dr. Morepen",
+    category: "Medical Devices",
+    image: "/images/products/dr-morepen-thermometer-v2.jpg",
+    mrp: 330,
+    sellingPrice: 299,
+    stockQuantity: 9,
+    reservedQuantity: 4,
+    prescriptionRequired: false,
+    status: "Low Stock",
+    composition: "Clinical Digital Sensor",
+    gstRate: 18,
+    lastUpdated: "Today, 09:00 AM",
+  },
+  {
+    id: "prod-4",
+    sku: "DER-CET-500",
+    name: "Gentle Skin Cleanser",
+    brand: "Cetaphil",
+    category: "Personal Care",
+    image: "/images/products/cetaphil-cleanser-v2.jpg",
+    mrp: 579,
+    sellingPrice: 475,
+    stockQuantity: 92,
+    reservedQuantity: 8,
+    prescriptionRequired: false,
+    status: "Active",
+    composition: "Niacinamide + Panthenol formula",
+    gstRate: 18,
+    lastUpdated: "Sep 05, 2026",
+  },
+  {
+    id: "prod-5",
+    sku: "DEV-ACC-50S",
+    name: "Blood Glucose Strips",
+    brand: "Accu-Chek",
+    category: "Medical Devices",
+    image: "/images/products/accu-chek-strips-v2.jpg",
+    mrp: 1350,
+    sellingPrice: 1199,
+    stockQuantity: 4,
+    reservedQuantity: 2,
+    prescriptionRequired: false,
+    status: "Low Stock",
+    composition: "Glucose Dehydrogenase biosensor",
+    gstRate: 12,
+    lastUpdated: "Today, 08:30 AM",
+  },
+  {
+    id: "prod-7",
+    sku: "MED-DRR-20M",
+    name: "Omeprazole 20mg Capsules",
+    brand: "Dr. Reddy's",
+    category: "Medicines",
+    image: "/images/products/omeprazole.jpg",
+    mrp: 85,
+    sellingPrice: 68,
+    stockQuantity: 310,
+    reservedQuantity: 25,
+    prescriptionRequired: true,
+    status: "Active",
+    composition: "Omeprazole IP 20mg",
+    gstRate: 12,
+    lastUpdated: "Sep 04, 2026",
+  },
+  {
+    id: "prod-11",
+    sku: "DEV-OMR-BP7",
+    name: "Digital Blood Pressure Monitor",
+    brand: "Omron",
+    category: "Medical Devices",
+    image: "/images/products/bp-monitor.jpg",
+    mrp: 2290,
+    sellingPrice: 1849,
+    stockQuantity: 0,
+    reservedQuantity: 0,
+    prescriptionRequired: false,
+    status: "Out of Stock",
+    composition: "IntelliSense Automatic Oscillometric",
+    gstRate: 18,
+    lastUpdated: "Sep 03, 2026",
+  },
+  {
+    id: "prod-13",
+    sku: "AYU-DAB-1KG",
+    name: "Authentic Chyawanprash Special",
+    brand: "Dabur",
+    category: "Ayurveda",
+    image: "/images/categories/cat-ayurveda-v2.jpg",
+    mrp: 450,
+    sellingPrice: 385,
+    stockQuantity: 140,
+    reservedQuantity: 6,
+    prescriptionRequired: false,
+    status: "Active",
+    composition: "Amla + 40 Ayurvedic Herbs",
+    gstRate: 12,
+    lastUpdated: "Sep 02, 2026",
+  },
+];
+
+export const ADMIN_ORDERS: AdminOrder[] = [
+  {
+    id: "GNK-89241",
+    customerName: "Prerna Sharma",
+    customerPhone: "9370102691",
+    customerEmail: "prerna.sharma@gmail.com",
+    deliveryAddress: "Flat 402, Green Valley Apts, Katol Road, Nagpur 440013",
+    orderDate: "Sep 06, 2026, 10:15 AM",
+    itemCount: 3,
+    totalAmount: 1207,
+    paymentMethod: "UPI (Google Pay)",
+    paymentStatus: "Paid",
+    orderStatus: "Shipped",
+    items: [
+      {
+        name: "Cetaphil Gentle Skin Cleanser",
+        brand: "Cetaphil",
+        variant: "500 ml",
+        quantity: 1,
+        price: 475,
+        image: "/images/products/cetaphil-cleanser-v2.jpg",
+        batchNumber: "BN-CET-9021",
+      },
+      {
+        name: "Dr. Morepen Digital Thermometer",
+        brand: "Dr. Morepen",
+        variant: "1 Unit",
+        quantity: 1,
+        price: 299,
+        image: "/images/products/dr-morepen-thermometer-v2.jpg",
+        batchNumber: "BN-MOR-4412",
+      },
+      {
+        name: "HealthKart Multivitamin Tablets",
+        brand: "HealthKart",
+        variant: "60 Tablets",
+        quantity: 1,
+        price: 599,
+        image: "/images/products/healthkart-multivitamin-v2.jpg",
+        batchNumber: "BN-HK-8819",
+      },
+    ],
+  },
+  {
+    id: "GNK-89240",
+    customerName: "Dr. Rajesh Kulkarni",
+    customerPhone: "9822345678",
+    customerEmail: "kulkarni.clinic@gmail.com",
+    deliveryAddress: "Kulkarni Nursing Home, Dhantoli, Nagpur 440012",
+    orderDate: "Sep 06, 2026, 09:30 AM",
+    itemCount: 8,
+    totalAmount: 4850,
+    paymentMethod: "Net Banking (SBI)",
+    paymentStatus: "Paid",
+    orderStatus: "Processing",
+    items: [
+      {
+        name: "Paracetamol 500 mg",
+        brand: "Cipla",
+        variant: "10 Tablets (Pack of 20)",
+        quantity: 5,
+        price: 320,
+        image: "/images/products/cipla-paracetamol-v2.jpg",
+        batchNumber: "BN-CIP-7782",
+      },
+      {
+        name: "Omeprazole 20mg Capsules",
+        brand: "Dr. Reddy's",
+        variant: "15 Capsules",
+        quantity: 4,
+        price: 680,
+        image: "/images/products/omeprazole.jpg",
+        batchNumber: "BN-DRR-3329",
+      },
+    ],
+  },
+  {
+    id: "GNK-89239",
+    customerName: "Sunil Verma",
+    customerPhone: "9422119988",
+    customerEmail: "s.verma@yahoo.com",
+    deliveryAddress: "Plot 12, Shankar Nagar, Nagpur 440010",
+    orderDate: "Sep 05, 2026, 05:45 PM",
+    itemCount: 1,
+    totalAmount: 1199,
+    paymentMethod: "Credit Card (HDFC)",
+    paymentStatus: "Paid",
+    orderStatus: "Delivered",
+    items: [
+      {
+        name: "Blood Glucose Strips",
+        brand: "Accu-Chek",
+        variant: "50 Strips",
+        quantity: 1,
+        price: 1199,
+        image: "/images/products/accu-chek-strips-v2.jpg",
+        batchNumber: "BN-ACC-1102",
+      },
+    ],
+  },
+  {
+    id: "GNK-89238",
+    customerName: "Aakash Deshpande",
+    customerPhone: "9890123456",
+    customerEmail: "aakash.d@gmail.com",
+    deliveryAddress: "Pratap Nagar, Ring Road, Nagpur 440022",
+    orderDate: "Sep 05, 2026, 02:10 PM",
+    itemCount: 2,
+    totalAmount: 430,
+    paymentMethod: "Cash on Delivery",
+    paymentStatus: "Paid",
+    orderStatus: "Delivered",
+    items: [
+      {
+        name: "Gentle Baby Shampoo & Wash",
+        brand: "Sebamed",
+        variant: "200 ml",
+        quantity: 1,
+        price: 430,
+        image: "/images/categories/cat-baby-care-v2.jpg",
+        batchNumber: "BN-SEB-5521",
+      },
+    ],
+  },
+  {
+    id: "GNK-89237",
+    customerName: "Meenal Joshi",
+    customerPhone: "9766543210",
+    customerEmail: "meenal.j@gmail.com",
+    deliveryAddress: "Civil Lines, Nagpur 440001",
+    orderDate: "Sep 04, 2026, 11:20 AM",
+    itemCount: 1,
+    totalAmount: 68,
+    paymentMethod: "UPI (PhonePe)",
+    paymentStatus: "Refunded",
+    orderStatus: "Cancelled",
+    items: [
+      {
+        name: "Omeprazole 20mg Capsules",
+        brand: "Dr. Reddy's",
+        variant: "15 Capsules",
+        quantity: 1,
+        price: 68,
+        image: "/images/products/omeprazole.jpg",
+        batchNumber: "BN-DRR-3329",
+      },
+    ],
+  },
+];
+
+export const ADMIN_PRESCRIPTIONS: AdminPrescription[] = [
+  {
+    id: "RX-4491",
+    customerName: "Prerna Sharma",
+    customerPhone: "9370102691",
+    doctorName: "Dr. A. K. Deshmukh, MD",
+    clinicName: "Nagpur Chest & General Clinic",
+    uploadDate: "Today, 02:15 PM",
+    fileName: "Prescription_Sept2026.pdf",
+    fileSize: "1.4 MB",
+    status: "Pending Review",
+    notes: "Requires Omeprazole 20mg + Multivitamins for 30 days",
+  },
+  {
+    id: "RX-4490",
+    customerName: "Vikram Rathi",
+    customerPhone: "9823456789",
+    doctorName: "Dr. N. B. Agrawal, DM (Cardio)",
+    clinicName: "Heart Care Institute, Ramdaspeth",
+    uploadDate: "Today, 11:40 AM",
+    fileName: "Cardiac_Rx_Sep.jpg",
+    fileSize: "2.8 MB",
+    status: "Pending Review",
+    notes: "Schedule H prescription check required",
+  },
+  {
+    id: "RX-4489",
+    customerName: "Anjali Dubey",
+    customerPhone: "9921098765",
+    doctorName: "Dr. Sunita Kulkarni, MD",
+    clinicName: "Skin Care Centre, Dhantoli",
+    uploadDate: "Yesterday, 04:30 PM",
+    fileName: "Derma_Consult_Prescription.pdf",
+    fileSize: "840 KB",
+    status: "Approved",
+    notes: "Verified & Cart created",
+  },
+  {
+    id: "RX-4488",
+    customerName: "Kishore Bhatt",
+    customerPhone: "9881122334",
+    doctorName: "Dr. R. K. Shinde",
+    clinicName: "General Hospital OPD",
+    uploadDate: "Sep 04, 2026",
+    fileName: "Prescription_Blurry.jpg",
+    fileSize: "610 KB",
+    status: "Information Requested",
+    notes: "Doctor signature registration number blurred. Requested re-upload.",
+  },
+];
+
+export const ADMIN_CUSTOMERS: AdminCustomer[] = [
+  {
+    id: "CUST-101",
+    name: "Prerna Sharma",
+    phone: "9370102691",
+    email: "prerna.sharma@gmail.com",
+    type: "Retail",
+    city: "Nagpur",
+    totalOrders: 3,
+    totalSpend: 2791,
+    registeredDate: "May 2026",
+    status: "Active",
+  },
+  {
+    id: "CUST-102",
+    name: "Dr. Rajesh Kulkarni",
+    phone: "9822345678",
+    email: "kulkarni.clinic@gmail.com",
+    type: "Wholesale",
+    city: "Nagpur",
+    totalOrders: 14,
+    totalSpend: 68400,
+    registeredDate: "Jan 2026",
+    status: "Active",
+  },
+  {
+    id: "CUST-103",
+    name: "Sunil Verma",
+    phone: "9422119988",
+    email: "s.verma@yahoo.com",
+    type: "Retail",
+    city: "Nagpur",
+    totalOrders: 6,
+    totalSpend: 7450,
+    registeredDate: "Feb 2026",
+    status: "Active",
+  },
+  {
+    id: "CUST-104",
+    name: "CareWell Polyclinic",
+    phone: "9890887766",
+    email: "admin@carewellnagpur.com",
+    type: "Wholesale",
+    city: "Wardha",
+    totalOrders: 22,
+    totalSpend: 142000,
+    registeredDate: "Nov 2025",
+    status: "Active",
+  },
+];
+
+export const ADMIN_WHOLESALE_APPS: AdminWholesaleApp[] = [
+  {
+    id: "WAPP-881",
+    businessName: "LifeCare Medicos",
+    ownerName: "Ramesh Patel",
+    businessType: "Retail Pharmacy",
+    gstNumber: "27AABCL7782A1Z4",
+    drugLicenseNumber: "MH-NGP-20B-789012",
+    phone: "9822001122",
+    email: "lifecare.med@gmail.com",
+    city: "Nagpur",
+    monthlyExpectedVolume: "₹1,00,000 - ₹2,50,000",
+    applicationDate: "Today, 09:15 AM",
+    status: "Pending Verification",
+  },
+  {
+    id: "WAPP-880",
+    businessName: "Apex Children's Clinic",
+    ownerName: "Dr. Sandeep Rao",
+    businessType: "Clinic / Nursing Home",
+    gstNumber: "27AABCA3310B1Z8",
+    drugLicenseNumber: "MH-NGP-20B-654321",
+    phone: "9890112233",
+    email: "apex.children@gmail.com",
+    city: "Nagpur",
+    monthlyExpectedVolume: "₹50,000 - ₹1,00,000",
+    applicationDate: "Yesterday, 03:40 PM",
+    status: "Pending Verification",
+  },
+  {
+    id: "WAPP-879",
+    businessName: "Central City Hospital",
+    ownerName: "Dr. Vinay Deshmukh (Director)",
+    businessType: "Hospital",
+    gstNumber: "27AABCC4490C1Z2",
+    drugLicenseNumber: "MH-NGP-20B-112233 / 21B",
+    phone: "9823998877",
+    email: "procurement@centralcityhospital.org",
+    city: "Nagpur",
+    monthlyExpectedVolume: "Above ₹5,00,000",
+    applicationDate: "Sep 03, 2026",
+    status: "Approved",
+  },
+];
+
+export const ADMIN_COUPONS: AdminCoupon[] = [
+  {
+    id: "cpn-1",
+    code: "GENEKON20",
+    discountType: "Percentage",
+    discountValue: 20,
+    minOrderValue: 499,
+    maxDiscount: 300,
+    expiryDate: "Sep 30, 2026",
+    redemptionsCount: 342,
+    status: "Active",
+  },
+  {
+    id: "cpn-2",
+    code: "FIRSTMED",
+    discountType: "Fixed",
+    discountValue: 150,
+    minOrderValue: 699,
+    expiryDate: "Dec 31, 2026",
+    redemptionsCount: 188,
+    status: "Active",
+  },
+  {
+    id: "cpn-3",
+    code: "BULK500",
+    discountType: "Fixed",
+    discountValue: 500,
+    minOrderValue: 2999,
+    expiryDate: "Oct 15, 2026",
+    redemptionsCount: 65,
+    status: "Active",
+  },
+  {
+    id: "cpn-4",
+    code: "MONSOON10",
+    discountType: "Percentage",
+    discountValue: 10,
+    minOrderValue: 299,
+    maxDiscount: 100,
+    expiryDate: "Aug 31, 2026",
+    redemptionsCount: 512,
+    status: "Expired",
+  },
+];
+
+export const SALES_CHART_DATA = [
+  { month: "Apr", revenue: 840000, orders: 810 },
+  { month: "May", revenue: 980000, orders: 940 },
+  { month: "Jun", revenue: 1120000, orders: 1080 },
+  { month: "Jul", revenue: 1290000, orders: 1240 },
+  { month: "Aug", revenue: 1390000, orders: 1330 },
+  { month: "Sep", revenue: 1482450, orders: 1428 },
+];
+
+export const CATEGORY_PERFORMANCE_DATA = [
+  { name: "Prescription Medicines", percentage: 42, color: "bg-[#559620]", revenue: "₹6.22 Lakh" },
+  { name: "Medical Devices", percentage: 24, color: "bg-[#1853A8]", revenue: "₹3.55 Lakh" },
+  { name: "Vitamins & Nutrition", percentage: 18, color: "bg-[#14304A]", revenue: "₹2.66 Lakh" },
+  { name: "Personal Care", percentage: 10, color: "bg-[#4CAF50]", revenue: "₹1.48 Lakh" },
+  { name: "Ayurveda & Others", percentage: 6, color: "bg-[#D97706]", revenue: "₹0.91 Lakh" },
+];

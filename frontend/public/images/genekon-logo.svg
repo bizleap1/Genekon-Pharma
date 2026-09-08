@@ -1,0 +1,15 @@
+<svg width="220" height="50" viewBox="0 0 220 50" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Brand Cross / Helix Emblem -->
+  <rect x="2" y="2" width="46" height="46" rx="12" fill="#F3F8EE" stroke="#E7ECEF" stroke-width="1.5"/>
+  <path d="M25 12V38" stroke="#69A82F" stroke-width="4.5" stroke-linecap="round"/>
+  <path d="M12 25H38" stroke="#315FAE" stroke-width="4.5" stroke-linecap="round"/>
+  <circle cx="25" cy="25" r="4" fill="#FFFFFF" stroke="#14304A" stroke-width="2"/>
+  
+  <!-- GENEKON Wordmark -->
+  <text x="58" y="29" font-family="system-ui, -apple-system, sans-serif" font-size="22" font-weight="800" letter-spacing="0.05em" fill="#14304A">
+    GENE<tspan fill="#69A82F">K</tspan><tspan fill="#315FAE">ON</tspan>
+  </text>
+  <text x="59" y="42" font-family="system-ui, -apple-system, sans-serif" font-size="8.5" font-weight="600" letter-spacing="0.16em" fill="#68746F">
+    PHARMACEUTICALS
+  </text>
+</svg>

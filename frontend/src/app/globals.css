@@ -1,0 +1,55 @@
+@import "tailwindcss";
+
+@theme {
+  --color-brand-green: #69A82F;
+  --color-brand-green-hover: #568c26;
+  --color-brand-blue: #315FAE;
+  --color-brand-blue-hover: #264b8a;
+  --color-brand-dark: #14304A;
+  --color-brand-muted: #68746F;
+  --color-brand-soft-green: #F3F8EE;
+  --color-brand-soft-blue: #F2F6FC;
+  --color-brand-surface: #FAFCFB;
+  --color-brand-border: #E7ECEF;
+
+  --font-sans: var(--font-manrope), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-heading: var(--font-heading), var(--font-manrope), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-serif: var(--font-serif), "DM Serif Display", Georgia, serif;
+}
+
+.font-heading {
+  font-family: var(--font-heading), var(--font-manrope), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+.font-serif {
+  font-family: var(--font-serif), "DM Serif Display", Georgia, serif;
+}
+
+:root {
+  --primary-green: #69A82F;
+  --primary-blue: #315FAE;
+  --dark-text: #14304A;
+  --muted-text: #68746F;
+  --soft-green: #F3F8EE;
+  --soft-blue: #F2F6FC;
+  --surface: #FAFCFB;
+  --border: #E7ECEF;
+}
+
+body {
+  background-color: #FFFFFF;
+  color: #14304A;
+  font-family: var(--font-manrope), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+
+/* Smooth horizontal scrollbar hiding for touch-friendly category bar */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
