@@ -13,13 +13,16 @@ export interface WholesaleApplication {
   id: string;
   businessName: string;
   ownerName: string;
+  contactPerson?: string;
   businessType: WholesaleBusinessType;
   gstNumber: string;
   drugLicenseNumber: string;
   phone: string;
   email: string;
   city: string;
-  monthlyExpectedVolume: string;
-  applicationDate: string;
+  state?: string;
+  monthlyExpectedVolume?: string;
+  applicationDate?: string;
+  appliedDate?: string;
   status: WholesaleAppStatus;
 }

@@ -4,6 +4,7 @@ import React from "react";
 import { CartProvider, useCart } from "@/context/CartContext";
 import { WishlistProvider } from "@/context/WishlistContext";
 import { ToastProvider } from "@/context/ToastContext";
+import { AuthProvider } from "@/context/AuthContext";
 import { LoginRequiredModal } from "@/components/ui/LoginRequiredModal";
 import { CheckCircle2, X } from "lucide-react";
 
@@ -38,13 +39,15 @@ function GlobalCartToast() {
 export function Providers({ children }: { children: React.ReactNode }) {
   return (
     <ToastProvider>
-      <CartProvider>
-        <WishlistProvider>
-          {children}
-          <GlobalCartToast />
-          <LoginRequiredModal />
-        </WishlistProvider>
-      </CartProvider>
+      <AuthProvider>
+        <CartProvider>
+          <WishlistProvider>
+            {children}
+            <GlobalCartToast />
+            <LoginRequiredModal />
+          </WishlistProvider>
+        </CartProvider>
+      </AuthProvider>
     </ToastProvider>
   );
 }

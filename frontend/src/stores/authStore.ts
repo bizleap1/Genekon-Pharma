@@ -3,6 +3,7 @@
 import { useSyncExternalStore } from "react";
 import { UserProfile, UserRole } from "@/types/user";
 import { Product } from "@/types/product";
+import { apiClient } from "@/api/client";
 
 export type { UserProfile, UserRole };
 
@@ -47,6 +48,7 @@ export interface AuthState {
   tempMobile: string;
   loading: boolean;
   error: string | null;
+  token: string | null;
   loginModal: {
     isOpen: boolean;
     message: string;
@@ -86,6 +88,7 @@ function getInitialState(): AuthState {
       tempMobile: "",
       loading: false,
       error: null,
+      token: null,
       loginModal: {
         isOpen: false,
         message: "Login required to continue",
@@ -115,6 +118,7 @@ function getInitialState(): AuthState {
           tempMobile: "",
           loading: false,
           error: null,
+          token: parsed.token || null,
           loginModal: {
             isOpen: false,
             message: "Login required to continue",
@@ -141,6 +145,7 @@ function getInitialState(): AuthState {
     tempMobile: "",
     loading: false,
     error: null,
+    token: null,
     loginModal: {
       isOpen: false,
       message: "Login required to continue",
@@ -160,6 +165,7 @@ function emitChange() {
           AUTH_STORAGE_KEY,
           JSON.stringify({
             user: state.user,
+            token: state.token,
             redirectPath: state.redirectPath,
             sessionExpiresAt: state.sessionExpiresAt,
           })
@@ -252,6 +258,15 @@ export const authStore = {
         action: null,
       },
     };
+    emitChange();
+  },
+
+  getToken(): string | null {
+    return state.token;
+  },
+
+  setToken(token: string | null): void {
+    state = { ...state, token };
     emitChange();
   },
 
@@ -475,6 +490,7 @@ export function useAuthStore() {
       tempMobile: "",
       loading: false,
       error: null,
+      token: null,
       loginModal: {
         isOpen: false,
         message: "Login required to continue",
@@ -491,6 +507,8 @@ export function useAuthStore() {
     saveIntendedAction: authStore.saveIntendedAction.bind(authStore),
     getIntendedAction: authStore.getIntendedAction.bind(authStore),
     clearIntendedAction: authStore.clearIntendedAction.bind(authStore),
+    getToken: authStore.getToken.bind(authStore),
+    setToken: authStore.setToken.bind(authStore),
     requestOtp: authStore.requestOtp.bind(authStore),
     verifyOtp: authStore.verifyOtp.bind(authStore),
     loginCustomer: authStore.loginCustomer.bind(authStore),
@@ -500,3 +518,7 @@ export function useAuthStore() {
     checkSessionExpiry: authStore.checkSessionExpiry.bind(authStore),
   };
 }
+
+// Auto-inject JWT token into global API client
+apiClient.setTokenGetter(() => authStore.getToken());
+
