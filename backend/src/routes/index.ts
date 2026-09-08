@@ -7,7 +7,9 @@ import cartRoutes from "./cartRoutes";
 import wishlistRoutes from "./wishlistRoutes";
 import orderRoutes from "./orderRoutes";
 import paymentRoutes from "./paymentRoutes";
-import { sendSuccess } from "../utils/apiResponse";
+import adminRoutes from "./adminRoutes";
+import { cmsService } from "../services/cmsService";
+import { sendSuccess, sendError } from "../utils/apiResponse";
 
 const router = Router();
 
@@ -25,6 +27,17 @@ router.get("/health", (_req, res) => {
   );
 });
 
+// Public CMS Banners (For Homepage and Promotions)
+router.get("/cms/banners", async (req, res) => {
+  try {
+    const section = req.query.section as string;
+    const banners = await cmsService.listBanners(false, section);
+    return sendSuccess(res, banners, "Active promotional banners retrieved");
+  } catch (err: any) {
+    return sendError(res, err.message || "Failed to retrieve banners", 400);
+  }
+});
+
 // Mount domain routes
 router.use("/auth", authRoutes);
 router.use("/users", userRoutes);
@@ -34,5 +47,6 @@ router.use("/cart", cartRoutes);
 router.use("/wishlist", wishlistRoutes);
 router.use("/orders", orderRoutes);
 router.use("/payments", paymentRoutes);
+router.use("/admin", adminRoutes);
 
 export default router;

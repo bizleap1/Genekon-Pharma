@@ -12,6 +12,7 @@
     "test:cart": "ts-node --transpile-only -r dotenv/config src/scripts/testCartWishlist.ts",
     "test:orders": "ts-node --transpile-only -r dotenv/config src/scripts/testOrders.ts",
     "test:payments": "ts-node --transpile-only -r dotenv/config src/scripts/testPayments.ts",
+    "test:admin": "ts-node --transpile-only -r dotenv/config src/scripts/testAdmin.ts",
     "db:push": "drizzle-kit push",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",

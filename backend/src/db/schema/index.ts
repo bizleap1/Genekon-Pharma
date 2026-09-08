@@ -12,6 +12,11 @@ import { orders } from "./orders";
 import { orderItems } from "./orderItems";
 import { orderStatusHistory } from "./orderStatusHistory";
 import { payments } from "./payments";
+import { inventoryBatches, inventoryLogs } from "./inventory";
+import { coupons } from "./coupons";
+import { cmsBanners } from "./cms";
+import { adminActivityLogs } from "./activityLogs";
+import { wholesaleProfiles } from "./wholesaleProfiles";
 
 export * from "./enums";
 export * from "./users";
@@ -28,6 +33,11 @@ export * from "./orders";
 export * from "./orderItems";
 export * from "./orderStatusHistory";
 export * from "./payments";
+export * from "./inventory";
+export * from "./coupons";
+export * from "./cms";
+export * from "./activityLogs";
+export * from "./wholesaleProfiles";
 
 // Users Relations
 export const usersRelations = relations(users, ({ one, many }) => ({
@@ -186,6 +196,51 @@ export const paymentsRelations = relations(payments, ({ one }) => ({
   order: one(orders, {
     fields: [payments.orderId],
     references: [orders.id],
+  }),
+}));
+
+// Inventory Batches Relations
+export const inventoryBatchesRelations = relations(inventoryBatches, ({ one, many }) => ({
+  product: one(products, {
+    fields: [inventoryBatches.productId],
+    references: [products.id],
+  }),
+  logs: many(inventoryLogs),
+}));
+
+// Inventory Logs Relations
+export const inventoryLogsRelations = relations(inventoryLogs, ({ one }) => ({
+  product: one(products, {
+    fields: [inventoryLogs.productId],
+    references: [products.id],
+  }),
+  batch: one(inventoryBatches, {
+    fields: [inventoryLogs.batchId],
+    references: [inventoryBatches.id],
+  }),
+  updatedByUser: one(users, {
+    fields: [inventoryLogs.updatedBy],
+    references: [users.id],
+  }),
+}));
+
+// Admin Activity Logs Relations
+export const adminActivityLogsRelations = relations(adminActivityLogs, ({ one }) => ({
+  admin: one(users, {
+    fields: [adminActivityLogs.adminId],
+    references: [users.id],
+  }),
+}));
+
+// Wholesale Profiles Relations
+export const wholesaleProfilesRelations = relations(wholesaleProfiles, ({ one }) => ({
+  user: one(users, {
+    fields: [wholesaleProfiles.userId],
+    references: [users.id],
+  }),
+  approver: one(users, {
+    fields: [wholesaleProfiles.approvedBy],
+    references: [users.id],
   }),
 }));
 
