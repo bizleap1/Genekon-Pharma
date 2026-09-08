@@ -16,8 +16,10 @@ import { DataTable } from "@/components/admin/DataTable";
 import { StatusBadge } from "@/components/admin/StatusBadge";
 import { FilterBar } from "@/components/admin/FilterBar";
 import { ADMIN_ORDERS, AdminOrder } from "@/data/adminData";
+import { useToast } from "@/context/ToastContext";
 
 export default function AdminOrdersPage() {
+  const toast = useToast();
   const [orders, setOrders] = useState<AdminOrder[]>(ADMIN_ORDERS);
   const [search, setSearch] = useState("");
   const [activeTab, setActiveTab] = useState("all");
@@ -134,8 +136,8 @@ export default function AdminOrdersPage() {
 
         <button
           type="button"
-          onClick={() => alert("Orders export CSV generated.")}
-          className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl border border-[#CCDCCD] bg-white hover:bg-[#F2F7F2] text-xs font-bold text-[#14304A] transition-colors"
+          onClick={() => toast.success("Orders export CSV generated successfully.")}
+          className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl border border-[#CCDCCD] bg-white hover:bg-[#F2F7F2] text-xs font-bold text-[#14304A] transition-colors cursor-pointer"
         >
           <Download className="w-3.5 h-3.5 text-[#559620]" />
           <span>Export Orders CSV</span>

@@ -108,16 +108,16 @@ export default function NotificationsPage() {
                 {/* Filter Tabs */}
                 <div className="flex items-center gap-1.5 bg-[#F2F7F1] p-1 rounded-xl w-fit mb-6 overflow-x-auto">
                   {[
-                    { id: "all", label: "All Updates" },
-                    { id: "order", label: "Orders & Rx" },
-                    { id: "offer", label: "Offers" },
-                    { id: "health", label: "Health Tips" },
+                    { id: "all" as const, label: "All Updates" },
+                    { id: "order" as const, label: "Orders & Rx" },
+                    { id: "offer" as const, label: "Offers" },
+                    { id: "health" as const, label: "Health Tips" },
                   ].map((tab) => {
                     const isActive = filter === tab.id;
                     return (
                       <button
                         key={tab.id}
-                        onClick={() => setFilter(tab.id as any)}
+                        onClick={() => setFilter(tab.id)}
                         className={`px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
                           isActive
                             ? "bg-[#559620] text-white shadow-2xs"

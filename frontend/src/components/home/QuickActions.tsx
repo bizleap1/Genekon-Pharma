@@ -8,7 +8,8 @@ import {
   ShoppingBag,
   PlusSquare,
   RotateCcw,
-  ChevronRight
+  ChevronRight,
+  LucideIcon
 } from "lucide-react";
 import { Container } from "@/components/ui/Container";
 import { ProtectedAction } from "@/components/auth/ProtectedAction";
@@ -19,7 +20,7 @@ interface QuickServiceItem {
   title: string;
   subtitle: string;
   href: string;
-  icon: any;
+  icon: LucideIcon;
   circleBg: string;
   circleColor: string;
   cardBg: string;

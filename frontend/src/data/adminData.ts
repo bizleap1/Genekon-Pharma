@@ -1,104 +1,22 @@
-export interface AdminMetric {
-  title: string;
-  value: string;
-  change: string;
-  isPositive: boolean;
-  period: string;
-}
-
-export interface AdminProduct {
-  id: string;
-  sku: string;
-  name: string;
-  brand: string;
-  category: string;
-  image: string;
-  mrp: number;
-  sellingPrice: number;
-  stockQuantity: number;
-  reservedQuantity: number;
-  prescriptionRequired: boolean;
-  status: "Active" | "Low Stock" | "Out of Stock" | "Draft";
-  composition?: string;
-  gstRate?: number;
-  lastUpdated: string;
-}
-
-export interface AdminOrder {
-  id: string;
-  customerName: string;
-  customerPhone: string;
-  customerEmail: string;
-  deliveryAddress: string;
-  orderDate: string;
-  itemCount: number;
-  totalAmount: number;
-  paymentMethod: string;
-  paymentStatus: "Paid" | "Pending" | "Refunded";
-  orderStatus: "Placed" | "Confirmed" | "Processing" | "Packed" | "Shipped" | "Delivered" | "Cancelled";
-  items: {
-    name: string;
-    brand: string;
-    variant: string;
-    quantity: number;
-    price: number;
-    image: string;
-    batchNumber: string;
-  }[];
-}
-
-export interface AdminPrescription {
-  id: string;
-  customerName: string;
-  customerPhone: string;
-  doctorName: string;
-  clinicName: string;
-  uploadDate: string;
-  fileName: string;
-  fileSize: string;
-  status: "Pending Review" | "Approved" | "Rejected" | "Information Requested";
-  notes?: string;
-}
-
-export interface AdminCustomer {
-  id: string;
-  name: string;
-  phone: string;
-  email: string;
-  type: "Retail" | "Wholesale";
-  city: string;
-  totalOrders: number;
-  totalSpend: number;
-  registeredDate: string;
-  status: "Active" | "Blocked";
-}
-
-export interface AdminWholesaleApp {
-  id: string;
-  businessName: string;
-  ownerName: string;
-  businessType: "Retail Pharmacy" | "Clinic / Nursing Home" | "Hospital" | "Distributor";
-  gstNumber: string;
-  drugLicenseNumber: string;
-  phone: string;
-  email: string;
-  city: string;
-  monthlyExpectedVolume: string;
-  applicationDate: string;
-  status: "Pending Verification" | "Approved" | "Rejected";
-}
-
-export interface AdminCoupon {
-  id?: string;
-  code: string;
-  discountType: "Percentage" | "Fixed";
-  discountValue: number;
-  minOrderValue: number;
-  maxDiscount?: number;
-  expiryDate: string;
-  redemptionsCount: number;
-  status: "Active" | "Expired" | "Scheduled";
-}
+export type {
+  AdminMetric,
+  AdminProduct,
+  AdminOrderItem,
+  AdminOrder,
+  AdminPrescriptionStatus,
+  AdminPrescription,
+  AdminCustomer,
+  AdminWholesaleApp,
+  AdminCoupon,
+} from "@/types/admin";
+import type {
+  AdminProduct,
+  AdminOrder,
+  AdminPrescription,
+  AdminCustomer,
+  AdminWholesaleApp,
+  AdminCoupon,
+} from "@/types/admin";
 
 export const ADMIN_METRICS = {
   totalRevenue: { title: "Total Revenue", value: "₹14,82,450", change: "+14.8%", isPositive: true, period: "vs last month" },

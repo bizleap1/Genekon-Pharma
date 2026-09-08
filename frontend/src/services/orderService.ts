@@ -1,15 +1,7 @@
-import { CheckoutFormData, FormValidationErrors } from "@/types/cart";
-import { CartItem, CartTotals } from "@/types/cart";
+import { CheckoutFormData, FormValidationErrors, CartItem, CartTotals } from "@/types/cart";
+import { PlacedOrder } from "@/types/order";
 
-export interface PlacedOrder {
-  orderId: string;
-  date: string;
-  items: CartItem[];
-  totals: CartTotals;
-  formData: CheckoutFormData;
-  status: "Placed" | "Confirmed" | "Packed" | "Shipped" | "Delivered";
-  estimatedDelivery: string;
-}
+export type { PlacedOrder };
 
 const ORDERS_STORAGE_KEY = "genekon_placed_orders_v1";
 

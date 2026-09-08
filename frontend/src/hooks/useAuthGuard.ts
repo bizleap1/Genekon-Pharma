@@ -1,6 +1,7 @@
 "use client";
 
 import { useAuthStore, IntendedAction, authStore } from "@/stores/authStore";
+import { Product } from "@/types/product";
 import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
 
 export function useAuthGuard() {
@@ -31,8 +32,8 @@ export function useAuthGuard() {
  */
 export function restoreIntendedActionAfterLogin(
   router: AppRouterInstance,
-  cart: { addToCart: (product: any, quantity?: number, variant?: string) => any },
-  wishlist: { toggleWishlist: (product: any) => any },
+  cart: { addToCart: (product: Product, quantity?: number, variant?: string) => unknown },
+  wishlist: { toggleWishlist: (product: Product) => void | boolean },
   toast?: { success: (msg: string) => void; info: (msg: string) => void }
 ) {
   const action = authStore.getIntendedAction();
@@ -100,12 +101,15 @@ export function restoreIntendedActionAfterLogin(
 
     case "REORDER":
       if (action.payload?.items && Array.isArray(action.payload.items)) {
-        action.payload.items.forEach((item: any) => {
-          cart.addToCart(
-            item.product || item,
-            item.qty || item.quantity || 1,
-            item.variant
-          );
+        action.payload.items.forEach((item: { product?: Product; id?: string; name?: string; price?: number; quantity?: number; qty?: number; variant?: string }) => {
+          const prod = item.product || (item as unknown as Product);
+          if (prod && prod.id) {
+            cart.addToCart(
+              prod,
+              item.qty || item.quantity || 1,
+              item.variant
+            );
+          }
         });
         if (toast) {
           toast.success("Items from your previous order added to cart!");

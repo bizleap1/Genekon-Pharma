@@ -567,8 +567,23 @@ export default function ProductDetailPage() {
 
           </div>
 
+          {/* Important Medicine Disclaimer Callout */}
+          <div className="mt-8 rounded-2xl bg-[#FFF9F2] border border-[#FDE5CD] p-4 sm:p-5 flex items-start gap-3.5 shadow-2xs">
+            <div className="w-9 h-9 rounded-xl bg-[#FDE5CD] text-[#D97706] flex items-center justify-center shrink-0 mt-0.5">
+              <AlertTriangle className="w-5 h-5" />
+            </div>
+            <div>
+              <h4 className="text-xs sm:text-sm font-bold text-[#14304A]">
+                Healthcare &amp; Medicine Disclaimer
+              </h4>
+              <p className="text-xs text-[#6E553B] mt-0.5 leading-relaxed">
+                Medicine information is for reference only. Consult healthcare professional before taking, substituting, or changing any medication dosage.
+              </p>
+            </div>
+          </div>
+
           {/* Detailed Product Tabs & Specifications */}
-          <div className="mt-12 rounded-3xl border border-[#E3EDE1] bg-white p-6 sm:p-8">
+          <div className="mt-8 rounded-3xl border border-[#E3EDE1] bg-white p-6 sm:p-8">
             {/* Tabs Row */}
             <div className="flex items-center gap-4 overflow-x-auto no-scrollbar border-b border-[#EBF3E8] pb-3 mb-6">
               {TABS.map((tab) => (
@@ -588,25 +603,112 @@ export default function ProductDetailPage() {
 
             {/* Tab Content */}
             <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-start">
-              <div className="md:col-span-7 space-y-3">
-                <p className="text-xs sm:text-sm text-[#506352] leading-relaxed">
-                  {product.description}
-                </p>
+              <div className="md:col-span-7 space-y-4">
+                {activeTab === "details" && (
+                  <div className="space-y-4">
+                    <p className="text-xs sm:text-sm text-[#506352] leading-relaxed">
+                      {product.description}
+                    </p>
+                    <div className="space-y-2.5 pt-2 text-xs text-[#3D5240]">
+                      <div className="flex items-start gap-2.5">
+                        <CheckCircle2 className="w-4 h-4 text-[#559620] shrink-0 mt-0.5" />
+                        <span><strong>Active Composition:</strong> {product.composition}</span>
+                      </div>
+                      <div className="flex items-start gap-2.5">
+                        <CheckCircle2 className="w-4 h-4 text-[#559620] shrink-0 mt-0.5" />
+                        <span><strong>Manufacturer:</strong> {product.manufacturer || product.brand}</span>
+                      </div>
+                      <div className="flex items-start gap-2.5">
+                        <CheckCircle2 className="w-4 h-4 text-[#559620] shrink-0 mt-0.5" />
+                        <span><strong>Storage:</strong> {product.storageInstructions || "Store below 25°C in a dry place."}</span>
+                      </div>
+                      <div className="flex items-start gap-2.5">
+                        <CheckCircle2 className="w-4 h-4 text-[#559620] shrink-0 mt-0.5" />
+                        <span>
+                          <strong>Prescription Status:</strong>{" "}
+                          {product.prescriptionRequired
+                            ? "Schedule H Prescription Required (Valid doctor Rx mandatory)"
+                            : "Over The Counter (OTC — No prescription required)"}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                )}
 
-                <ul className="space-y-2 pt-2 text-xs text-[#3D5240]">
-                  <li className="flex items-center gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-[#559620] shrink-0" />
-                    <span><strong>Active Salt / Formula:</strong> {product.composition}</span>
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-[#559620] shrink-0" />
-                    <span><strong>Manufacturer:</strong> {product.brand}</span>
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-[#559620] shrink-0" />
-                    <span><strong>Prescription Status:</strong> {product.prescriptionRequired ? "Schedule H (Prescription Required)" : "Over The Counter (No Rx needed)"}</span>
-                  </li>
-                </ul>
+                {activeTab === "benefits" && (
+                  <div className="space-y-3">
+                    <h4 className="font-serif text-base font-bold text-[#14304A]">
+                      Key Therapeutic Benefits &amp; Action
+                    </h4>
+                    <p className="text-xs sm:text-sm text-[#506352] leading-relaxed">
+                      Formulated with pharmaceutical-grade standards. {product.description}
+                    </p>
+                    <ul className="space-y-2 pt-2 text-xs text-[#3D5240]">
+                      <li className="flex items-center gap-2">
+                        <CheckCircle2 className="w-4 h-4 text-[#559620] shrink-0" />
+                        <span>Fast-absorbing and clinically validated composition</span>
+                      </li>
+                      <li className="flex items-center gap-2">
+                        <CheckCircle2 className="w-4 h-4 text-[#559620] shrink-0" />
+                        <span>High bioavailability with certified excipients</span>
+                      </li>
+                      <li className="flex items-center gap-2">
+                        <CheckCircle2 className="w-4 h-4 text-[#559620] shrink-0" />
+                        <span>Packaged in protective barrier foil to preserve potency</span>
+                      </li>
+                    </ul>
+                  </div>
+                )}
+
+                {activeTab === "usage" && (
+                  <div className="space-y-3">
+                    <h4 className="font-serif text-base font-bold text-[#14304A]">
+                      Directions for Use &amp; Dosage Guidelines
+                    </h4>
+                    <div className="p-4 rounded-2xl bg-[#F7FAF6] border border-[#E3EDE1] text-xs sm:text-sm text-[#435746] leading-relaxed">
+                      {product.usage || "Take as directed by your treating physician or follow label instructions carefully."}
+                    </div>
+                    <p className="text-xs text-[#697C6B]">
+                      Always swallow with sufficient quantity of water unless instructed otherwise. Do not chew or crush delayed-release or enteric-coated preparations.
+                    </p>
+                  </div>
+                )}
+
+                {activeTab === "safety" && (
+                  <div className="space-y-3">
+                    <h4 className="font-serif text-base font-bold text-[#14304A]">
+                      Safety Advice &amp; Warnings
+                    </h4>
+                    <div className="p-4 rounded-2xl bg-[#FFF8F8] border border-[#FADCDA] text-xs text-[#8A3232] leading-relaxed space-y-2">
+                      <p>
+                        <strong>Precautions:</strong> {product.precautions || "Keep out of reach of children. Discontinue and consult your physician in case of adverse reaction."}
+                      </p>
+                      <p>
+                        <strong>Pregnancy &amp; Lactation:</strong> Consult your healthcare professional prior to taking if pregnant, planning to become pregnant, or breastfeeding.
+                      </p>
+                    </div>
+                    <div className="p-3.5 rounded-xl bg-[#F7FAF6] border border-[#E3EDE1] text-xs text-[#435746]">
+                      <strong>Storage:</strong> {product.storageInstructions || "Store below 25°C in a cool and dry place."}
+                    </div>
+                  </div>
+                )}
+
+                {activeTab === "reviews" && (
+                  <div className="space-y-4">
+                    <div className="flex items-center gap-3">
+                      <div className="flex items-center gap-1 text-[#D97706]">
+                        {Array.from({ length: 5 }).map((_, i) => (
+                          <Star key={i} className="w-4 h-4 fill-[#D97706]" />
+                        ))}
+                      </div>
+                      <span className="font-bold text-sm text-[#14304A]">{product.rating} out of 5</span>
+                      <span className="text-xs text-[#697C6B]">({product.reviewCount || 450} verified patient reviews)</span>
+                    </div>
+                    <p className="text-xs text-[#506352]">
+                      98% of verified patients reported positive therapeutic outcomes with genuine Genekon pharmacy dispatch.
+                    </p>
+                  </div>
+                )}
               </div>
 
               {/* Specifications Table */}
@@ -617,17 +719,35 @@ export default function ProductDetailPage() {
                     <span className="font-bold text-[#14304A]">{product.brand}</span>
                   </div>
                   <div className="flex justify-between py-1.5">
+                    <span className="text-[#697C6B]">Manufacturer</span>
+                    <span className="font-bold text-[#14304A] text-right max-w-[200px] truncate">{product.manufacturer || product.brand}</span>
+                  </div>
+                  <div className="flex justify-between py-1.5">
                     <span className="text-[#697C6B]">Category</span>
                     <span className="font-bold text-[#14304A]">{product.category}</span>
                   </div>
+                  {product.subCategory && (
+                    <div className="flex justify-between py-1.5">
+                      <span className="text-[#697C6B]">Subcategory</span>
+                      <span className="font-bold text-[#14304A]">{product.subCategory}</span>
+                    </div>
+                  )}
                   <div className="flex justify-between py-1.5">
-                    <span className="text-[#697C6B]">Dosage Form / Packaging</span>
-                    <span className="font-bold text-[#14304A]">{selectedVariant.name}</span>
+                    <span className="text-[#697C6B]">SKU / Batch</span>
+                    <span className="font-mono font-bold text-[#14304A]">{product.sku || "GNK-PH-01"} / {product.batchNumber || "BTH-2026"}</span>
                   </div>
                   <div className="flex justify-between py-1.5">
-                    <span className="text-[#697C6B]">Stock Availability</span>
+                    <span className="text-[#697C6B]">Expiry Date</span>
+                    <span className="font-bold text-[#14304A]">{product.expiryDate || "10/2028"}</span>
+                  </div>
+                  <div className="flex justify-between py-1.5">
+                    <span className="text-[#697C6B]">GST Rate</span>
+                    <span className="font-bold text-[#14304A]">{product.gst || 12}% Included</span>
+                  </div>
+                  <div className="flex justify-between py-1.5">
+                    <span className="text-[#697C6B]">Stock Status</span>
                     <span className={`font-bold ${isOutOfStock ? "text-red-600" : isLowStock ? "text-[#D97706]" : "text-[#559620]"}`}>
-                      {product.stockStatus} ({currentStock} units)
+                      {product.stockStatus} ({currentStock} available)
                     </span>
                   </div>
                   <div className="flex justify-between py-1.5">

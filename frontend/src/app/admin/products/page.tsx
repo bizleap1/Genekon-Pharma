@@ -18,12 +18,16 @@ import { FilterBar } from "@/components/admin/FilterBar";
 import { DataTable } from "@/components/admin/DataTable";
 import { StatusBadge } from "@/components/admin/StatusBadge";
 import { ADMIN_PRODUCTS, AdminProduct } from "@/data/adminData";
+import { ConfirmationModal } from "@/components/ui/ConfirmationModal";
+import { useToast } from "@/context/ToastContext";
 
 export default function AdminProductsPage() {
+  const toast = useToast();
   const [products, setProducts] = useState<AdminProduct[]>(ADMIN_PRODUCTS);
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("all");
   const [stockStatus, setStockStatus] = useState("all");
+  const [deleteTarget, setDeleteTarget] = useState<{ id: string; name: string } | null>(null);
 
   const categories = ["Medicines", "Vitamins & Nutrition", "Medical Devices", "Personal Care", "Ayurveda"];
   const statuses = ["Active", "Low Stock", "Out of Stock"];
@@ -44,9 +48,7 @@ export default function AdminProductsPage() {
   }, [products, search, category, stockStatus]);
 
   const handleDelete = (id: string, name: string) => {
-    if (confirm(`Are you sure you want to remove "${name}" from the active catalog?`)) {
-      setProducts((prev) => prev.filter((p) => p.id !== id));
-    }
+    setDeleteTarget({ id, name });
   };
 
   const columns = [
@@ -183,7 +185,7 @@ export default function AdminProductsPage() {
         statusFilter={stockStatus}
         onStatusChange={setStockStatus}
         statuses={statuses}
-        onExport={() => alert("Product catalog CSV exported.")}
+        onExport={() => toast.success("Product catalog CSV exported successfully.")}
       />
 
       {/* Products Table */}
@@ -193,6 +195,23 @@ export default function AdminProductsPage() {
         emptyMessage="No healthcare products found matching your search and filter criteria."
       />
 
+      {/* Delete Confirmation Modal */}
+      <ConfirmationModal
+        isOpen={Boolean(deleteTarget)}
+        title="Remove Product from Catalog"
+        message={`Are you sure you want to remove "${deleteTarget?.name}" from the active pharmacy catalog? This action will archive the SKU.`}
+        confirmLabel="Delete Product"
+        cancelLabel="Cancel"
+        isDestructive
+        onConfirm={() => {
+          if (deleteTarget) {
+            setProducts((prev) => prev.filter((p) => p.id !== deleteTarget.id));
+            toast.success(`"${deleteTarget.name}" removed successfully.`);
+            setDeleteTarget(null);
+          }
+        }}
+        onCancel={() => setDeleteTarget(null)}
+      />
     </div>
   );
 }

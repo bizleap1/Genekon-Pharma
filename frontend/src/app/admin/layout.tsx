@@ -11,6 +11,7 @@ export default function AdminLayout({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
+  const [isMobileSidebarOpen, setIsMobileSidebarOpen] = React.useState(false);
   const isLoginPage = pathname === "/admin/login";
 
   if (isLoginPage) {
@@ -19,13 +20,16 @@ export default function AdminLayout({
 
   return (
     <div className="min-h-screen flex bg-[#FAFCFA] text-[#14304A]">
-      {/* Fixed Admin Sidebar */}
-      <AdminSidebar />
+      {/* Responsive Admin Sidebar */}
+      <AdminSidebar
+        isOpen={isMobileSidebarOpen}
+        onClose={() => setIsMobileSidebarOpen(false)}
+      />
 
       {/* Main Admin Content Canvas */}
       <div className="flex-1 flex flex-col min-w-0 overflow-y-auto">
-        <AdminHeader />
-        <main className="flex-1 p-6 sm:p-8 space-y-6">
+        <AdminHeader onMenuClick={() => setIsMobileSidebarOpen(true)} />
+        <main className="flex-1 p-4 sm:p-6 lg:p-8 space-y-6">
           {children}
         </main>
       </div>

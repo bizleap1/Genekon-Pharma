@@ -29,9 +29,11 @@ import { useCart } from "@/context/CartContext";
 import { useAuthStore } from "@/stores/authStore";
 import { orderService, PlacedOrder } from "@/services/orderService";
 import { CheckoutFormData, FormValidationErrors } from "@/types/cart";
+import { useToast } from "@/context/ToastContext";
 
 export default function CheckoutPage() {
   const router = useRouter();
+  const toast = useToast();
   const { user, isLoggedIn, openLoginModal } = useAuthStore();
   const { items, totals, deliveryType, setDeliveryType, clearCart } = useCart();
 
@@ -94,7 +96,7 @@ export default function CheckoutPage() {
     }
 
     if (selectedItems.length === 0) {
-      alert("No items selected in cart. Please return to cart and select medicines.");
+      toast.warning("No items selected in cart. Please return to cart and select medicines.");
       return;
     }
 

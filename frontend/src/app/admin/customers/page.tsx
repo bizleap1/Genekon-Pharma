@@ -6,8 +6,10 @@ import { DataTable } from "@/components/admin/DataTable";
 import { StatusBadge } from "@/components/admin/StatusBadge";
 import { FilterBar } from "@/components/admin/FilterBar";
 import { ADMIN_CUSTOMERS, AdminCustomer } from "@/data/adminData";
+import { useToast } from "@/context/ToastContext";
 
 export default function AdminCustomersPage() {
+  const toast = useToast();
   const [customers, setCustomers] = useState<AdminCustomer[]>(ADMIN_CUSTOMERS);
   const [search, setSearch] = useState("");
   const [activeTab, setActiveTab] = useState<"all" | "Retail" | "Wholesale">("all");
@@ -95,8 +97,8 @@ export default function AdminCustomersPage() {
 
         <button
           type="button"
-          onClick={() => alert("Customer directory exported.")}
-          className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl border border-[#CCDCCD] bg-white hover:bg-[#F2F7F2] text-xs font-bold text-[#14304A] transition-colors"
+          onClick={() => toast.success("Customer directory exported successfully.")}
+          className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl border border-[#CCDCCD] bg-white hover:bg-[#F2F7F2] text-xs font-bold text-[#14304A] transition-colors cursor-pointer"
         >
           <Download className="w-3.5 h-3.5 text-[#559620]" />
           <span>Export Customer CSV</span>
@@ -106,15 +108,15 @@ export default function AdminCustomersPage() {
       {/* Tabs */}
       <div className="flex items-center gap-1.5 bg-white p-1.5 rounded-2xl border border-[#E2EAE0] w-fit">
         {[
-          { id: "all", label: `All (${customers.length})` },
-          { id: "Retail", label: "Retail Patients" },
-          { id: "Wholesale", label: "Wholesale Clinics / B2B" },
+          { id: "all" as const, label: `All (${customers.length})` },
+          { id: "Retail" as const, label: "Retail Patients" },
+          { id: "Wholesale" as const, label: "Wholesale Clinics / B2B" },
         ].map((tab) => {
           const isActive = activeTab === tab.id;
           return (
             <button
               key={tab.id}
-              onClick={() => setActiveTab(tab.id as any)}
+              onClick={() => setActiveTab(tab.id)}
               className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
                 isActive
                   ? "bg-[#559620] text-white shadow-2xs"

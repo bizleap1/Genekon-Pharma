@@ -23,10 +23,10 @@ import { CategoryNav } from "@/components/layout/CategoryNav";
 import { Footer } from "@/components/layout/Footer";
 import { Container } from "@/components/ui/Container";
 import { AccountSidebar } from "@/components/account/AccountSidebar";
-import { MOCK_PRESCRIPTIONS } from "@/data/customer";
+import { MOCK_PRESCRIPTIONS, CustomerPrescription } from "@/data/customer";
 
 export default function PrescriptionsHistoryPage() {
-  const [selectedRx, setSelectedRx] = useState<any | null>(null);
+  const [selectedRx, setSelectedRx] = useState<CustomerPrescription | null>(null);
 
   return (
     <div className="min-h-screen flex flex-col bg-[#FAFCFA]">

@@ -1,22 +1,10 @@
 "use client";
 
 import { useSyncExternalStore } from "react";
+import { UserProfile, UserRole } from "@/types/user";
+import { Product } from "@/types/product";
 
-export type UserRole = "customer" | "wholesale" | "admin";
-
-export interface UserProfile {
-  id: string;
-  name: string;
-  mobile: string;
-  email?: string;
-  role: UserRole;
-  avatar?: string;
-  address?: string;
-  city?: string;
-  pincode?: string;
-  businessName?: string;
-  gstNumber?: string;
-}
+export type { UserProfile, UserRole };
 
 export type IntendedActionType =
   | "ADD_TO_CART"
@@ -29,10 +17,19 @@ export type IntendedActionType =
   | "REORDER"
   | "REDIRECT";
 
+export interface IntendedActionPayload {
+  product?: Product;
+  quantity?: number;
+  variant?: string;
+  orderId?: string;
+  items?: Array<{ product?: Product; id?: string; name?: string; price?: number; quantity?: number; qty?: number; variant?: string }>;
+  [key: string]: unknown;
+}
+
 export interface IntendedAction {
   type: IntendedActionType;
   title?: string;
-  payload?: any;
+  payload?: IntendedActionPayload;
   redirectUrl?: string;
 }
 

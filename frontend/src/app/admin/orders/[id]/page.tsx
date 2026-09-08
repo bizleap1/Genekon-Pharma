@@ -22,6 +22,8 @@ import {
 import { StatusBadge } from "@/components/admin/StatusBadge";
 import { ADMIN_ORDERS, AdminOrder } from "@/data/adminData";
 
+import { OrderStatus } from "@/types/order";
+
 export default function AdminOrderDetailsPage({
   params,
 }: {
@@ -34,10 +36,10 @@ export default function AdminOrderDetailsPage({
     ADMIN_ORDERS.find((o) => o.id.toLowerCase() === orderId.toLowerCase()) ||
     ADMIN_ORDERS[0];
 
-  const [currentStatus, setCurrentStatus] = useState<any>(baseOrder.orderStatus);
+  const [currentStatus, setCurrentStatus] = useState<OrderStatus>(baseOrder.orderStatus);
   const [successMsg, setSuccessMsg] = useState("");
 
-  const handleStatusUpdate = (newStatus: string) => {
+  const handleStatusUpdate = (newStatus: OrderStatus) => {
     setCurrentStatus(newStatus);
     setSuccessMsg(`Order status successfully updated to "${newStatus}".`);
     setTimeout(() => setSuccessMsg(""), 3000);
@@ -93,7 +95,7 @@ export default function AdminOrderDetailsPage({
         <div className="flex items-center gap-2.5 shrink-0">
           <select
             value={currentStatus}
-            onChange={(e) => handleStatusUpdate(e.target.value)}
+            onChange={(e) => handleStatusUpdate(e.target.value as OrderStatus)}
             className="text-xs font-bold px-3.5 py-2 rounded-xl border border-[#559620] bg-white text-[#14304A] outline-none cursor-pointer shadow-2xs"
           >
             <option value="Placed">Set Status: Placed</option>

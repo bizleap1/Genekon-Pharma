@@ -13,9 +13,12 @@ import {
 } from "lucide-react";
 import { FormInput } from "@/components/admin/FormInput";
 import { UploadBox } from "@/components/admin/UploadBox";
+import { ConfirmationModal } from "@/components/ui/ConfirmationModal";
+import { useToast } from "@/context/ToastContext";
 
 export default function EditProductPage() {
   const router = useRouter();
+  const toast = useToast();
   const [formData, setFormData] = useState({
     name: "Cetaphil Gentle Skin Cleanser",
     brand: "Cetaphil",
@@ -31,6 +34,7 @@ export default function EditProductPage() {
     status: "Active",
   });
   const [submitted, setSubmitted] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -68,12 +72,8 @@ export default function EditProductPage() {
 
         <button
           type="button"
-          onClick={() => {
-            if (confirm("Are you sure you want to delete this product?")) {
-              router.push("/admin/products");
-            }
-          }}
-          className="p-2 rounded-xl text-red-600 hover:bg-red-50 cursor-pointer"
+          onClick={() => setIsDeleteModalOpen(true)}
+          className="p-2 rounded-xl text-red-600 hover:bg-red-50 cursor-pointer transition-colors"
           title="Delete product"
         >
           <Trash2 className="w-4 h-4" />
@@ -268,6 +268,22 @@ export default function EditProductPage() {
         </div>
 
       </form>
+
+      {/* Delete Confirmation Modal */}
+      <ConfirmationModal
+        isOpen={isDeleteModalOpen}
+        title="Delete Product"
+        message={`Are you sure you want to delete "${formData.name}"? This action cannot be undone.`}
+        confirmLabel="Delete Product"
+        cancelLabel="Cancel"
+        isDestructive
+        onConfirm={() => {
+          toast.success(`Product "${formData.name}" deleted.`);
+          setIsDeleteModalOpen(false);
+          router.push("/admin/products");
+        }}
+        onCancel={() => setIsDeleteModalOpen(false)}
+      />
 
     </div>
   );

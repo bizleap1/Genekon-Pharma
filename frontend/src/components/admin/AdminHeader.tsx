@@ -8,28 +8,42 @@ import {
   MapPin,
   ShieldCheck,
   User,
-  ChevronDown
+  ChevronDown,
+  Menu
 } from "lucide-react";
 
 interface AdminHeaderProps {
   title?: string;
   subtitle?: string;
+  onMenuClick?: () => void;
 }
 
 export const AdminHeader: React.FC<AdminHeaderProps> = ({
   title = "Management Console",
   subtitle = "Genekon Central Pharmacy & Wholesale Operations",
+  onMenuClick,
 }) => {
   return (
-    <header className="sticky top-0 z-40 bg-white border-b border-[#E2EAE0] px-6 py-3.5 flex items-center justify-between gap-4">
-      {/* Page Title & Breadcrumb */}
-      <div>
-        <h1 className="font-serif text-lg sm:text-xl font-bold text-[#14304A]">
-          {title}
-        </h1>
-        <p className="text-xs text-[#637766] mt-0.5">
-          {subtitle}
-        </p>
+    <header className="sticky top-0 z-40 bg-white border-b border-[#E2EAE0] px-4 sm:px-6 py-3.5 flex items-center justify-between gap-4">
+      {/* Mobile Menu Button & Page Title */}
+      <div className="flex items-center gap-3">
+        <button
+          type="button"
+          onClick={onMenuClick}
+          className="lg:hidden p-2 -ml-1 rounded-xl text-[#14304A] hover:bg-[#F2F7F1] transition-colors border border-[#E2EAE0]"
+          aria-label="Open sidebar menu"
+        >
+          <Menu className="w-5 h-5 text-[#14304A]" />
+        </button>
+
+        <div>
+          <h1 className="font-serif text-base sm:text-xl font-bold text-[#14304A]">
+            {title}
+          </h1>
+          <p className="text-[11px] sm:text-xs text-[#637766] mt-0.5 hidden sm:block">
+            {subtitle}
+          </p>
+        </div>
       </div>
 
       {/* Center Search / Location Info */}

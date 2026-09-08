@@ -139,8 +139,10 @@ export default function CategoryPage({
   const [priceFilter, setPriceFilter] = useState<string>("all");
   const [discountFilter, setDiscountFilter] = useState<number>(0);
   const [inStockOnly, setInStockOnly] = useState<boolean>(false);
-  const [rxFilter, setRxFilter] = useState<"all" | "otc" | "rx">("all");
-  const [sortBy, setSortBy] = useState<"popular" | "price-low" | "price-high" | "rating">("popular");
+  type RxFilterOption = "all" | "otc" | "rx";
+  type CategorySortOption = "popular" | "price-low" | "price-high" | "latest";
+  const [rxFilter, setRxFilter] = useState<RxFilterOption>("all");
+  const [sortBy, setSortBy] = useState<CategorySortOption>("popular");
   const [mobileFilterOpen, setMobileFilterOpen] = useState(false);
 
   // Match products for this category or fallback
@@ -194,8 +196,9 @@ export default function CategoryPage({
     }).sort((a, b) => {
       if (sortBy === "price-low") return a.price - b.price;
       if (sortBy === "price-high") return b.price - a.price;
-      if (sortBy === "rating") return (b.rating || 0) - (a.rating || 0);
-      return 0;
+      if (sortBy === "latest") return b.id.localeCompare(a.id);
+      // popular
+      return (b.rating * (b.reviewCount || 100)) - (a.rating * (a.reviewCount || 100));
     });
   }, [categoryProducts, selectedBrands, priceFilter, discountFilter, inStockOnly, rxFilter, sortBy]);
 
@@ -283,9 +286,9 @@ export default function CategoryPage({
         </h4>
         <div className="space-y-1.5">
           {[
-            { id: "all", label: "All Products" },
-            { id: "otc", label: "Over-the-Counter (OTC)" },
-            { id: "rx", label: "Prescription Required" },
+            { id: "all" as const, label: "All Products" },
+            { id: "otc" as const, label: "Over-the-Counter (OTC)" },
+            { id: "rx" as const, label: "Prescription Required" },
           ].map((item) => (
             <label
               key={item.id}
@@ -295,7 +298,7 @@ export default function CategoryPage({
                 type="radio"
                 name="rxFilter"
                 checked={rxFilter === item.id}
-                onChange={() => setRxFilter(item.id as any)}
+                onChange={() => setRxFilter(item.id)}
                 className="text-[#559620] focus:ring-[#559620] h-3.5 w-3.5"
               />
               <span>{item.label}</span>
@@ -456,13 +459,13 @@ export default function CategoryPage({
                 <span className="text-[#687C69]">Sort:</span>
                 <select
                   value={sortBy}
-                  onChange={(e) => setSortBy(e.target.value as any)}
+                  onChange={(e) => setSortBy(e.target.value as CategorySortOption)}
                   className="bg-transparent font-bold text-[#14304A] outline-none text-xs"
                 >
                   <option value="popular">Popularity</option>
                   <option value="price-low">Price: Low to High</option>
                   <option value="price-high">Price: High to Low</option>
-                  <option value="rating">Rating</option>
+                  <option value="latest">Latest</option>
                 </select>
               </div>
             </div>
@@ -480,13 +483,13 @@ export default function CategoryPage({
                   <span className="text-[#687C69]">Sort By:</span>
                   <select
                     value={sortBy}
-                    onChange={(e) => setSortBy(e.target.value as any)}
+                    onChange={(e) => setSortBy(e.target.value as CategorySortOption)}
                     className="bg-white border border-[#D0DED3] rounded-lg px-2.5 py-1.5 font-bold text-[#14304A] outline-none text-xs focus:border-[#559620]"
                   >
-                    <option value="popular">Featured &amp; Popular</option>
+                    <option value="popular">Popularity &amp; Bestselling</option>
                     <option value="price-low">Price: Low to High</option>
                     <option value="price-high">Price: High to Low</option>
-                    <option value="rating">Top Customer Rated</option>
+                    <option value="latest">Latest</option>
                   </select>
                 </div>
               </div>

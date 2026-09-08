@@ -20,8 +20,10 @@ import { DataTable } from "@/components/admin/DataTable";
 import { StatusBadge } from "@/components/admin/StatusBadge";
 import { FilterBar } from "@/components/admin/FilterBar";
 import { ADMIN_PRODUCTS, AdminProduct } from "@/data/adminData";
+import { useToast } from "@/context/ToastContext";
 
 export default function AdminInventoryPage() {
+  const toast = useToast();
   const [products, setProducts] = useState<AdminProduct[]>(ADMIN_PRODUCTS);
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
@@ -66,6 +68,7 @@ export default function AdminInventoryPage() {
           : p
       )
     );
+    toast.success(`Inventory stock updated for "${selectedProduct.name}" (${val} units).`);
     setSelectedProduct(null);
   };
 
@@ -193,7 +196,7 @@ export default function AdminInventoryPage() {
         statusFilter={statusFilter}
         onStatusChange={setStatusFilter}
         statuses={["Active", "Low Stock", "Out of Stock"]}
-        onExport={() => alert("Inventory stock sheet CSV exported.")}
+        onExport={() => toast.success("Inventory stock sheet CSV exported successfully.")}
       />
 
       {/* Inventory Data Table */}

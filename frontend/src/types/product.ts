@@ -1,5 +1,13 @@
 export type StockStatus = "In Stock" | "Low Stock" | "Out of Stock";
 
+export type ProductSortOption =
+  | "popularity"
+  | "price-low"
+  | "price-high"
+  | "latest"
+  | "relevance"
+  | "rating";
+
 export interface ProductVariant {
   id: string;
   name: string;
@@ -9,33 +17,44 @@ export interface ProductVariant {
 }
 
 export interface Product {
+  // Core pharmacy identifiers
   id: string;
   name: string;
   brand: string;
+  manufacturer: string;
   category: string;
-  images: string[];
-  description: string;
+  subCategory: string;
   composition: string;
-  price: number;
+  description: string;
+  usage: string;
+  precautions: string;
+  images: string[];
   mrp: number;
+  sellingPrice: number;
   discount: number;
-  rating: number;
+  gst: number;
   stockStatus: StockStatus;
-  stockQuantity: number;
+  quantity: number; // pack size or count
+  sku: string;
+  batchNumber: string;
+  expiryDate: string;
   prescriptionRequired: boolean;
-  variants: ProductVariant[];
-  quantity: number; // Pack/unit size or default quantity
+  storageInstructions: string;
 
-  // Compatibility & secondary attributes
-  image: string; // primary image thumbnail
+  // Compatibility & UI fields
+  price: number; // mirrors sellingPrice
+  image: string; // primary thumbnail
   genericName?: string;
   originalPrice?: number;
   discountPercent?: number;
+  rating: number;
   reviewCount?: number;
+  stockQuantity: number;
   inStock: boolean;
   dosageForm?: string;
   packSize?: string;
   tag?: string;
+  variants: ProductVariant[];
   "stock status"?: StockStatus;
 }
 

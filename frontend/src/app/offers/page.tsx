@@ -201,16 +201,16 @@ export default function OffersPage() {
               {/* Filter Tabs */}
               <div className="flex items-center gap-2 overflow-x-auto no-scrollbar">
                 {[
-                  { id: "all", label: "All Deals" },
-                  { id: "high-discount", label: "Flat 18%+ Off" },
-                  { id: "nutrition", label: "Vitamins & Nutrition" },
-                  { id: "devices", label: "Medical Devices" },
+                  { id: "all" as const, label: "All Deals" },
+                  { id: "high-discount" as const, label: "Flat 18%+ Off" },
+                  { id: "nutrition" as const, label: "Vitamins & Nutrition" },
+                  { id: "devices" as const, label: "Medical Devices" },
                 ].map((tab) => {
                   const isActive = activeTab === tab.id;
                   return (
                     <button
                       key={tab.id}
-                      onClick={() => setActiveTab(tab.id as any)}
+                      onClick={() => setActiveTab(tab.id)}
                       className={`px-3.5 py-1.5 rounded-full text-xs font-bold transition-all shrink-0 cursor-pointer ${
                         isActive
                           ? "bg-[#559620] text-white shadow-2xs"

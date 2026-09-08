@@ -16,10 +16,19 @@ import {
   BarChart3,
   ExternalLink,
   ShieldCheck,
-  ChevronRight
+  ChevronRight,
+  X
 } from "lucide-react";
 
-export const AdminSidebar: React.FC = () => {
+interface AdminSidebarProps {
+  isOpen?: boolean;
+  onClose?: () => void;
+}
+
+export const AdminSidebar: React.FC<AdminSidebarProps> = ({
+  isOpen = false,
+  onClose,
+}) => {
   const pathname = usePathname();
 
   const menuItems = [
@@ -35,28 +44,55 @@ export const AdminSidebar: React.FC = () => {
   ];
 
   return (
-    <aside className="w-64 bg-white border-r border-[#E2EAE0] flex flex-col justify-between shrink-0 min-h-screen sticky top-0">
-      <div>
-        {/* Brand Header */}
-        <div className="p-5 border-b border-[#E2EAE0]">
-          <Link href="/admin/dashboard" className="block">
-            <div className="relative h-10 w-36 mb-1">
-              <Image
-                src="/images/genekon-brand-logo.png"
-                alt="Genekon Admin"
-                fill
-                sizes="144px"
-                className="object-contain object-left"
-              />
+    <>
+      {/* Mobile Backdrop */}
+      {isOpen && (
+        <div
+          onClick={onClose}
+          className="fixed inset-0 bg-black/40 z-40 lg:hidden backdrop-blur-xs transition-opacity"
+          aria-hidden="true"
+        />
+      )}
+
+      {/* Sidebar Container */}
+      <aside
+        className={`fixed lg:sticky top-0 left-0 z-50 lg:z-auto h-screen w-64 bg-white border-r border-[#E2EAE0] flex flex-col justify-between shrink-0 transition-transform duration-300 ease-in-out ${
+          isOpen ? "translate-x-0 shadow-2xl" : "-translate-x-full lg:translate-x-0"
+        }`}
+      >
+        <div>
+          {/* Brand Header */}
+          <div className="p-5 border-b border-[#E2EAE0] flex items-center justify-between">
+            <div>
+              <Link href="/admin/dashboard" onClick={onClose} className="block">
+                <div className="relative h-10 w-36 mb-1">
+                  <Image
+                    src="/images/genekon-brand-logo.png"
+                    alt="Genekon Admin"
+                    fill
+                    sizes="144px"
+                    className="object-contain object-left"
+                  />
+                </div>
+              </Link>
+              <div className="flex items-center gap-1.5 mt-2">
+                <span className="inline-flex items-center gap-1 text-[10px] font-extrabold uppercase tracking-wider px-2 py-0.5 rounded-full bg-[#EDF7E9] text-[#447719]">
+                  <ShieldCheck className="w-3 h-3" />
+                  Pharmacist Console
+                </span>
+              </div>
             </div>
-          </Link>
-          <div className="flex items-center gap-1.5 mt-2">
-            <span className="inline-flex items-center gap-1 text-[10px] font-extrabold uppercase tracking-wider px-2 py-0.5 rounded-full bg-[#EDF7E9] text-[#447719]">
-              <ShieldCheck className="w-3 h-3" />
-              Pharmacist Console
-            </span>
+
+            {/* Mobile Close Button */}
+            <button
+              type="button"
+              onClick={onClose}
+              className="lg:hidden p-1.5 rounded-lg text-[#637766] hover:text-[#14304A] hover:bg-[#F2F7F1] transition-colors"
+              aria-label="Close sidebar"
+            >
+              <X className="w-5 h-5" />
+            </button>
           </div>
-        </div>
 
         {/* Navigation List */}
         <nav className="p-3 space-y-1">
@@ -71,6 +107,7 @@ export const AdminSidebar: React.FC = () => {
               <Link
                 key={item.href}
                 href={item.href}
+                onClick={onClose}
                 className={`flex items-center justify-between px-3 py-2 rounded-xl text-xs font-bold transition-all ${
                   isActive
                     ? "bg-[#559620] text-white shadow-2xs"
@@ -116,5 +153,6 @@ export const AdminSidebar: React.FC = () => {
         </Link>
       </div>
     </aside>
+    </>
   );
 };

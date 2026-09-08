@@ -23,12 +23,14 @@ import { Footer } from "@/components/layout/Footer";
 import { Container } from "@/components/ui/Container";
 import { AccountSidebar } from "@/components/account/AccountSidebar";
 import { MOCK_ORDERS } from "@/data/customer";
+import { useToast } from "@/context/ToastContext";
 
 export default function OrderDetailsPage({
   params,
 }: {
   params: Promise<{ id: string }>;
 }) {
+  const toast = useToast();
   const resolvedParams = use(params);
   const orderId = resolvedParams.id;
 
@@ -104,7 +106,7 @@ export default function OrderDetailsPage({
                   <div className="flex items-center gap-2">
                     <button
                       type="button"
-                      onClick={() => alert("Invoice downloaded successfully.")}
+                      onClick={() => toast.success("Tax Invoice PDF downloaded successfully.")}
                       className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl border border-[#CCDCCD] bg-[#FAFCFA] hover:bg-[#F0F5F1] text-xs font-bold text-[#14304A] transition-colors cursor-pointer"
                     >
                       <Download className="w-3.5 h-3.5 text-[#559620]" />

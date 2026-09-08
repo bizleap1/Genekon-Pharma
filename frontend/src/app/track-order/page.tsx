@@ -22,7 +22,35 @@ import { Footer } from "@/components/layout/Footer";
 import { Container } from "@/components/ui/Container";
 import { useAuthStore } from "@/stores/authStore";
 
-const SAMPLE_ORDERS = {
+interface TrackOrderItem {
+  name: string;
+  qty: number;
+  price: number;
+  image: string;
+}
+
+interface TrackOrderTimelineItem {
+  step: number;
+  title: string;
+  subtitle: string;
+  time: string;
+  completed: boolean;
+}
+
+interface TrackOrderRecord {
+  orderId: string;
+  status: string;
+  currentStep: number;
+  estimatedDelivery: string;
+  courier: string;
+  awbNumber: string;
+  deliveryAddress: string;
+  recipient: string;
+  items: TrackOrderItem[];
+  timeline: TrackOrderTimelineItem[];
+}
+
+const SAMPLE_ORDERS: Record<string, TrackOrderRecord> = {
   "GNK-89241": {
     orderId: "GNK-89241",
     status: "Shipped",
@@ -50,29 +78,29 @@ const SAMPLE_ORDERS = {
       {
         step: 1,
         title: "Order Placed",
-        subtitle: "Order placed successfully on Genekon Pharmacy",
-        time: "Yesterday, 10:15 AM",
+        subtitle: "Order placed on Genekon Pharmacy Portal",
+        time: "Yesterday, 10:14 AM",
         completed: true,
       },
       {
         step: 2,
-        title: "Confirmed",
-        subtitle: "Pharmacist verified dosage & prescription details",
-        time: "Yesterday, 10:45 AM",
+        title: "Pharmacist Verified & Confirmed",
+        subtitle: "Verified by Clinical Pharmacist Dr. Nikhil Rao (Reg: MH-68214)",
+        time: "Yesterday, 11:30 AM",
         completed: true,
       },
       {
         step: 3,
-        title: "Packed",
-        subtitle: "Sealed in tamper-proof temperature-safe packaging",
-        time: "Yesterday, 04:20 PM",
+        title: "Packed in Temperature-Controlled Box",
+        subtitle: "Dispatched from Central Hub, Gittikhadan, Nagpur",
+        time: "Yesterday, 3:45 PM",
         completed: true,
       },
       {
         step: 4,
-        title: "Shipped",
-        subtitle: "Handed over to delivery agent. On route to destination",
-        time: "Today, 09:30 AM",
+        title: "Out for Delivery / In Transit",
+        subtitle: "Assigned to delivery executive Rahul Verma (+91 9822334455)",
+        time: "Today, 9:20 AM",
         completed: true,
       },
       {
@@ -90,7 +118,7 @@ export default function TrackOrderPage() {
   const { isLoggedIn, openLoginModal } = useAuthStore();
   const [orderIdInput, setOrderIdInput] = useState("GNK-89241");
   const [mobileInput, setMobileInput] = useState("9370102691");
-  const [trackedOrder, setTrackedOrder] = useState<any>(SAMPLE_ORDERS["GNK-89241"]);
+  const [trackedOrder, setTrackedOrder] = useState<TrackOrderRecord | null>(SAMPLE_ORDERS["GNK-89241"]);
   const [hasSearched, setHasSearched] = useState(true);
 
   const handleTrack = (e: React.FormEvent) => {
@@ -305,7 +333,7 @@ export default function TrackOrderPage() {
 
                 {/* Timeline Visual */}
                 <div className="relative pl-6 sm:pl-8 space-y-8 before:absolute before:left-[17px] sm:before:left-[21px] before:top-3 before:bottom-3 before:w-0.5 before:bg-[#E3EDE1]">
-                  {trackedOrder.timeline.map((item: any) => {
+                  {trackedOrder.timeline.map((item: TrackOrderTimelineItem) => {
                     const isCompleted = item.completed;
                     const isCurrent = item.step === trackedOrder.currentStep;
 
@@ -381,7 +409,7 @@ export default function TrackOrderPage() {
                     </h4>
                   </div>
                   <div className="space-y-3">
-                    {trackedOrder.items.map((item: any, i: number) => (
+                    {trackedOrder.items.map((item: TrackOrderItem, i: number) => (
                       <div key={i} className="flex items-center justify-between gap-3 text-xs">
                         <div className="flex items-center gap-2.5">
                           <div className="relative w-9 h-9 rounded-lg overflow-hidden border border-[#E3EDE1] bg-[#FAFCFA] p-1 shrink-0">

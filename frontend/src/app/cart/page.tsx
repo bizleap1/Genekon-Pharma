@@ -31,6 +31,7 @@ import { useToast } from "@/context/ToastContext";
 import { useAuthGuard } from "@/hooks/useAuthGuard";
 import { CartItem } from "@/types/cart";
 import { AVAILABLE_COUPONS } from "@/services/cartService";
+import { ALL_PRODUCTS } from "@/data/products";
 
 const RECOMMENDED_PRODUCTS = [
   {
@@ -131,28 +132,44 @@ export default function CartPage() {
   };
 
   const handleSaveForLater = (item: CartItem) => {
-    addToWishlist({
-      id: item.productId,
-      name: item.name,
-      brand: item.brand,
-      price: item.price,
-      originalPrice: item.originalPrice,
-      discount: item.discount,
-      image: item.image,
-      images: [item.image],
-      category: "Medicines",
-      dosageForm: item.variant,
-      inStock: true,
-      stockStatus: "In Stock",
-      stockQuantity: item.stockQuantity || 50,
-      prescriptionRequired: item.prescriptionRequired || false,
-      mrp: item.mrp || item.originalPrice,
-      rating: 4.5,
-      composition: "",
-      description: "",
-      variants: [],
-      quantity: 1,
-    });
+    const existing = ALL_PRODUCTS.find((p) => p.id === item.productId);
+    if (existing) {
+      addToWishlist(existing);
+    } else {
+      addToWishlist({
+        id: item.productId,
+        name: item.name,
+        brand: item.brand,
+        manufacturer: item.brand,
+        price: item.price,
+        sellingPrice: item.price,
+        originalPrice: item.originalPrice,
+        mrp: item.mrp || item.originalPrice,
+        discount: item.discount,
+        gst: 12,
+        image: item.image,
+        images: [item.image],
+        category: "Medicines",
+        subCategory: "General Health",
+        dosageForm: item.variant,
+        usage: "As directed by physician",
+        precautions: "Keep out of reach of children",
+        inStock: true,
+        stockStatus: "In Stock",
+        stockQuantity: item.stockQuantity || 50,
+        prescriptionRequired: item.prescriptionRequired || false,
+        rating: 4.5,
+        reviewCount: 0,
+        composition: "",
+        description: "",
+        variants: [],
+        quantity: 1,
+        sku: item.productId,
+        batchNumber: "GEN-DEFAULT",
+        expiryDate: "12/2027",
+        storageInstructions: "Store below 25°C",
+      });
+    }
     removeFromCart(item.id);
     toast.info(`Moved "${item.name}" to Wishlist.`);
   };
@@ -194,7 +211,7 @@ export default function CartPage() {
             </div>
 
             <Link
-              href="/medicines"
+              href="/products"
               className="inline-flex items-center gap-1 text-xs sm:text-sm font-bold text-[#1853A8] hover:underline"
             >
               <span>Continue Shopping</span>
@@ -214,7 +231,7 @@ export default function CartPage() {
               </p>
               <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
                 <Link
-                  href="/medicines"
+                  href="/products"
                   className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-[#559620] hover:bg-[#467e19] text-white text-xs sm:text-sm font-bold px-6 py-3 rounded-full transition-colors shadow-xs"
                 >
                   <span>Browse All Medicines</span>
@@ -609,7 +626,7 @@ export default function CartPage() {
               </div>
 
               <Link
-                href="/medicines"
+                href="/products"
                 className="text-xs font-bold text-[#1853A8] hover:underline flex items-center gap-1"
               >
                 <span>View All</span>

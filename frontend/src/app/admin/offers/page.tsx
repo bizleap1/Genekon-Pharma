@@ -142,7 +142,7 @@ export default function AdminOffersPage() {
                 </label>
                 <select
                   value={newCoupon.discountType}
-                  onChange={(e) => setNewCoupon({ ...newCoupon, discountType: e.target.value as any })}
+                  onChange={(e) => setNewCoupon({ ...newCoupon, discountType: e.target.value as "Percentage" | "Fixed" })}
                   className="w-full text-xs px-3.5 py-2.5 rounded-xl border border-[#CCDCCD] bg-[#FAFCFB] text-[#14304A] font-semibold outline-none focus:border-[#559620]"
                 >
                   <option value="Percentage">Percentage Discount (%)</option>

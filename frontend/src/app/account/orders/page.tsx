@@ -19,10 +19,11 @@ import { CategoryNav } from "@/components/layout/CategoryNav";
 import { Footer } from "@/components/layout/Footer";
 import { Container } from "@/components/ui/Container";
 import { AccountSidebar } from "@/components/account/AccountSidebar";
-import { MOCK_ORDERS } from "@/data/customer";
+import { MOCK_ORDERS, CustomerOrder } from "@/data/customer";
 import { useAuthStore } from "@/stores/authStore";
 import { useAuthGuard } from "@/hooks/useAuthGuard";
 import { useCart } from "@/context/CartContext";
+import { Product } from "@/types/product";
 
 export default function MyOrdersPage() {
   const { isLoggedIn, openLoginModal } = useAuthStore();
@@ -50,24 +51,41 @@ export default function MyOrdersPage() {
     return true;
   });
 
-  const handleReorder = (order: any) => {
+  const handleReorder = (order: CustomerOrder) => {
     requireAuth(
       () => {
-        order.items?.forEach((item: any) => {
-          addToCart(
-            {
-              id: item.id,
-              name: item.name,
-              brand: item.brand || "Genekon",
-              price: item.price,
-              images: [item.image],
-              image: item.image,
-              stockQuantity: 50,
-              inStock: true,
-            } as any,
-            item.quantity || 1,
-            item.variant
-          );
+        order.items?.forEach((item) => {
+          const minimalProd: Product = {
+            id: item.id,
+            name: item.name,
+            brand: item.brand || "Genekon",
+            manufacturer: item.brand || "Genekon",
+            category: "Medicines",
+            subCategory: "Prescription Medicines",
+            composition: "",
+            description: "",
+            usage: "",
+            precautions: "",
+            images: [item.image],
+            image: item.image,
+            mrp: item.price * 1.2,
+            sellingPrice: item.price,
+            price: item.price,
+            discount: 10,
+            gst: 12,
+            stockStatus: "In Stock",
+            stockQuantity: 50,
+            quantity: 1,
+            sku: `SKU-${item.id}`,
+            batchNumber: "BTH-GEN-01",
+            expiryDate: "12/2028",
+            prescriptionRequired: false,
+            storageInstructions: "Store in a cool dry place.",
+            rating: 4.5,
+            inStock: true,
+            variants: [],
+          };
+          addToCart(minimalProd, item.quantity || 1, item.variant);
         });
         setReorderedId(order.id);
         setTimeout(() => setReorderedId(null), 2500);
@@ -125,15 +143,15 @@ export default function MyOrdersPage() {
                   {/* Filter Pills */}
                   <div className="flex items-center gap-1.5 bg-[#F2F7F1] p-1 rounded-xl">
                     {[
-                      { id: "all", label: `All (${MOCK_ORDERS.length})` },
-                      { id: "in-transit", label: "In Transit" },
-                      { id: "delivered", label: "Delivered" },
+                      { id: "all" as const, label: "All Orders" },
+                      { id: "in-transit" as const, label: "In Transit" },
+                      { id: "delivered" as const, label: "Delivered" },
                     ].map((tab) => {
                       const isActive = activeFilter === tab.id;
                       return (
                         <button
                           key={tab.id}
-                          onClick={() => setActiveFilter(tab.id as any)}
+                          onClick={() => setActiveFilter(tab.id)}
                           className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
                             isActive
                               ? "bg-[#559620] text-white shadow-2xs"
@@ -147,7 +165,27 @@ export default function MyOrdersPage() {
                   </div>
                 </div>
 
-                {/* Orders List */}
+                {/* Orders List / Empty State */}
+                {filteredOrders.length === 0 ? (
+                  <div className="rounded-2xl border border-dashed border-[#C5D6C7] bg-[#FAFCFB] p-10 sm:p-14 text-center my-6">
+                    <div className="w-14 h-14 rounded-full bg-[#EDF7E9] text-[#559620] flex items-center justify-center mx-auto mb-3">
+                      <Package className="w-7 h-7" />
+                    </div>
+                    <h3 className="font-serif text-lg font-bold text-[#14304A]">No orders found</h3>
+                    <p className="text-xs text-[#637766] max-w-xs mx-auto mt-1 mb-5 leading-relaxed">
+                      {activeFilter === "all"
+                        ? "You haven't placed any medicine orders yet. Explore our genuine catalog to order today."
+                        : `You have no ${activeFilter === "in-transit" ? "in-transit" : "delivered"} orders.`}
+                    </p>
+                    <Link
+                      href="/products"
+                      className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-xl bg-[#559620] hover:bg-[#467E19] text-white text-xs font-bold shadow-xs transition-colors"
+                    >
+                      <span>Explore Catalog</span>
+                      <ArrowRight className="w-3.5 h-3.5" />
+                    </Link>
+                  </div>
+                ) : (
                 <div className="mt-6 space-y-5">
                   {filteredOrders.map((order) => {
                     const isDelivered = order.deliveryStatus === "Delivered";
@@ -275,6 +313,7 @@ export default function MyOrdersPage() {
                     );
                   })}
                 </div>
+              )}
 
               </div>
 

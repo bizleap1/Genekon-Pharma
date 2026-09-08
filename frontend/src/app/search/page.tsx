@@ -31,8 +31,9 @@ function SearchContent() {
   const [priceFilter, setPriceFilter] = useState<string>("all");
   const [discountFilter, setDiscountFilter] = useState<number>(0);
   const [inStockOnly, setInStockOnly] = useState<boolean>(false);
+  type SearchSortOption = "popularity" | "price-low" | "price-high" | "latest";
   const [rxFilter, setRxFilter] = useState<"all" | "otc" | "rx">("all");
-  const [sortBy, setSortBy] = useState<"relevance" | "price-low" | "price-high" | "rating">("relevance");
+  const [sortBy, setSortBy] = useState<SearchSortOption>("popularity");
   const [mobileFilterOpen, setMobileFilterOpen] = useState(false);
 
   // Extract unique filter facets from catalog
@@ -97,8 +98,9 @@ function SearchContent() {
     }).sort((a, b) => {
       if (sortBy === "price-low") return a.price - b.price;
       if (sortBy === "price-high") return b.price - a.price;
-      if (sortBy === "rating") return (b.rating || 0) - (a.rating || 0);
-      return 0; // relevance
+      if (sortBy === "latest") return b.id.localeCompare(a.id);
+      // Default: popularity
+      return (b.rating * (b.reviewCount || 100)) - (a.rating * (a.reviewCount || 100));
     });
   }, [query, selectedCategories, selectedBrands, priceFilter, discountFilter, inStockOnly, rxFilter, sortBy]);
 
@@ -419,13 +421,13 @@ function SearchContent() {
                 <span className="text-[#687C69]">Sort:</span>
                 <select
                   value={sortBy}
-                  onChange={(e) => setSortBy(e.target.value as any)}
+                  onChange={(e) => setSortBy(e.target.value as SearchSortOption)}
                   className="bg-transparent font-bold text-[#14304A] outline-none text-xs"
                 >
-                  <option value="relevance">Popularity</option>
+                  <option value="popularity">Popularity</option>
                   <option value="price-low">Price: Low to High</option>
                   <option value="price-high">Price: High to Low</option>
-                  <option value="rating">Rating</option>
+                  <option value="latest">Latest</option>
                 </select>
               </div>
             </div>
@@ -443,13 +445,13 @@ function SearchContent() {
                   <span className="text-[#687C69]">Sort By:</span>
                   <select
                     value={sortBy}
-                    onChange={(e) => setSortBy(e.target.value as any)}
+                    onChange={(e) => setSortBy(e.target.value as SearchSortOption)}
                     className="bg-white border border-[#D0DED3] rounded-lg px-2.5 py-1.5 font-bold text-[#14304A] outline-none text-xs focus:border-[#559620]"
                   >
-                    <option value="relevance">Relevance &amp; Popularity</option>
+                    <option value="popularity">Popularity &amp; Bestselling</option>
                     <option value="price-low">Price: Low to High</option>
                     <option value="price-high">Price: High to Low</option>
-                    <option value="rating">Customer Rating</option>
+                    <option value="latest">Latest</option>
                   </select>
                 </div>
               </div>

@@ -97,10 +97,17 @@ export const cartStore = {
     quantityToAdd = 1,
     variantName?: string
   ): { success: boolean; message: string; warning?: boolean } {
-    const availableStock = product.stockQuantity ?? (product.inStock ? 50 : 0);
+    const isProductOutOfStock =
+      product.stockStatus === "Out of Stock" ||
+      !product.inStock ||
+      (product.stockQuantity !== undefined && product.stockQuantity <= 0);
+
+    const availableStock = isProductOutOfStock
+      ? 0
+      : (product.stockQuantity ?? 50);
 
     // If completely out of stock, reject
-    if (availableStock <= 0 || !product.inStock) {
+    if (availableStock <= 0 || isProductOutOfStock) {
       state = {
         ...state,
         lastError: `"${product.name}" is currently out of stock.`,
@@ -145,16 +152,20 @@ export const cartStore = {
         warningMsg = `Only ${availableStock} units available in stock. Added ${safeQty}.`;
       }
 
+      const currentPrice = product.sellingPrice || product.price;
+      const currentMrp = product.mrp || product.originalPrice || currentPrice;
+      const currentDiscount = product.discount || product.discountPercent || (currentMrp > currentPrice ? Math.round(((currentMrp - currentPrice) / currentMrp) * 100) : 0);
+
       const newItem: CartItem = {
         id: `cart-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
         productId: product.id,
         name: product.name,
         brand: product.brand,
         variant: chosenVariant,
-        price: product.price,
-        originalPrice: product.mrp || product.originalPrice || product.price,
-        mrp: product.mrp || product.originalPrice || product.price,
-        discount: product.discount || product.discountPercent || 0,
+        price: currentPrice,
+        originalPrice: currentMrp,
+        mrp: currentMrp,
+        discount: currentDiscount,
         quantity: safeQty,
         stockQuantity: availableStock,
         image: product.images?.[0] || product.image,

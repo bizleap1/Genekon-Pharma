@@ -1,0 +1,25 @@
+export type WholesaleBusinessType =
+  | "Retail Pharmacy"
+  | "Clinic / Nursing Home"
+  | "Hospital"
+  | "Distributor";
+
+export type WholesaleAppStatus =
+  | "Pending Verification"
+  | "Approved"
+  | "Rejected";
+
+export interface WholesaleApplication {
+  id: string;
+  businessName: string;
+  ownerName: string;
+  businessType: WholesaleBusinessType;
+  gstNumber: string;
+  drugLicenseNumber: string;
+  phone: string;
+  email: string;
+  city: string;
+  monthlyExpectedVolume: string;
+  applicationDate: string;
+  status: WholesaleAppStatus;
+}
