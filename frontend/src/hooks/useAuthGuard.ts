@@ -2,7 +2,9 @@
 
 import { useAuthStore, IntendedAction, authStore } from "@/stores/authStore";
 import { Product } from "@/types/product";
-import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
+import type { useRouter } from "next/navigation";
+
+type AppRouterInstance = ReturnType<typeof useRouter>;
 
 export function useAuthGuard() {
   const { isLoggedIn, guestUser, openLoginModal } = useAuthStore();

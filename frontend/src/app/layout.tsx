@@ -134,17 +134,12 @@ export default function RootLayout({
       lang="en"
       className={`${inter.variable} ${manrope.variable} ${allura.variable} h-full scroll-smooth`}
     >
-      <head>
-        <link
-          rel="stylesheet"
-          href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,600,700,800,900&display=swap"
-        />
+      <body className="min-h-full flex flex-col font-sans bg-white text-[#14304A] antialiased selection:bg-[#F3F8EE] selection:text-[#69A82F]">
         <script
           type="application/ld+json"
+          id="schema-jsonld"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
-      </head>
-      <body className="min-h-full flex flex-col font-sans bg-white text-[#14304A] antialiased selection:bg-[#F3F8EE] selection:text-[#69A82F]">
         <Providers>{children}</Providers>
       </body>
     </html>
