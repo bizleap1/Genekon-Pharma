@@ -50,7 +50,7 @@ export const otpService = {
         const { Resend } = await import("resend");
         const resend = new Resend(env.RESEND_API_KEY);
         await resend.emails.send({
-          from: "Genekon Pharmacy <auth@genekonpharma.com>",
+          from: env.RESEND_FROM_EMAIL || "Genekon Pharmacy <onboarding@resend.dev>",
           to: cleanId,
           subject: "Your Genekon Pharmacy Verification Code",
           html: `

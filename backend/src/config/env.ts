@@ -17,6 +17,7 @@ const envSchema = z.object({
   JWT_ACCESS_EXPIRY: z.string().default("15m"),
   JWT_REFRESH_EXPIRY: z.string().default("7d"),
   RESEND_API_KEY: z.string().optional(),
+  RESEND_FROM_EMAIL: z.string().default("Genekon Pharmacy <onboarding@resend.dev>"),
   GOOGLE_CLIENT_ID: z.string().optional(),
   CLOUDINARY_CLOUD_NAME: z.string().default("hsufdlap"),
   CLOUDINARY_API_KEY: z.string().optional(),
