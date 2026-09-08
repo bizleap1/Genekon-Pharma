@@ -19,9 +19,13 @@ import { Header } from "@/components/layout/Header";
 import { CategoryNav } from "@/components/layout/CategoryNav";
 import { Footer } from "@/components/layout/Footer";
 import { Container } from "@/components/ui/Container";
+import { wholesaleApi } from "@/api/wholesale";
 
 export default function WholesaleRegisterPage() {
   const [submitted, setSubmitted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [refId, setRefId] = useState<string>("GNK-B2B-APP-7729");
   const [formData, setFormData] = useState({
     businessName: "",
     ownerName: "",
@@ -36,9 +40,33 @@ export default function WholesaleRegisterPage() {
     monthlyVolume: "₹50,000 - ₹2,00,000",
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSubmitted(true);
+    setIsSubmitting(true);
+    setErrorMessage(null);
+    try {
+      const res = await wholesaleApi.submitWholesaleApplication({
+        businessName: formData.businessName,
+        ownerName: formData.ownerName,
+        businessType: formData.businessType as any,
+        gstNumber: formData.gstNumber,
+        drugLicense: formData.drugLicense,
+        phone: formData.phone,
+        email: formData.email,
+        address: formData.address,
+        city: formData.city,
+        pincode: formData.pincode,
+      });
+
+      if (res.data?.id) {
+        setRefId(res.data.id);
+      }
+      setSubmitted(true);
+    } catch (err: any) {
+      setErrorMessage(err?.message || "Failed to submit wholesale application. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -98,7 +126,7 @@ export default function WholesaleRegisterPage() {
                     Business Type: <span className="font-bold text-[#14304A]">{formData.businessType}</span>
                   </p>
                   <p className="text-[#657967]">
-                    Verification Reference: <span className="font-mono font-bold text-[#559620]">GNK-B2B-APP-7729</span>
+                    Verification Reference: <span className="font-mono font-bold text-[#559620]">{refId}</span>
                   </p>
                 </div>
 
@@ -333,6 +361,12 @@ export default function WholesaleRegisterPage() {
                   </div>
                 </div>
 
+                {errorMessage && (
+                  <div className="p-3.5 rounded-xl bg-red-50 border border-red-200 text-red-700 text-xs font-semibold">
+                    {errorMessage}
+                  </div>
+                )}
+
                 {/* Submit Bar */}
                 <div className="pt-4 border-t border-[#E3EDE1] flex flex-col sm:flex-row items-center justify-between gap-4">
                   <div className="flex items-center gap-2 text-xs text-[#6B806E]">
@@ -342,9 +376,10 @@ export default function WholesaleRegisterPage() {
 
                   <button
                     type="submit"
-                    className="w-full sm:w-auto px-8 py-3 rounded-xl bg-[#559620] hover:bg-[#467E19] text-white text-xs sm:text-sm font-bold transition-all shadow-xs cursor-pointer"
+                    disabled={isSubmitting}
+                    className="w-full sm:w-auto px-8 py-3 rounded-xl bg-[#559620] hover:bg-[#467E19] disabled:opacity-50 text-white text-xs sm:text-sm font-bold transition-all shadow-xs cursor-pointer"
                   >
-                    Register as Partner &rarr;
+                    {isSubmitting ? "Submitting Application..." : "Register as Partner \u2192"}
                   </button>
                 </div>
 

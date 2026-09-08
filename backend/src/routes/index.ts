@@ -8,6 +8,7 @@ import wishlistRoutes from "./wishlistRoutes";
 import orderRoutes from "./orderRoutes";
 import paymentRoutes from "./paymentRoutes";
 import adminRoutes from "./adminRoutes";
+import wholesaleRoutes from "./wholesaleRoutes";
 import { cmsService } from "../services/cmsService";
 import { sendSuccess, sendError } from "../utils/apiResponse";
 
@@ -48,5 +49,6 @@ router.use("/wishlist", wishlistRoutes);
 router.use("/orders", orderRoutes);
 router.use("/payments", paymentRoutes);
 router.use("/admin", adminRoutes);
+router.use("/wholesale", wholesaleRoutes);
 
 export default router;

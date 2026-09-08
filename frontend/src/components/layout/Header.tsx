@@ -17,7 +17,8 @@ import {
   Clock,
   ArrowRight,
   LogOut,
-  ShoppingBag
+  ShoppingBag,
+  ShieldCheck
 } from "lucide-react";
 
 import { useCart } from "@/context/CartContext";
@@ -33,7 +34,7 @@ export const Header: React.FC = () => {
   const { totals } = useCart();
   const { wishlistCount } = useWishlist();
   const toast = useToast();
-  const { user, isLoggedIn, logout } = useAuthStore();
+  const { user, isLoggedIn, logout, isAdmin } = useAuthStore();
   const { requireAuth } = useAuthGuard();
   const cartCount = totals.itemCount;
 
@@ -355,6 +356,22 @@ export const Header: React.FC = () => {
                       <MapPin className="w-3.5 h-3.5 text-[#559620]" />
                       <span>Saved Addresses</span>
                     </Link>
+
+                    {isAdmin && (
+                      <Link
+                        href="/admin/dashboard"
+                        onClick={() => setUserMenuOpen(false)}
+                        className="flex items-center justify-between px-4 py-2 text-xs font-bold text-[#14304A] hover:bg-[#F2F7F1] transition-colors"
+                      >
+                        <div className="flex items-center gap-2">
+                          <ShieldCheck className="w-3.5 h-3.5 text-[#559620]" />
+                          <span>Admin Dashboard</span>
+                        </div>
+                        <span className="text-[9px] uppercase px-1.5 py-0.5 rounded bg-[#EDF7E9] text-[#559620] font-extrabold">
+                          Admin
+                        </span>
+                      </Link>
+                    )}
 
                     <div className="border-t border-[#EDF3EC] my-1" />
 

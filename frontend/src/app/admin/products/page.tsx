@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import {
@@ -20,10 +20,19 @@ import { StatusBadge } from "@/components/admin/StatusBadge";
 import { ADMIN_PRODUCTS, AdminProduct } from "@/data/adminData";
 import { ConfirmationModal } from "@/components/ui/ConfirmationModal";
 import { useToast } from "@/context/ToastContext";
+import { adminApi } from "@/api/admin";
 
 export default function AdminProductsPage() {
   const toast = useToast();
   const [products, setProducts] = useState<AdminProduct[]>(ADMIN_PRODUCTS);
+
+  useEffect(() => {
+    adminApi.getInventory().then((res) => {
+      if (res.data?.products?.length) {
+        setProducts(res.data.products);
+      }
+    });
+  }, []);
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("all");
   const [stockStatus, setStockStatus] = useState("all");
@@ -205,6 +214,7 @@ export default function AdminProductsPage() {
         isDestructive
         onConfirm={() => {
           if (deleteTarget) {
+            adminApi.deleteProduct(deleteTarget.id).catch(() => {});
             setProducts((prev) => prev.filter((p) => p.id !== deleteTarget.id));
             toast.success(`"${deleteTarget.name}" removed successfully.`);
             setDeleteTarget(null);

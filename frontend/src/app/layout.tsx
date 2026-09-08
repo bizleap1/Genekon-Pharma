@@ -1,7 +1,13 @@
 import type { Metadata } from "next";
-import { Manrope, Plus_Jakarta_Sans, DM_Serif_Display } from "next/font/google";
+import { Inter, Manrope, Allura } from "next/font/google";
 import "./globals.css";
 import { Providers } from "@/components/providers/Providers";
+
+const inter = Inter({
+  subsets: ["latin"],
+  variable: "--font-inter",
+  display: "swap",
+});
 
 const manrope = Manrope({
   subsets: ["latin"],
@@ -10,18 +16,10 @@ const manrope = Manrope({
   display: "swap",
 });
 
-const plusJakarta = Plus_Jakarta_Sans({
-  subsets: ["latin"],
-  weight: ["600", "700", "800"],
-  variable: "--font-heading",
-  display: "swap",
-});
-
-const dmSerifDisplay = DM_Serif_Display({
+const allura = Allura({
   subsets: ["latin"],
   weight: ["400"],
-  style: ["normal", "italic"],
-  variable: "--font-serif",
+  variable: "--font-allura",
   display: "swap",
 });
 
@@ -134,9 +132,13 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${manrope.variable} ${plusJakarta.variable} ${dmSerifDisplay.variable} h-full scroll-smooth`}
+      className={`${inter.variable} ${manrope.variable} ${allura.variable} h-full scroll-smooth`}
     >
       <head>
+        <link
+          rel="stylesheet"
+          href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,600,700,800,900&display=swap"
+        />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}

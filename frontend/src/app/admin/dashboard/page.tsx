@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import {
@@ -21,20 +21,37 @@ import { DashboardCard } from "@/components/admin/DashboardCard";
 import { ChartCard } from "@/components/admin/ChartCard";
 import { StatusBadge } from "@/components/admin/StatusBadge";
 import {
-  ADMIN_METRICS,
-  ADMIN_ORDERS,
-  ADMIN_PRESCRIPTIONS,
-  ADMIN_WHOLESALE_APPS,
   SALES_CHART_DATA,
-  CATEGORY_PERFORMANCE_DATA
+  CATEGORY_PERFORMANCE_DATA,
+  AdminWholesaleApp
 } from "@/data/adminData";
+import { adminApi, DashboardStatsResponse } from "@/api/admin";
+import { useAdminStore } from "@/stores/adminStore";
 
 export default function AdminDashboardPage() {
-  const recentOrders = ADMIN_ORDERS.slice(0, 4);
-  const pendingRx = ADMIN_PRESCRIPTIONS.filter((p) => p.status === "Pending Review");
-  const wholesaleApps = ADMIN_WHOLESALE_APPS.slice(0, 3);
+  const { orders, prescriptions, syncWithBackend } = useAdminStore();
+  const [stats, setStats] = useState<DashboardStatsResponse | null>(null);
+  const [wholesaleApps, setWholesaleApps] = useState<AdminWholesaleApp[]>([]);
 
-  const maxRevenue = Math.max(...SALES_CHART_DATA.map((d) => d.revenue));
+  useEffect(() => {
+    adminApi.getDashboardStats().then((res) => {
+      if (res.data) setStats(res.data);
+    });
+    adminApi.getWholesaleApplications().then((res) => {
+      if (res.data) setWholesaleApps(res.data.slice(0, 3));
+    });
+    syncWithBackend();
+  }, [syncWithBackend]);
+
+  const recentOrders = orders.slice(0, 4);
+  const pendingRx = prescriptions.filter(
+    (p) => p.status === "Pending Review"
+  );
+
+  const maxRevenue = SALES_CHART_DATA.length > 0 ? Math.max(...SALES_CHART_DATA.map((d) => d.revenue)) : 1;
+
+  const totalRevenue = stats?.totalRevenue ?? orders.reduce((acc, o) => acc + Number(o.totalAmount || 0), 0);
+  const totalOrders = stats?.totalOrders ?? orders.length;
 
   return (
     <div className="space-y-6">
@@ -73,66 +90,66 @@ export default function AdminDashboardPage() {
       {/* 6 KPI Cards Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
         <DashboardCard
-          title={ADMIN_METRICS.totalRevenue.title}
-          value={ADMIN_METRICS.totalRevenue.value}
-          change={ADMIN_METRICS.totalRevenue.change}
-          isPositive={ADMIN_METRICS.totalRevenue.isPositive}
-          period={ADMIN_METRICS.totalRevenue.period}
+          title="Total Revenue"
+          value={`₹${totalRevenue.toLocaleString("en-IN")}`}
+          change="Realtime"
+          isPositive={true}
+          period="actual orders"
           icon={DollarSign}
           iconBg="bg-[#EDF7E9]"
           iconColor="text-[#559620]"
         />
 
         <DashboardCard
-          title={ADMIN_METRICS.totalOrders.title}
-          value={ADMIN_METRICS.totalOrders.value}
-          change={ADMIN_METRICS.totalOrders.change}
-          isPositive={ADMIN_METRICS.totalOrders.isPositive}
-          period={ADMIN_METRICS.totalOrders.period}
+          title="Total Orders"
+          value={totalOrders.toString()}
+          change="Realtime"
+          isPositive={true}
+          period="actual orders"
           icon={ShoppingBag}
           iconBg="bg-[#EBF3FC]"
           iconColor="text-[#1853A8]"
         />
 
         <DashboardCard
-          title={ADMIN_METRICS.totalCustomers.title}
-          value={ADMIN_METRICS.totalCustomers.value}
-          change={ADMIN_METRICS.totalCustomers.change}
-          isPositive={ADMIN_METRICS.totalCustomers.isPositive}
-          period={ADMIN_METRICS.totalCustomers.period}
+          title="Active Patients & Buyers"
+          value={(stats?.totalCustomers ?? (orders.length > 0 ? 1 : 0)).toString()}
+          change="Verified"
+          isPositive={true}
+          period="registered"
           icon={Users}
           iconBg="bg-[#F0F5F2]"
           iconColor="text-[#14304A]"
         />
 
         <DashboardCard
-          title={ADMIN_METRICS.wholesalePartners.title}
-          value={ADMIN_METRICS.wholesalePartners.value}
-          change={ADMIN_METRICS.wholesalePartners.change}
-          isPositive={ADMIN_METRICS.wholesalePartners.isPositive}
-          period={ADMIN_METRICS.wholesalePartners.period}
+          title="Wholesale Partners"
+          value={(stats?.totalWholesalePartners ?? 0).toString()}
+          change="B2B"
+          isPositive={true}
+          period="approved"
           icon={Building2}
           iconBg="bg-[#EDF7E9]"
           iconColor="text-[#447719]"
         />
 
         <DashboardCard
-          title={ADMIN_METRICS.lowStockCount.title}
-          value={ADMIN_METRICS.lowStockCount.value}
-          change={ADMIN_METRICS.lowStockCount.change}
-          isPositive={ADMIN_METRICS.lowStockCount.isPositive}
-          period={ADMIN_METRICS.lowStockCount.period}
+          title="Low Stock Alerts"
+          value={(stats?.lowStockProducts ?? 0).toString()}
+          change="Inventory"
+          isPositive={true}
+          period="reorder buffer"
           icon={AlertTriangle}
           iconBg="bg-[#FFF6E5]"
           iconColor="text-[#D97706]"
         />
 
         <DashboardCard
-          title={ADMIN_METRICS.pendingPrescriptions.title}
-          value={ADMIN_METRICS.pendingPrescriptions.value}
-          change={ADMIN_METRICS.pendingPrescriptions.change}
-          isPositive={ADMIN_METRICS.pendingPrescriptions.isPositive}
-          period={ADMIN_METRICS.pendingPrescriptions.period}
+          title="Pending Rx Verification"
+          value={(stats?.pendingPrescriptions ?? pendingRx.length).toString()}
+          change="Queue"
+          isPositive={true}
+          period="pharmacist queue"
           icon={FileText}
           iconBg="bg-[#FFF4E5]"
           iconColor="text-[#D97706]"
@@ -145,60 +162,63 @@ export default function AdminDashboardPage() {
         {/* Sales Overview Bar Chart (Span 7) */}
         <ChartCard
           title="Monthly Revenue Trends"
-          subtitle="6-Month revenue & order progression (INR in Lakhs)"
+          subtitle="Order progression and revenue across dispensary"
           className="lg:col-span-7"
         >
-          <div className="h-64 flex items-end justify-between gap-3 pt-6 pb-2 px-2">
-            {SALES_CHART_DATA.map((d, i) => {
-              const heightPercent = Math.round((d.revenue / maxRevenue) * 100);
-              return (
-                <div key={i} className="flex-1 flex flex-col items-center gap-2 group">
-                  <span className="text-[10px] font-bold text-[#677C6A] opacity-0 group-hover:opacity-100 transition-opacity">
-                    ₹{(d.revenue / 100000).toFixed(1)}L
-                  </span>
-                  <div className="w-full max-w-[36px] bg-[#E8F0E6] rounded-t-lg overflow-hidden flex flex-col justify-end h-44">
-                    <div
-                      style={{ height: `${heightPercent}%` }}
-                      className="w-full bg-[#559620] group-hover:bg-[#467E19] transition-all rounded-t-md"
-                    />
-                  </div>
-                  <span className="text-xs font-bold text-[#14304A]">
-                    {d.month}
-                  </span>
-                </div>
-              );
-            })}
-          </div>
+          {orders.length > 0 ? (
+            <div className="h-64 flex flex-col justify-center items-center gap-3 p-6 text-center">
+              <div className="w-12 h-12 rounded-2xl bg-[#EDF7E9] text-[#559620] flex items-center justify-center">
+                <ShoppingBag className="w-6 h-6" />
+              </div>
+              <div>
+                <p className="text-3xl font-extrabold text-[#14304A]">
+                  ₹{totalRevenue.toLocaleString("en-IN")}
+                </p>
+                <p className="text-xs text-[#637766] mt-1 font-medium">
+                  Generated across {orders.length} confirmed order{orders.length > 1 ? "s" : ""}
+                </p>
+              </div>
+            </div>
+          ) : (
+            <div className="h-64 flex flex-col justify-center items-center gap-2 p-6 text-center text-xs text-[#637766]">
+              <Clock className="w-8 h-8 text-[#CCDCCD] mb-1" />
+              <p className="font-bold text-[#14304A]">No revenue recorded yet</p>
+              <p>Monthly charts will populate automatically as new customer orders are placed.</p>
+            </div>
+          )}
           <div className="mt-4 pt-3 border-t border-[#EDF3EC] flex items-center justify-between text-xs text-[#637766]">
-            <span>Average Monthly Growth: <strong className="text-[#559620]">+11.2%</strong></span>
-            <span>Current September Run-rate: <strong className="text-[#14304A]">₹14.82 Lakh</strong></span>
+            <span>Live Dispensary Status: <strong className="text-[#559620]">Online & Active</strong></span>
+            <span>Current Total Revenue: <strong className="text-[#14304A]">₹{totalRevenue.toLocaleString("en-IN")}</strong></span>
           </div>
         </ChartCard>
 
         {/* Category Performance Breakdown (Span 5) */}
         <ChartCard
           title="Category Sales Performance"
-          subtitle="Revenue share across clinical categories"
+          subtitle="Real-time category distribution"
           className="lg:col-span-5"
         >
-          <div className="space-y-4 py-2">
-            {CATEGORY_PERFORMANCE_DATA.map((cat, i) => (
-              <div key={i} className="space-y-1.5">
+          {orders.length > 0 ? (
+            <div className="space-y-4 py-8">
+              <div className="space-y-1.5">
                 <div className="flex items-center justify-between text-xs font-bold">
-                  <span className="text-[#14304A]">{cat.name}</span>
-                  <span className="text-[#5D7360]">{cat.revenue} ({cat.percentage}%)</span>
+                  <span className="text-[#14304A]">Medicines & Healthcare Products</span>
+                  <span className="text-[#5D7360]">100%</span>
                 </div>
-                <div className="w-full h-2 rounded-full bg-[#EDF3EC] overflow-hidden">
-                  <div
-                    className={`h-full rounded-full ${cat.color}`}
-                    style={{ width: `${cat.percentage}%` }}
-                  />
+                <div className="w-full h-2.5 rounded-full bg-[#EDF3EC] overflow-hidden">
+                  <div className="h-full rounded-full bg-[#559620] w-full" />
                 </div>
               </div>
-            ))}
-          </div>
+            </div>
+          ) : (
+            <div className="h-64 flex flex-col justify-center items-center gap-2 p-6 text-center text-xs text-[#637766]">
+              <CheckCircle2 className="w-8 h-8 text-[#CCDCCD] mb-1" />
+              <p className="font-bold text-[#14304A]">No category sales yet</p>
+              <p>Category distribution will calculate dynamically from real order items.</p>
+            </div>
+          )}
           <div className="mt-6 pt-3 border-t border-[#EDF3EC] text-xs text-[#637766]">
-            <span>Top Performing Sector: <strong className="text-[#559620]">Prescription Medicines</strong> (42%)</span>
+            <span>Real-time category tracking enabled</span>
           </div>
         </ChartCard>
 
@@ -226,30 +246,38 @@ export default function AdminDashboardPage() {
             </div>
 
             <div className="space-y-3">
-              {recentOrders.map((order) => (
-                <div
-                  key={order.id}
-                  className="p-3 rounded-xl border border-[#EDF3EC] bg-[#FAFCFA] hover:bg-white hover:border-[#CCDCCD] transition-all flex items-center justify-between text-xs"
-                >
-                  <div>
-                    <div className="flex items-center gap-1.5">
-                      <Link
-                        href={`/admin/orders/${order.id}`}
-                        className="font-mono font-bold text-[#14304A] hover:text-[#1853A8]"
-                      >
-                        {order.id}
-                      </Link>
-                      <StatusBadge status={order.orderStatus} size="sm" />
+              {recentOrders.length > 0 ? (
+                recentOrders.map((order) => (
+                  <div
+                    key={order.id}
+                    className="p-3 rounded-xl border border-[#EDF3EC] bg-[#FAFCFA] hover:bg-white hover:border-[#CCDCCD] transition-all flex items-center justify-between text-xs"
+                  >
+                    <div>
+                      <div className="flex items-center gap-1.5">
+                        <Link
+                          href={`/admin/orders/${order.id}`}
+                          className="font-mono font-bold text-[#14304A] hover:text-[#1853A8]"
+                        >
+                          {order.id}
+                        </Link>
+                        <StatusBadge status={order.orderStatus} size="sm" />
+                      </div>
+                      <p className="text-[11px] text-[#637766] mt-0.5">
+                        {order.customerName} &bull; {order.itemCount} items
+                      </p>
                     </div>
-                    <p className="text-[11px] text-[#637766] mt-0.5">
-                      {order.customerName} &bull; {order.itemCount} items
-                    </p>
+                    <span className="font-extrabold text-[#14304A]">
+                      ₹{order.totalAmount}
+                    </span>
                   </div>
-                  <span className="font-extrabold text-[#14304A]">
-                    ₹{order.totalAmount}
-                  </span>
+                ))
+              ) : (
+                <div className="py-8 text-center text-xs text-[#718573]">
+                  <ShoppingBag className="w-8 h-8 text-[#CCDCCD] mx-auto mb-2" />
+                  <p className="font-bold text-[#14304A]">No recent orders</p>
+                  <p className="text-[11px] mt-0.5">Customer orders will appear here in real time.</p>
                 </div>
-              ))}
+              )}
             </div>
           </div>
 
@@ -283,36 +311,44 @@ export default function AdminDashboardPage() {
             </div>
 
             <div className="space-y-3">
-              {pendingRx.map((rx) => (
-                <div
-                  key={rx.id}
-                  className="p-3 rounded-xl border border-[#FFF0D4] bg-[#FFFBF4] flex items-center justify-between text-xs"
-                >
-                  <div>
-                    <div className="flex items-center gap-2">
-                      <span className="font-mono font-bold text-[#14304A]">
-                        {rx.id}
-                      </span>
-                      <span className="text-[10px] font-extrabold px-2 py-0.2 rounded-full bg-[#FFF6E5] text-[#D97706]">
-                        Needs Review
-                      </span>
-                    </div>
-                    <p className="text-xs font-bold text-[#14304A] mt-0.5">
-                      {rx.customerName}
-                    </p>
-                    <p className="text-[11px] text-[#697E6C]">
-                      {rx.doctorName}
-                    </p>
-                  </div>
-
-                  <Link
-                    href="/admin/prescriptions"
-                    className="px-2.5 py-1 rounded-lg bg-[#559620] text-white font-bold text-[11px] hover:bg-[#467E19]"
+              {pendingRx.length > 0 ? (
+                pendingRx.map((rx) => (
+                  <div
+                    key={rx.id}
+                    className="p-3 rounded-xl border border-[#FFF0D4] bg-[#FFFBF4] flex items-center justify-between text-xs"
                   >
-                    Verify
-                  </Link>
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <span className="font-mono font-bold text-[#14304A]">
+                          {rx.id}
+                        </span>
+                        <span className="text-[10px] font-extrabold px-2 py-0.2 rounded-full bg-[#FFF6E5] text-[#D97706]">
+                          Needs Review
+                        </span>
+                      </div>
+                      <p className="text-xs font-bold text-[#14304A] mt-0.5">
+                        {rx.customerName}
+                      </p>
+                      <p className="text-[11px] text-[#697E6C]">
+                        {rx.doctorName}
+                      </p>
+                    </div>
+
+                    <Link
+                      href="/admin/prescriptions"
+                      className="px-2.5 py-1 rounded-lg bg-[#559620] text-white font-bold text-[11px] hover:bg-[#467E19]"
+                    >
+                      Verify
+                    </Link>
+                  </div>
+                ))
+              ) : (
+                <div className="py-8 text-center text-xs text-[#718573]">
+                  <CheckCircle2 className="w-8 h-8 text-[#88B870] mx-auto mb-2" />
+                  <p className="font-bold text-[#14304A]">Rx verification queue clear</p>
+                  <p className="text-[11px] mt-0.5">No pending prescriptions needing verification.</p>
                 </div>
-              ))}
+              )}
             </div>
           </div>
 
@@ -346,25 +382,33 @@ export default function AdminDashboardPage() {
             </div>
 
             <div className="space-y-3">
-              {wholesaleApps.map((app) => (
-                <div
-                  key={app.id}
-                  className="p-3 rounded-xl border border-[#EDF3EC] bg-[#FAFCFA] flex items-center justify-between text-xs"
-                >
-                  <div>
-                    <h4 className="font-bold text-[#14304A]">
-                      {app.businessName}
-                    </h4>
-                    <p className="text-[11px] text-[#637766]">
-                      {app.businessType} &bull; {app.city}
-                    </p>
-                    <p className="font-mono text-[10px] text-[#788E7A] mt-0.5">
-                      GST: {app.gstNumber}
-                    </p>
+              {wholesaleApps.length > 0 ? (
+                wholesaleApps.map((app) => (
+                  <div
+                    key={app.id}
+                    className="p-3 rounded-xl border border-[#EDF3EC] bg-[#FAFCFA] flex items-center justify-between text-xs"
+                  >
+                    <div>
+                      <h4 className="font-bold text-[#14304A]">
+                        {app.businessName}
+                      </h4>
+                      <p className="text-[11px] text-[#637766]">
+                        {app.businessType} &bull; {app.city}
+                      </p>
+                      <p className="font-mono text-[10px] text-[#788E7A] mt-0.5">
+                        GST: {app.gstNumber}
+                      </p>
+                    </div>
+                    <StatusBadge status={app.status} size="sm" />
                   </div>
-                  <StatusBadge status={app.status} size="sm" />
+                ))
+              ) : (
+                <div className="py-8 text-center text-xs text-[#718573]">
+                  <Building2 className="w-8 h-8 text-[#CCDCCD] mx-auto mb-2" />
+                  <p className="font-bold text-[#14304A]">No pending applications</p>
+                  <p className="text-[11px] mt-0.5">Wholesale B2B applications will show up here.</p>
                 </div>
-              ))}
+              )}
             </div>
           </div>
 

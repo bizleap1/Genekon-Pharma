@@ -22,7 +22,9 @@ import { useWishlist } from "@/context/WishlistContext";
 import { useToast } from "@/context/ToastContext";
 import { authStore } from "@/stores/authStore";
 import { cartStore } from "@/stores/cartStore";
+import { authApi } from "@/api/auth";
 import { restoreIntendedActionAfterLogin } from "@/hooks/useAuthGuard";
+import { useGoogleAuth } from "@/hooks/useGoogleAuth";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -38,17 +40,9 @@ export default function LoginPage() {
   const { addToCart } = useCart();
   const { toggleWishlist } = useWishlist();
   const toast = useToast();
+  const { triggerGoogleLogin, isGoogleLoading } = useGoogleAuth();
 
-  const handleGoogleLogin = () => {
-    setError("");
-    setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
-      setError("Google sign-in was cancelled. Please try again or use mobile OTP.");
-    }, 700);
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
 
@@ -63,32 +57,50 @@ export default function LoginPage() {
         setError("Please enter your email or mobile number");
         return;
       }
-      if (identifier === "network-error" || identifier === "error@network.com") {
-        setError("Network error: Unable to connect to Genekon authentication services. Please retry.");
-        return;
-      }
       if (!password || password.length < 4) {
         setError("Please enter your account password");
         return;
       }
       setLoading(true);
-      setTimeout(() => {
-        authStore.loginCustomer({
-          mobile: identifier.includes("@") ? "9370102691" : identifier,
-          email: identifier.includes("@") ? identifier : undefined,
+      try {
+        const res = await authApi.loginUser({
+          identifier: identifier.trim(),
+          password,
         });
-        cartStore.mergeGuestCart();
-        restoreIntendedActionAfterLogin(router, { addToCart }, { toggleWishlist }, toast);
-      }, 600);
+
+        if (res.success && res.data) {
+          authStore.loginCustomer(res.data.user, res.data.token);
+          cartStore.mergeGuestCart();
+          toast.success(`Welcome back, ${res.data.user.name || "Customer"}!`);
+          restoreIntendedActionAfterLogin(router, { addToCart }, { toggleWishlist }, toast);
+        } else {
+          setError(res.message || "Invalid credentials. If you are new to Genekon, please Sign Up first.");
+        }
+      } catch (err: any) {
+        setError(err.message || "Invalid mobile/email or password. Don't have an account? Click Sign Up below.");
+      } finally {
+        setLoading(false);
+      }
     } else {
-      if (!phone || phone.trim().length < 10) {
+      const cleanPhone = phone.replace(/\D/g, "").slice(-10);
+      if (!cleanPhone || cleanPhone.length < 10) {
         setError("Please enter a valid 10-digit mobile number");
         return;
       }
       setLoading(true);
-      setTimeout(() => {
-        router.push(`/verify-otp?phone=${encodeURIComponent(phone.trim())}`);
-      }, 500);
+      try {
+        const res = await authApi.sendOtp(cleanPhone);
+        if (res.success) {
+          toast.success(`Verification code sent to +91 ${cleanPhone}`);
+          router.push(`/verify-otp?phone=${encodeURIComponent(cleanPhone)}`);
+        } else {
+          setError(res.message || "Could not send OTP to this number. Please retry.");
+        }
+      } catch (err: any) {
+        setError(err.message || "Failed to send OTP. Please check your connection.");
+      } finally {
+        setLoading(false);
+      }
     }
   };
 
@@ -116,10 +128,18 @@ export default function LoginPage() {
           </p>
         </div>
 
-        {/* Top Right Motto */}
-        <div className="hidden sm:flex items-center gap-2 text-xs font-bold text-[#637766]">
-          <span>For a Healthier Tomorrow</span>
-          <span className="w-6 h-[2px] bg-[#559620] rounded-full inline-block" />
+        {/* Top Right Actions */}
+        <div className="flex items-center gap-3">
+          <Link
+            href="/signup"
+            className="px-3.5 py-1.5 rounded-xl border border-[#CCDCCD] bg-white hover:bg-[#F2F7F2] text-xs font-bold text-[#14304A] transition-colors shadow-2xs"
+          >
+            Create Account
+          </Link>
+          <div className="hidden sm:flex items-center gap-2 text-xs font-bold text-[#637766]">
+            <span>For a Healthier Tomorrow</span>
+            <span className="w-6 h-[2px] bg-[#559620] rounded-full inline-block" />
+          </div>
         </div>
       </header>
 
@@ -376,8 +396,8 @@ export default function LoginPage() {
                   {/* Continue with Google */}
                   <button
                     type="button"
-                    onClick={handleGoogleLogin}
-                    disabled={loading}
+                    onClick={triggerGoogleLogin}
+                    disabled={loading || isGoogleLoading}
                     className="w-full py-2.5 sm:py-3 rounded-xl border border-[#CCDCCD] bg-[#FAFCFB] hover:bg-[#F2F7F2] text-xs sm:text-sm font-bold text-[#14304A] transition-colors flex items-center justify-center gap-2.5 cursor-pointer disabled:opacity-50"
                   >
                     <svg className="w-4 h-4" viewBox="0 0 24 24">
@@ -398,9 +418,20 @@ export default function LoginPage() {
                         d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"
                       />
                     </svg>
-                    <span>Continue with Google</span>
+                    <span>{isGoogleLoading ? "Connecting with Google..." : "Continue with Google"}</span>
                   </button>
                 </form>
+
+                {/* Sign Up Link */}
+                <div className="pt-3 text-center text-xs text-[#556A58]">
+                  <span>New to Genekon? </span>
+                  <Link
+                    href="/signup"
+                    className="font-bold text-[#559620] hover:underline"
+                  >
+                    Create an account / Sign Up &rarr;
+                  </Link>
+                </div>
 
                 {/* Security Access Badge */}
                 <div className="relative flex py-4 items-center">

@@ -65,3 +65,9 @@ export const paymentMethodEnum = pgEnum("payment_method_enum", [
   "NETBANKING",
 ]);
 
+export const cancellationStatusEnum = pgEnum("cancellation_status_enum", [
+  "PENDING",
+  "APPROVED",
+  "REJECTED",
+]);
+

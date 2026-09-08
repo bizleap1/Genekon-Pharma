@@ -89,11 +89,14 @@ export const wishlistStore = {
   },
 };
 
+const SERVER_WISHLIST_SNAPSHOT = { items: [] };
+const getWishlistServerSnapshot = () => SERVER_WISHLIST_SNAPSHOT;
+
 export function useWishlistStore() {
   const snapshot = useSyncExternalStore(
     wishlistStore.subscribe,
     wishlistStore.getSnapshot,
-    () => ({ items: [] })
+    getWishlistServerSnapshot
   );
 
   return {

@@ -16,15 +16,29 @@ import {
   MessageCircle,
   ChevronRight
 } from "lucide-react";
-import { MOCK_CUSTOMER } from "@/data/customer";
 import { useAuthStore } from "@/stores/authStore";
+import { useWishlist } from "@/context/WishlistContext";
+import { orderService } from "@/services/orderService";
 import { useToast } from "@/context/ToastContext";
 
 export const AccountSidebar: React.FC = () => {
   const pathname = usePathname();
   const router = useRouter();
   const toast = useToast();
-  const { user, logout } = useAuthStore();
+  const { user, logout, isAdmin } = useAuthStore();
+  const { wishlistCount } = useWishlist();
+  const [orderCount, setOrderCount] = React.useState<number | undefined>(undefined);
+
+  React.useEffect(() => {
+    if (typeof window !== "undefined") {
+      const stored = orderService.getStoredOrders();
+      if (stored && stored.length > 0) {
+        setOrderCount(stored.length);
+      } else {
+        setOrderCount(undefined);
+      }
+    }
+  }, []);
 
   const handleLogout = () => {
     logout();
@@ -35,12 +49,20 @@ export const AccountSidebar: React.FC = () => {
   const navItems = [
     { label: "Dashboard", href: "/account", icon: LayoutDashboard },
     { label: "My Profile", href: "/account/profile", icon: User },
-    { label: "My Orders", href: "/account/orders", icon: Package, badge: "3" },
-    { label: "Prescriptions", href: "/account/prescriptions", icon: FileText, badge: "2" },
-    { label: "Wishlist", href: "/wishlist", icon: Heart, badge: "4" },
+    { label: "My Orders", href: "/account/orders", icon: Package, badge: orderCount ? String(orderCount) : undefined },
+    { label: "Prescriptions", href: "/account/prescriptions", icon: FileText },
+    { label: "Wishlist", href: "/wishlist", icon: Heart, badge: wishlistCount > 0 ? String(wishlistCount) : undefined },
     { label: "Saved Addresses", href: "/account/addresses", icon: MapPin },
-    { label: "Notifications", href: "/account/notifications", icon: Bell, badge: "2" },
+    { label: "Notifications", href: "/account/notifications", icon: Bell },
   ];
+
+  const getInitials = (name?: string) => {
+    if (!name) return "U";
+    const clean = name.replace(/^Dr\.?\s*/i, "").trim();
+    const parts = clean.split(/\s+/);
+    if (parts.length >= 2) return `${parts[0][0]}${parts[1][0]}`.toUpperCase();
+    return clean.slice(0, 2).toUpperCase() || "U";
+  };
 
   return (
     <aside className="w-full lg:w-72 shrink-0 space-y-6">
@@ -49,14 +71,14 @@ export const AccountSidebar: React.FC = () => {
       <div className="rounded-3xl border border-[#DCE8D8] bg-white p-5 sm:p-6 shadow-2xs">
         <div className="flex items-center gap-3.5">
           <div className="w-12 h-12 rounded-2xl bg-[#EDF7E9] text-[#559620] font-serif text-lg font-bold flex items-center justify-center shrink-0 border border-[#D5E4D2]">
-            {user?.name ? user.name.charAt(0) : MOCK_CUSTOMER.avatar}
+            {getInitials(user?.name)}
           </div>
           <div className="overflow-hidden">
-            <h3 className="font-serif text-base font-bold text-[#14304A] truncate">
-              {user?.name || MOCK_CUSTOMER.name}
+            <h3 className="font-serif text-base font-bold text-[#14304A] truncate" title={user?.name || "Customer"}>
+              {user?.name || "Customer"}
             </h3>
             <div className="flex items-center gap-1.5 text-xs text-[#637766]">
-              <span>+91 {user?.mobile || MOCK_CUSTOMER.phone}</span>
+              <span>{user?.mobile ? `+91 ${user.mobile}` : "Customer Account"}</span>
               <span className="w-1.5 h-1.5 rounded-full bg-[#559620]" />
             </div>
           </div>
@@ -65,9 +87,9 @@ export const AccountSidebar: React.FC = () => {
         <div className="mt-4 pt-3.5 border-t border-[#EAF2E8] flex items-center justify-between text-[11px] text-[#586E5B]">
           <span className="inline-flex items-center gap-1">
             <ShieldCheck className="w-3.5 h-3.5 text-[#559620]" />
-            Verified Customer
+            {user?.role === "admin" ? "Lead Super Admin" : "Verified Customer"}
           </span>
-          <span className="font-bold text-[#14304A]">Nagpur</span>
+          <span className="font-bold text-[#14304A]">{user?.city || "India"}</span>
         </div>
       </div>
 
@@ -108,8 +130,26 @@ export const AccountSidebar: React.FC = () => {
             );
           })}
 
+          {/* Admin Dashboard Quick Access - ONLY for Admin */}
+          {isAdmin && (
+            <div className="pt-2 border-t border-[#EAF2E8] mt-2">
+              <Link
+                href="/admin/dashboard"
+                className="flex items-center justify-between px-3.5 py-2.5 rounded-2xl text-xs sm:text-sm font-bold bg-[#14304A] text-white hover:bg-[#1E4366] transition-all shadow-2xs group"
+              >
+                <div className="flex items-center gap-3">
+                  <ShieldCheck className="w-4 h-4 text-[#7BD434] group-hover:scale-110 transition-transform" />
+                  <span>Admin Dashboard</span>
+                </div>
+                <span className="text-[10px] font-extrabold uppercase px-2 py-0.5 rounded-full bg-[#559620] text-white">
+                  Admin
+                </span>
+              </Link>
+            </div>
+          )}
+
           {/* Logout */}
-          <div className="pt-2 border-t border-[#EAF2E8] mt-2">
+          <div className="pt-1">
             <button
               type="button"
               onClick={handleLogout}

@@ -7,6 +7,8 @@ import {
   createOrderSchema,
   updateOrderStatusSchema,
   reviewPrescriptionSchema,
+  requestCancellationSchema,
+  reviewCancellationSchema,
 } from "../validators/orderValidation";
 
 const router = Router();
@@ -26,12 +28,8 @@ router.post(
 );
 router.get("/prescriptions/mine", orderController.getUserPrescriptions);
 
-// Single Order Operations
-router.get("/:id", orderController.getOrderById);
-router.post("/:id/cancel", orderController.cancelOrder);
-router.post("/:id/reorder", orderController.reorder);
-
 // ================= ADMIN DISPENSARY ROUTES =================
+// Must be registered before /:id to prevent Express shadowing /admin as an :id parameter
 router.get("/admin/all", authorizeRole("ADMIN"), orderController.getAdminOrders);
 router.put(
   "/admin/:id/status",
@@ -50,5 +48,29 @@ router.put(
   validateRequest(reviewPrescriptionSchema),
   orderController.reviewPrescription
 );
+
+// Admin Cancellation Reviews
+router.get(
+  "/admin/cancellations",
+  authorizeRole("ADMIN"),
+  orderController.getAdminCancellationRequests
+);
+router.put(
+  "/admin/cancellations/:id/review",
+  authorizeRole("ADMIN"),
+  validateRequest(reviewCancellationSchema),
+  orderController.reviewCancellationRequest
+);
+
+// Single Order Operations
+router.get("/:id", orderController.getOrderById);
+router.post(
+  "/:id/cancel-request",
+  validateRequest(requestCancellationSchema),
+  orderController.requestCancellation
+);
+router.get("/:id/cancel-request", orderController.getCancellationRequest);
+router.post("/:id/cancel", orderController.cancelOrder);
+router.post("/:id/reorder", orderController.reorder);
 
 export default router;

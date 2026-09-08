@@ -172,4 +172,16 @@ export const wholesaleService = {
   async listPartners() {
     return this.listApplications("APPROVED");
   },
+
+  /**
+   * 5. Get partner profile by User ID
+   */
+  async getProfileByUserId(userId: string) {
+    const [profile] = await db
+      .select()
+      .from(wholesaleProfiles)
+      .where(eq(wholesaleProfiles.userId, userId))
+      .limit(1);
+    return profile || null;
+  },
 };

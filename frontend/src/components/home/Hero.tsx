@@ -2,34 +2,32 @@
 
 import React from "react";
 import Image from "next/image";
+import Link from "next/link";
 import {
   CreditCard,
   Truck,
   ShieldCheck,
-  CheckCircle2
+  CheckCircle2,
+  ArrowRight
 } from "lucide-react";
 import { Container } from "@/components/ui/Container";
 
 const TRUST_FEATURES = [
   {
     icon: ShieldCheck,
-    title: "100% Genuine",
-    subtitle: "Direct from labs",
+    title: "100% Genuine Products",
   },
   {
     icon: CreditCard,
     title: "Secure Payments",
-    subtitle: "256-bit encrypted",
   },
   {
     icon: Truck,
-    title: "Fast Delivery",
-    subtitle: "Reliable & safe",
+    title: "Easy Home Delivery",
   },
   {
     icon: CheckCircle2,
     title: "Trusted Pharmacy",
-    subtitle: "Licensed pharmacists",
   },
 ];
 
@@ -56,42 +54,49 @@ export const Hero: React.FC = () => {
           <div className="lg:col-span-7 flex flex-col justify-start max-w-xl">
             
             {/* Eyebrow */}
-            <p className="text-xs sm:text-[13px] font-bold tracking-[0.18em] uppercase text-[#687C67] mb-2.5">
-              CARE FOR TODAY. HEALTHIER TOMORROW.
+            <p className="text-xs sm:text-[13px] font-bold tracking-[0.16em] uppercase text-[#14304A]/80 mb-3">
+              BETTER HEALTH. BRIGHTER TOMORROW.
             </p>
 
             {/* Main Headline */}
-            <h1 className="font-serif font-normal text-4xl sm:text-5xl lg:text-[56px] xl:text-[62px] text-[#14304A] tracking-[-0.02em] leading-[1.04]">
-              Trusted Healthcare <br />
-              <span className="text-[#559620]">For Every You.</span>
+            <h1 className="font-extrabold text-4xl sm:text-5xl lg:text-[56px] xl:text-[62px] text-[#14304A] tracking-[-0.03em] leading-[1.08]">
+              Trusted Medicines <br />
+              <span className="text-[#559620]">for a Healthier You.</span>
             </h1>
 
             {/* Subheading */}
-            <p className="mt-3 text-sm sm:text-base md:text-lg text-[#4A5D4C] leading-relaxed max-w-lg">
-              Wide range of genuine medicines, healthcare products and wellness essentials — delivered to your doorstep.
+            <p className="mt-3.5 text-sm sm:text-base md:text-lg text-[#4A5D4C] leading-relaxed max-w-lg">
+              Wide range of genuine medicines, healthcare products and wellness essentials — delivered with care.
             </p>
 
-            {/* Revamped Premium Trust Badges */}
-            <div className="mt-7 pt-5 border-t border-[#DCEBD9]/80">
-              <div className="grid grid-cols-2 sm:flex sm:flex-wrap items-center gap-2.5 sm:gap-3">
+            {/* CTA Buttons */}
+            <div className="mt-7 flex flex-wrap items-center gap-3.5">
+              <Link
+                href="/category/medicines"
+                className="inline-flex items-center gap-2.5 px-6 sm:px-7 py-3 rounded-full bg-[#559620] hover:bg-[#488219] text-white font-semibold text-sm sm:text-base shadow-sm hover:shadow-md transition-all duration-200 group"
+              >
+                <span>Shop Medicines</span>
+                <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+              </Link>
+              <Link
+                href="/categories"
+                className="inline-flex items-center justify-center px-6 sm:px-7 py-3 rounded-full bg-white hover:bg-[#F3F8EE] text-[#14304A] font-semibold text-sm sm:text-base border border-[#D5E7D3] hover:border-[#559620]/50 transition-all duration-200 shadow-2xs"
+              >
+                Explore Healthcare
+              </Link>
+            </div>
+
+            {/* Trust Badges */}
+            <div className="mt-8 pt-5 border-t border-[#DCEBD9]/80">
+              <div className="grid grid-cols-2 sm:flex sm:flex-wrap items-center gap-4 sm:gap-6">
                 {TRUST_FEATURES.map((item, idx) => {
                   const Icon = item.icon;
                   return (
-                    <div
-                      key={idx}
-                      className="group flex items-center gap-2.5 px-3.5 py-2 rounded-xl bg-white/95 backdrop-blur-xs border border-[#D5E7D3] shadow-2xs hover:border-[#559620]/60 hover:shadow-xs transition-all duration-200 cursor-default"
-                    >
-                      <div className="w-7 h-7 rounded-lg bg-[#EBF6E8] group-hover:bg-[#559620] text-[#559620] group-hover:text-white flex items-center justify-center shrink-0 transition-colors">
-                        <Icon className="w-4 h-4 stroke-[2.2]" />
-                      </div>
-                      <div className="flex flex-col leading-tight">
-                        <span className="text-xs font-bold text-[#14304A] whitespace-nowrap">
-                          {item.title}
-                        </span>
-                        <span className="text-[10px] text-[#6F8271] font-medium hidden sm:inline-block">
-                          {item.subtitle}
-                        </span>
-                      </div>
+                    <div key={idx} className="flex items-center gap-2 text-[#14304A]">
+                      <Icon className="w-5 h-5 text-[#14304A] shrink-0" strokeWidth={1.75} />
+                      <span className="text-xs sm:text-[13px] font-semibold tracking-tight whitespace-nowrap">
+                        {item.title}
+                      </span>
                     </div>
                   );
                 })}
@@ -100,8 +105,12 @@ export const Hero: React.FC = () => {
 
           </div>
 
-          {/* Right side spacer allowing the background products to shine through cleanly */}
-          <div className="hidden lg:block lg:col-span-5 min-h-[360px]" />
+          {/* Right side accent matching the attached reference image */}
+          <div className="hidden lg:flex lg:col-span-5 flex-col items-center justify-center min-h-[340px] relative pointer-events-none select-none">
+            <div className="font-script text-5xl xl:text-6xl text-[#14304A] leading-tight text-center -rotate-6 opacity-90 tracking-wide">
+              Care<br />Beyond<br />Medicines
+            </div>
+          </div>
 
         </div>
       </Container>

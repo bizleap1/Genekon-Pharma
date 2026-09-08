@@ -102,12 +102,12 @@ export default function CartPage() {
     selectAllItems(!allSelected);
   };
 
-  const handleApplyCoupon = (codeToApply?: string) => {
+  const handleApplyCoupon = async (codeToApply?: string) => {
     const target = (codeToApply || couponCode).trim().toUpperCase();
     if (!target) return;
     setCouponError("");
     setCouponSuccess("");
-    const res = applyCoupon(target);
+    const res = await applyCoupon(target);
     if (!res.success) {
       setCouponError(res.message);
       toast.error(res.message);

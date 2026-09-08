@@ -305,4 +305,114 @@ export const emailNotificationService = {
 
     return this.sendEmail(customer.email, `Payment Unsuccessful for Order #${order.orderNumber} | Genekon Pharmacy`, html);
   },
+
+  /**
+   * 6. Order Cancellation Request Received Email
+   */
+  async sendCancellationRequestReceivedEmail(
+    order: Order,
+    reason: string,
+    customer: CustomerInfo
+  ): Promise<boolean> {
+    const html = `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #FAFCFA; border: 1px solid #E5E7EB; border-radius: 8px; overflow: hidden;">
+        <div style="background-color: #14304A; padding: 24px; text-align: center;">
+          <h1 style="color: #FFFFFF; margin: 0; font-size: 24px;">Cancellation Request Received</h1>
+          <p style="color: #93C5FD; margin: 6px 0 0 0; font-size: 14px;">Order #${order.orderNumber}</p>
+        </div>
+        
+        <div style="padding: 24px; color: #14304A;">
+          <p>Dear ${customer.name},</p>
+          <p>We have received your cancellation request for order <strong>#${order.orderNumber}</strong>.</p>
+          <div style="background: #F3F4F6; border-left: 4px solid #F59E0B; padding: 12px 16px; margin: 16px 0; border-radius: 4px;">
+            <p style="margin: 0; font-size: 13px; color: #1F2937;"><strong>Reason stated:</strong> ${reason}</p>
+          </div>
+          <p style="font-size: 14px; color: #4B5563;">
+            Our dispensary administration team is currently reviewing your request in accordance with Schedule H compliance. You will receive an update once the review is finalized.
+          </p>
+          <div style="text-align: center; margin: 24px 0;">
+            <a href="${env.FRONTEND_URL}/account/orders/${order.id}" style="background-color: #559620; color: #FFFFFF; text-decoration: none; padding: 12px 24px; border-radius: 6px; font-weight: bold; font-size: 14px;">View Request Status</a>
+          </div>
+        </div>
+      </div>
+    `;
+
+    return this.sendEmail(customer.email, `Cancellation Request for Order #${order.orderNumber} | Genekon Pharmacy`, html);
+  },
+
+  /**
+   * 7. Order Cancellation Approved Email
+   */
+  async sendCancellationApprovedEmail(
+    order: Order,
+    customer: CustomerInfo,
+    refundInfo?: string
+  ): Promise<boolean> {
+    const html = `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #FAFCFA; border: 1px solid #E5E7EB; border-radius: 8px; overflow: hidden;">
+        <div style="background-color: #559620; padding: 24px; text-align: center;">
+          <h1 style="color: #FFFFFF; margin: 0; font-size: 24px;">Order Cancellation Approved</h1>
+          <p style="color: #D1FAE5; margin: 6px 0 0 0; font-size: 14px;">Order #${order.orderNumber}</p>
+        </div>
+        
+        <div style="padding: 24px; color: #14304A;">
+          <p>Dear ${customer.name},</p>
+          <p>Your cancellation request for order <strong>#${order.orderNumber}</strong> has been <strong>approved</strong> by our dispensary administration.</p>
+          <p style="font-size: 14px; color: #4B5563;">
+            The order is now cancelled and stock has been returned to dispensary inventory.
+          </p>
+          ${
+            refundInfo
+              ? `<div style="background: #ECFDF5; border: 1px solid #A7F3D0; padding: 14px; border-radius: 6px; margin: 16px 0; color: #065F46; font-size: 14px;">
+                  <strong>Refund Status:</strong> ${refundInfo}
+                </div>`
+              : ""
+          }
+          <p style="font-size: 13px; color: #6B7280; margin-top: 16px;">
+            Thank you for choosing Genekon Central Pharmacy. If you have any further questions, please contact our clinical support team.
+          </p>
+        </div>
+      </div>
+    `;
+
+    return this.sendEmail(customer.email, `Order #${order.orderNumber} Cancelled & Refund Update | Genekon Pharmacy`, html);
+  },
+
+  /**
+   * 8. Order Cancellation Rejected Email
+   */
+  async sendCancellationRejectedEmail(
+    order: Order,
+    customer: CustomerInfo,
+    adminComment?: string
+  ): Promise<boolean> {
+    const html = `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #FAFCFA; border: 1px solid #E5E7EB; border-radius: 8px; overflow: hidden;">
+        <div style="background-color: #14304A; padding: 24px; text-align: center;">
+          <h1 style="color: #FFFFFF; margin: 0; font-size: 24px;">Cancellation Request Update</h1>
+          <p style="color: #FCA5A5; margin: 6px 0 0 0; font-size: 14px;">Order #${order.orderNumber}</p>
+        </div>
+        
+        <div style="padding: 24px; color: #14304A;">
+          <p>Dear ${customer.name},</p>
+          <p>Your cancellation request for order <strong>#${order.orderNumber}</strong> could not be approved at this time.</p>
+          ${
+            adminComment
+              ? `<div style="background: #FEF2F2; border-left: 4px solid #EF4444; padding: 12px 16px; margin: 16px 0; border-radius: 4px;">
+                  <p style="margin: 0; font-size: 13px; color: #991B1B;"><strong>Dispensary note:</strong> ${adminComment}</p>
+                </div>`
+              : ""
+          }
+          <p style="font-size: 14px; color: #4B5563;">
+            Your order remains active and is progressing through clinical verification and dispatch.
+          </p>
+          <div style="text-align: center; margin: 24px 0;">
+            <a href="${env.FRONTEND_URL}/account/orders/${order.id}" style="background-color: #14304A; color: #FFFFFF; text-decoration: none; padding: 12px 24px; border-radius: 6px; font-weight: bold; font-size: 14px;">Track Order</a>
+          </div>
+        </div>
+      </div>
+    `;
+
+    return this.sendEmail(customer.email, `Update on Cancellation Request #${order.orderNumber} | Genekon Pharmacy`, html);
+  },
 };

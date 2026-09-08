@@ -22,13 +22,13 @@ async function runAuthVerification() {
     const [created] = await db
       .insert(users)
       .values({
-        name: "Dr. Nikhil Rao (Super Pharmacist)",
+        name: "Dr. Shreya Meshram (Super Pharmacist)",
         email: adminEmail,
         phone: "9822110011",
         passwordHash: adminPasswordHash,
         role: "ADMIN",
         isActive: true,
-        profileDetails: { avatar: "NR", department: "Clinical Operations" },
+        profileDetails: { avatar: "SM", department: "Clinical Operations" },
       })
       .returning();
     adminUser = created;

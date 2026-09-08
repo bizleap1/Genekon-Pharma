@@ -51,6 +51,7 @@ export interface AdminOrder {
   paymentStatus: PaymentStatus;
   orderStatus: OrderStatus;
   items: AdminOrderItem[];
+  cancellationRequest?: any;
 }
 
 export type AdminPrescriptionStatus =

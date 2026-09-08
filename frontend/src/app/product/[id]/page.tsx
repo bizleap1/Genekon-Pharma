@@ -21,7 +21,8 @@ import {
   ChevronRight,
   Plus,
   Minus,
-  AlertTriangle
+  AlertTriangle,
+  Building2
 } from "lucide-react";
 import { UtilityBar } from "@/components/layout/UtilityBar";
 import { Header } from "@/components/layout/Header";
@@ -33,6 +34,8 @@ import { useCart } from "@/context/CartContext";
 import { useWishlist } from "@/context/WishlistContext";
 import { useToast } from "@/context/ToastContext";
 import { useAuthGuard } from "@/hooks/useAuthGuard";
+import { useAuth } from "@/context/AuthContext";
+import { useProductQuery } from "@/hooks/api/useProductsQuery";
 
 const TABS = [
   { id: "details", label: "Product Details" },
@@ -49,12 +52,15 @@ export default function ProductDetailPage() {
 
   const { addToCart } = useCart();
   const { isInWishlist, toggleWishlist } = useWishlist();
+  const { isWholesale, user } = useAuth();
   const toast = useToast();
 
   // Find product or fallback to first product
+  const { data: liveProduct } = useProductQuery(productId);
   const product = useMemo(() => {
+    if (liveProduct) return liveProduct;
     return ALL_PRODUCTS.find((p) => p.id === productId) || ALL_PRODUCTS[0];
-  }, [productId]);
+  }, [liveProduct, productId]);
 
   const [selectedImage, setSelectedImage] = useState<string>(
     product.images?.[0] || product.image
@@ -311,9 +317,17 @@ export default function ProductDetailPage() {
                 <span className="text-xs font-bold text-[#559620] uppercase tracking-wider block">
                   {product.brand}
                 </span>
-                <h1 className="font-serif text-2xl sm:text-3xl text-[#14304A] mt-1 tracking-tight">
-                  {product.name}
-                </h1>
+                <div className="flex items-center gap-2.5 flex-wrap mt-1">
+                  <h1 className="font-serif text-2xl sm:text-3xl text-[#14304A] tracking-tight">
+                    {product.name}
+                  </h1>
+                  {product.prescriptionRequired && (
+                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-[#EBF3FC] text-[#1853A8] border border-[#CADCF2] text-xs font-bold shadow-2xs">
+                      <ShieldCheck className="w-3.5 h-3.5 text-[#1853A8]" />
+                      <span>Rx Prescription Required</span>
+                    </span>
+                  )}
+                </div>
                 <p className="text-xs sm:text-sm text-[#556958] mt-1">
                   {product.composition || product.dosageForm || product.category}
                 </p>
@@ -371,6 +385,14 @@ export default function ProductDetailPage() {
                   Inclusive of all taxes • MRP ₹{selectedVariant.mrp || product.mrp}
                 </span>
 
+                {/* Prescription requirement note near price */}
+                {product.prescriptionRequired && (
+                  <div className="pt-2 border-t border-[#E5EFE3] text-xs text-[#1853A8] flex items-center gap-1.5 font-semibold">
+                    <ShieldCheck className="w-3.5 h-3.5 text-[#1853A8]" />
+                    <span>Prescription required before purchase.</span>
+                  </div>
+                )}
+
                 {/* Offers callout */}
                 <div className="pt-2 border-t border-[#E5EFE3] flex items-center justify-between text-xs text-[#559620] font-semibold cursor-pointer">
                   <div className="flex items-center gap-1.5">
@@ -379,6 +401,25 @@ export default function ProductDetailPage() {
                   </div>
                   <ChevronRight className="w-4 h-4" />
                 </div>
+
+                {/* Exclusive Wholesale Volume Pricing (Visible only for wholesale partners) */}
+                {Boolean(isWholesale || user?.role === "wholesale") && (
+                  <div className="mt-3 p-3 rounded-xl bg-[#EBF3FC] border border-[#CADCF2] text-xs space-y-1.5">
+                    <div className="flex items-center justify-between font-bold text-[#1853A8]">
+                      <span className="flex items-center gap-1.5">
+                        <Building2 className="w-3.5 h-3.5 text-[#1853A8]" />
+                        Wholesale B2B Partner Rate
+                      </span>
+                      <span className="text-sm font-black text-[#14304A]">
+                        ₹{Math.round(selectedVariant.price * 0.75)} / unit
+                      </span>
+                    </div>
+                    <div className="text-[11px] text-[#4A6B82] flex justify-between font-medium">
+                      <span>Min. Order: 10 units (Bulk 25% Margin)</span>
+                      <span className="font-bold text-[#559620]">Case Qty: 50 units</span>
+                    </div>
+                  </div>
+                )}
               </div>
 
               {/* Variants Selector */}
@@ -405,6 +446,19 @@ export default function ProductDetailPage() {
                         <span className="text-[11px] font-bold text-[#559620]">₹{v.price}</span>
                       </button>
                     ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Rx Prescription Required Notice near Add To Cart */}
+              {product.prescriptionRequired && (
+                <div className="p-3 rounded-xl bg-[#F0F6FF] border border-[#CADCF2] text-xs text-[#1853A8] flex items-start gap-2.5">
+                  <ShieldCheck className="w-4 h-4 text-[#1853A8] shrink-0 mt-0.5" />
+                  <div>
+                    <span className="font-bold block">Rx Prescription Required</span>
+                    <span className="text-[11px] text-[#3D6899] block mt-0.5">
+                      Prescription required before purchase. A valid doctor&apos;s prescription must be uploaded or verified before dispatch.
+                    </span>
                   </div>
                 </div>
               )}

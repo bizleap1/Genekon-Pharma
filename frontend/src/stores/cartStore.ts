@@ -4,6 +4,8 @@ import { useSyncExternalStore } from "react";
 import { CartItem, CartTotals, CouponCode } from "@/types/cart";
 import { Product } from "@/types/product";
 import { cartService, AVAILABLE_COUPONS } from "@/services/cartService";
+import { cartApi } from "@/api/cart";
+import { authStore } from "./authStore";
 
 interface CartState {
   items: CartItem[];
@@ -299,8 +301,22 @@ export const cartStore = {
    * - Maintains selected variants
    * - Retains non-duplicate items from both carts
    */
-  mergeGuestCart(userCartItems: CartItem[] = []): void {
+  async mergeGuestCart(userCartItems: CartItem[] = []): Promise<void> {
     const guestItems = [...state.items];
+    const token = authStore.getToken();
+
+    if (token && guestItems.length > 0) {
+      try {
+        await cartApi.mergeCart(
+          guestItems.map((i) => ({ productId: i.productId, quantity: i.quantity }))
+        );
+        await this.syncWithServer();
+        return;
+      } catch (e) {
+        console.warn("Server cart merge failed, falling back to local merge", e);
+      }
+    }
+
     const mergedMap = new Map<string, CartItem>();
 
     // Load user items if any exist
@@ -337,33 +353,74 @@ export const cartStore = {
   },
 
   /**
-   * Stub for future Express API synchronization without rewriting components.
+   * Express API synchronization with live backend cart.
    */
   async syncWithServer(): Promise<boolean> {
+    const token = authStore.getToken();
+    if (!token) {
+      state = { ...state, syncStatus: "synced" };
+      emitChange();
+      return true;
+    }
+
     state = { ...state, syncStatus: "syncing" };
     emitChange();
 
-    return new Promise((resolve) => {
-      setTimeout(() => {
+    try {
+      const res = await cartApi.getCart();
+      const serverItems = res.data?.items || [];
+      if (serverItems.length > 0) {
+        const mappedItems: CartItem[] = serverItems.map((item) => {
+          const prod = item.product;
+          const currentPrice = Number(item.price) || (prod ? Number(prod.sellingPrice) : 100);
+          const currentMrp = prod ? Number(prod.mrp) : currentPrice;
+          return {
+            id: item.id,
+            productId: item.productId,
+            name: prod?.name || "Medicine Item",
+            brand: prod?.brand || "Genekon",
+            variant: prod?.dosageForm || "Standard",
+            price: currentPrice,
+            originalPrice: currentMrp,
+            mrp: currentMrp,
+            discount: prod?.discount ? Number(prod.discount) : 0,
+            quantity: item.quantity,
+            stockQuantity: prod?.stockQuantity || 50,
+            image: prod?.images?.[0]?.imageUrl || "/images/products/cipla-paracetamol-v2.jpg",
+            prescriptionRequired: Boolean(prod?.prescriptionRequired),
+            selected: true,
+          };
+        });
+        state = { ...state, items: mappedItems, syncStatus: "synced" };
+        emitChange();
+      } else {
         state = { ...state, syncStatus: "synced" };
         emitChange();
-        resolve(true);
-      }, 500);
-    });
+      }
+      return true;
+    } catch {
+      state = { ...state, syncStatus: "synced" };
+      emitChange();
+      return false;
+    }
   },
 };
+
+const SERVER_CART_SNAPSHOT: CartState = {
+  items: [],
+  appliedCoupon: null,
+  deliveryType: "standard",
+  syncStatus: "idle",
+  lastError: null,
+};
+
+const getCartServerSnapshot = () => SERVER_CART_SNAPSHOT;
 
 export function useCartStore() {
   const snapshot = useSyncExternalStore(
     cartStore.subscribe,
     cartStore.getSnapshot,
-    () => ({
-      items: [],
-      appliedCoupon: null,
-      deliveryType: "standard" as const,
-      syncStatus: "idle" as const,
-      lastError: null,
-    })
+    getCartServerSnapshot
   );
 
   const totals = cartStore.getTotals();

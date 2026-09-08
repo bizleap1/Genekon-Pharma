@@ -85,7 +85,7 @@ const SAMPLE_ORDERS: Record<string, TrackOrderRecord> = {
       {
         step: 2,
         title: "Pharmacist Verified & Confirmed",
-        subtitle: "Verified by Clinical Pharmacist Dr. Nikhil Rao (Reg: MH-68214)",
+        subtitle: "Verified by Clinical Pharmacist Dr. Shreya Meshram (Reg: MH-68214)",
         time: "Yesterday, 11:30 AM",
         completed: true,
       },

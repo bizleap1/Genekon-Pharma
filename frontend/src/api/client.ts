@@ -7,7 +7,7 @@
 import { ApiResponse, ApiError, RequestOptions } from "@/types/api";
 
 const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, "") || "/api/v1";
+  process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, "") || "http://localhost:5000/api/v1";
 
 const DEFAULT_TIMEOUT_MS = 15000;
 

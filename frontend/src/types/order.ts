@@ -34,6 +34,7 @@ export interface PlacedOrder {
   status: OrderStatus;
   estimatedDelivery: string;
   trackingNumber?: string;
+  cancellationRequest?: any;
 }
 
 export interface TimelineEvent {

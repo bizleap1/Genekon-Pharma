@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { orderService } from "../services/orderService";
 import { prescriptionService } from "../services/prescriptionService";
+import { cancellationService } from "../services/cancellationService";
 import { sendSuccess, sendError } from "../utils/apiResponse";
 
 export const orderController = {
@@ -26,10 +27,8 @@ export const orderController = {
    */
   async getCustomerOrders(req: Request, res: Response) {
     try {
-      const page = req.query.page ? parseInt(req.query.page as string, 10) : 1;
-      const limit = req.query.limit ? parseInt(req.query.limit as string, 10) : 10;
-      const result = await orderService.getCustomerOrders(req.user!.id, page, limit);
-      return sendSuccess(res, result, "Orders retrieved successfully");
+      const orders = await orderService.getCustomerOrders(req.user!.id, req.query as any);
+      return sendSuccess(res, orders, "Orders retrieved successfully");
     } catch (error: any) {
       return sendError(res, error.message || "Failed to retrieve orders", 400);
     }
@@ -37,31 +36,67 @@ export const orderController = {
 
   /**
    * GET /api/v1/orders/:id
-   * Customer/Admin: Get order details with timeline and snapshots
+   * Customer / Admin: Get order by ID or order number
    */
   async getOrderById(req: Request, res: Response) {
     try {
       const orderId = req.params.id as string;
-      const isAdmin = req.user!.role === "ADMIN";
-      const order = await orderService.getOrderById(orderId, req.user!.id, isAdmin);
+      const isAdmin = req.user?.role === "ADMIN";
+      const order = await orderService.getOrderById(
+        orderId,
+        isAdmin ? undefined : req.user!.id,
+        isAdmin
+      );
       return sendSuccess(res, order, "Order retrieved successfully");
     } catch (error: any) {
-      return sendError(res, error.message || "Failed to retrieve order", 400);
+      return sendError(res, error.message || "Failed to retrieve order", 404);
     }
   },
 
   /**
    * POST /api/v1/orders/:id/cancel
-   * Customer: Cancel order before packing
+   * Policy guard: Direct cancellation is disabled
    */
-  async cancelOrder(req: Request, res: Response) {
+  async cancelOrder(_req: Request, res: Response) {
+    return sendError(
+      res,
+      "Direct order cancellation is disabled. Please submit a cancellation request for dispensary admin review.",
+      400
+    );
+  },
+
+  /**
+   * POST /api/v1/orders/:id/cancel-request
+   * Customer: Submit order cancellation request for dispensary review
+   */
+  async requestCancellation(req: Request, res: Response) {
     try {
       const orderId = req.params.id as string;
-      const { reason } = req.body;
-      const updated = await orderService.cancelOrder(orderId, req.user!.id, reason);
-      return sendSuccess(res, updated, "Order cancelled successfully");
+      const { reason, details } = req.body;
+      const request = await cancellationService.submitRequest(req.user!.id, orderId, {
+        reason,
+        details,
+      });
+      return sendSuccess(res, request, "Cancellation request submitted for admin review", 201);
     } catch (error: any) {
-      return sendError(res, error.message || "Failed to cancel order", 400);
+      return sendError(res, error.message || "Failed to submit cancellation request", 400);
+    }
+  },
+
+  /**
+   * GET /api/v1/orders/:id/cancel-request
+   * Customer / Admin: Retrieve cancellation request status for this order
+   */
+  async getCancellationRequest(req: Request, res: Response) {
+    try {
+      const orderId = req.params.id as string;
+      const request = await cancellationService.getRequestForOrder(
+        orderId,
+        req.user!.role === "ADMIN" ? undefined : req.user!.id
+      );
+      return sendSuccess(res, request, "Cancellation request retrieved successfully");
+    } catch (error: any) {
+      return sendError(res, error.message || "Failed to retrieve cancellation request", 400);
     }
   },
 
@@ -178,4 +213,40 @@ export const orderController = {
       return sendError(res, error.message || "Failed to review prescription", 400);
     }
   },
+
+  /**
+   * GET /api/v1/orders/admin/cancellations
+   * Admin: List cancellation requests with filters & pagination
+   */
+  async getAdminCancellationRequests(req: Request, res: Response) {
+    try {
+      const result = await cancellationService.listAdminRequests(req.query as any);
+      return sendSuccess(res, result, "Cancellation requests retrieved successfully");
+    } catch (error: any) {
+      return sendError(res, error.message || "Failed to retrieve cancellation requests", 400);
+    }
+  },
+
+  /**
+   * PUT /api/v1/orders/admin/cancellations/:id/review
+   * Admin: Review cancellation request (Approve or Reject)
+   */
+  async reviewCancellationRequest(req: Request, res: Response) {
+    try {
+      const requestId = req.params.id as string;
+      const { decision, comment } = req.body;
+      const result = await cancellationService.reviewRequest(req.user!.id, requestId, {
+        decision,
+        comment,
+      });
+      return sendSuccess(
+        res,
+        result,
+        `Cancellation request ${decision === "APPROVE" ? "approved" : "rejected"} successfully`
+      );
+    } catch (error: any) {
+      return sendError(res, error.message || "Failed to review cancellation request", 400);
+    }
+  },
 };
+

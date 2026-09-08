@@ -25,11 +25,11 @@ export const paymentService = {
    * 1. Create Razorpay order authoritatively from database order total
    */
   async createPaymentOrder(userId: string, orderId: string) {
-    // Authoritatively fetch order from DB
+    // Authoritatively fetch order from DB by either UUID id or orderNumber
     const [order] = await db
       .select()
       .from(orders)
-      .where(eq(orders.id, orderId))
+      .where(or(eq(orders.id, orderId), eq(orders.orderNumber, orderId)))
       .limit(1);
 
     if (!order) {
@@ -123,7 +123,7 @@ export const paymentService = {
     const [order] = await db
       .select()
       .from(orders)
-      .where(eq(orders.id, input.orderId))
+      .where(or(eq(orders.id, input.orderId), eq(orders.orderNumber, input.orderId)))
       .limit(1);
 
     if (!order) {

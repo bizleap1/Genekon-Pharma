@@ -9,6 +9,7 @@ import {
   ADMIN_ORDERS,
   ADMIN_PRESCRIPTIONS,
 } from "@/data/adminData";
+import { adminApi } from "@/api/admin";
 
 interface AdminStoreState {
   products: AdminProduct[];
@@ -21,36 +22,39 @@ interface AdminStoreState {
   } | null;
 }
 
-const ADMIN_PRODUCTS_STORAGE_KEY = "genekon_admin_products_v1";
-const ADMIN_ORDERS_STORAGE_KEY = "genekon_admin_orders_v1";
+// Versioned localStorage keys — bumped to v3 to purge old dummy orders
+const ADMIN_PRODUCTS_KEY = "genekon_admin_products_v3";
+const ADMIN_ORDERS_KEY = "genekon_admin_orders_v3";
+const ADMIN_PRESCRIPTIONS_KEY = "genekon_admin_prescriptions_v3";
 
-function getInitialState(): AdminStoreState {
-  if (typeof window === "undefined") {
-    return {
-      products: ADMIN_PRODUCTS,
-      orders: ADMIN_ORDERS,
-      prescriptions: ADMIN_PRESCRIPTIONS,
-      deleteModal: null,
-    };
-  }
-
-  let products = ADMIN_PRODUCTS;
-  let orders = ADMIN_ORDERS;
-
+// ─── Persistence helpers ────────────────────────────────────────────────────
+function saveToStorage(key: string, value: unknown): void {
+  if (typeof window === "undefined") return;
   try {
-    const savedProds = localStorage.getItem(ADMIN_PRODUCTS_STORAGE_KEY);
-    if (savedProds) products = JSON.parse(savedProds);
-
-    const savedOrders = localStorage.getItem(ADMIN_ORDERS_STORAGE_KEY);
-    if (savedOrders) orders = JSON.parse(savedOrders);
+    localStorage.setItem(key, JSON.stringify(value));
   } catch {
-    // fallback
+    // storage quota exceeded or blocked
   }
+}
 
+function loadFromStorage<T>(key: string, fallback: T): T {
+  if (typeof window === "undefined") return fallback;
+  try {
+    const raw = localStorage.getItem(key);
+    if (!raw) return fallback;
+    const parsed = JSON.parse(raw) as T;
+    return Array.isArray(parsed) && (parsed as unknown[]).length > 0 ? parsed : fallback;
+  } catch {
+    return fallback;
+  }
+}
+
+// ─── Initial state — loads from localStorage, falls back to static data ─────
+function getInitialState(): AdminStoreState {
   return {
-    products,
-    orders,
-    prescriptions: ADMIN_PRESCRIPTIONS,
+    products: loadFromStorage<AdminProduct[]>(ADMIN_PRODUCTS_KEY, ADMIN_PRODUCTS),
+    orders: loadFromStorage<AdminOrder[]>(ADMIN_ORDERS_KEY, ADMIN_ORDERS),
+    prescriptions: loadFromStorage<AdminPrescription[]>(ADMIN_PRESCRIPTIONS_KEY, ADMIN_PRESCRIPTIONS),
     deleteModal: null,
   };
 }
@@ -59,14 +63,10 @@ let state: AdminStoreState = getInitialState();
 const listeners = new Set<() => void>();
 
 function emitChange() {
-  if (typeof window !== "undefined") {
-    try {
-      localStorage.setItem(ADMIN_PRODUCTS_STORAGE_KEY, JSON.stringify(state.products));
-      localStorage.setItem(ADMIN_ORDERS_STORAGE_KEY, JSON.stringify(state.orders));
-    } catch (err) {
-      console.error("Failed to persist admin store", err);
-    }
-  }
+  // Persist every state change to localStorage so refresh doesn't wipe data
+  saveToStorage(ADMIN_PRODUCTS_KEY, state.products);
+  saveToStorage(ADMIN_ORDERS_KEY, state.orders);
+  saveToStorage(ADMIN_PRESCRIPTIONS_KEY, state.prescriptions);
   listeners.forEach((listener) => listener());
 }
 
@@ -80,10 +80,54 @@ export const adminStore = {
     return () => listeners.delete(listener);
   },
 
+  /**
+   * Sync with backend — only replace local state if backend returns REAL data.
+   * This prevents flicker / data-reset on every refresh when the backend is
+   * returning different/random mock data.
+   */
+  async syncWithBackend(): Promise<void> {
+    try {
+      const [invRes, ordersRes, rxRes] = await Promise.allSettled([
+        adminApi.getInventory(),
+        adminApi.getAdminOrders(),
+        adminApi.getPendingPrescriptions(),
+      ]);
+
+      let updated = false;
+
+      // Only replace products if backend returned REAL products (not the static fallback)
+      if (
+        invRes.status === "fulfilled" &&
+        invRes.value?.data?.products?.length &&
+        // Heuristic: if backend products have different IDs than static fallback, they're real
+        invRes.value.data.products[0]?.id !== ADMIN_PRODUCTS[0]?.id
+      ) {
+        state = { ...state, products: invRes.value.data.products };
+        updated = true;
+      }
+
+      if (ordersRes.status === "fulfilled" && ordersRes.value?.data) {
+        state = { ...state, orders: ordersRes.value.data };
+        updated = true;
+      }
+
+      if (rxRes.status === "fulfilled" && rxRes.value?.data) {
+        state = { ...state, prescriptions: rxRes.value.data };
+        updated = true;
+      }
+
+      if (updated) emitChange();
+    } catch {
+      // Silently keep existing localStorage state — no reset
+    }
+  },
+
   addProduct(newProd: Partial<AdminProduct>): AdminProduct {
+    // Use timestamp for stable SKU — no Math.random() to avoid refresh flicker
+    const ts = Date.now().toString().slice(-6);
     const created: AdminProduct = {
-      id: `prod-${Date.now().toString().slice(-4)}`,
-      sku: newProd.sku || `SKU-${Math.floor(1000 + Math.random() * 9000)}`,
+      id: `prod-${ts}`,
+      sku: newProd.sku || `SKU-${ts}`,
       name: newProd.name || "New Product",
       brand: newProd.brand || "Generic",
       category: newProd.category || "Medicines",
@@ -93,7 +137,12 @@ export const adminStore = {
       stockQuantity: Number(newProd.stockQuantity) || 50,
       reservedQuantity: 0,
       prescriptionRequired: !!newProd.prescriptionRequired,
-      status: Number(newProd.stockQuantity) <= 0 ? "Out of Stock" : Number(newProd.stockQuantity) <= 10 ? "Low Stock" : "Active",
+      status:
+        Number(newProd.stockQuantity) <= 0
+          ? "Out of Stock"
+          : Number(newProd.stockQuantity) <= 10
+          ? "Low Stock"
+          : "Active",
       composition: newProd.composition || "",
       gstRate: Number(newProd.gstRate) || 12,
       lastUpdated: "Just now",
@@ -104,6 +153,21 @@ export const adminStore = {
       products: [created, ...state.products],
     };
     emitChange();
+
+    adminApi
+      .createProduct({
+        name: created.name,
+        sku: created.sku,
+        brand: created.brand,
+        mrp: created.mrp,
+        sellingPrice: created.sellingPrice,
+        prescriptionRequired: created.prescriptionRequired,
+        composition: created.composition,
+        gst: created.gstRate,
+        status: "ACTIVE",
+      })
+      .catch(() => {});
+
     return created;
   },
 
@@ -115,7 +179,8 @@ export const adminStore = {
           const updated = { ...p, ...updates, lastUpdated: "Just now" };
           if (updates.stockQuantity !== undefined) {
             const qty = Number(updates.stockQuantity);
-            updated.status = qty <= 0 ? "Out of Stock" : qty <= 10 ? "Low Stock" : "Active";
+            updated.status =
+              qty <= 0 ? "Out of Stock" : qty <= 10 ? "Low Stock" : "Active";
           }
           return updated;
         }
@@ -123,6 +188,8 @@ export const adminStore = {
       }),
     };
     emitChange();
+
+    adminApi.updateProduct(id, updates).catch(() => {});
   },
 
   openDeleteModal(productId: string, productName: string): void {
@@ -147,6 +214,8 @@ export const adminStore = {
       deleteModal: null,
     };
     emitChange();
+
+    adminApi.deleteProduct(productId).catch(() => {});
   },
 
   updateStock(productId: string, newStock: number): void {
@@ -168,6 +237,15 @@ export const adminStore = {
       ),
     };
     emitChange();
+
+    adminApi
+      .adjustStock({
+        productId,
+        quantityChanged: qty,
+        changeType: "MANUAL_ADJUSTMENT",
+        reason: "Inventory physical recount via admin panel",
+      })
+      .catch(() => {});
   },
 
   updateOrderStatus(
@@ -181,6 +259,19 @@ export const adminStore = {
       ),
     };
     emitChange();
+
+    const backendStatus =
+      newStatus === "Processing"
+        ? "PROCESSING"
+        : newStatus === "Shipped"
+        ? "SHIPPED"
+        : newStatus === "Delivered"
+        ? "DELIVERED"
+        : newStatus === "Cancelled"
+        ? "CANCELLED"
+        : "CONFIRMED";
+
+    adminApi.updateOrderStatus(orderId, backendStatus).catch(() => {});
   },
 
   updatePrescriptionStatus(
@@ -194,23 +285,32 @@ export const adminStore = {
       ),
     };
     emitChange();
+
+    const decision = newStatus === "Approved" ? "APPROVED" : "REJECTED";
+    adminApi.reviewPrescription(rxId, decision).catch(() => {});
   },
 };
+
+// Server snapshot — always returns static data for SSR
+const SERVER_ADMIN_SNAPSHOT: AdminStoreState = {
+  products: ADMIN_PRODUCTS,
+  orders: ADMIN_ORDERS,
+  prescriptions: ADMIN_PRESCRIPTIONS,
+  deleteModal: null,
+};
+
+const getAdminServerSnapshot = () => SERVER_ADMIN_SNAPSHOT;
 
 export function useAdminStore() {
   const snapshot = useSyncExternalStore(
     adminStore.subscribe,
     adminStore.getSnapshot,
-    () => ({
-      products: ADMIN_PRODUCTS,
-      orders: ADMIN_ORDERS,
-      prescriptions: ADMIN_PRESCRIPTIONS,
-      deleteModal: null,
-    })
+    getAdminServerSnapshot
   );
 
   return {
     ...snapshot,
+    syncWithBackend: adminStore.syncWithBackend.bind(adminStore),
     addProduct: adminStore.addProduct.bind(adminStore),
     updateProduct: adminStore.updateProduct.bind(adminStore),
     openDeleteModal: adminStore.openDeleteModal.bind(adminStore),

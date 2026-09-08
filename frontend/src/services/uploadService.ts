@@ -157,11 +157,28 @@ export const uploadService = {
     if (!validation.valid) {
       throw new Error(validation.error);
     }
-    return this.uploadToCloudinary(file, {
-      folder: "prescriptions",
-      tags: ["medical_rx", "patient_upload"],
-      onProgress,
-    });
+    onProgress?.(25);
+    try {
+      const { prescriptionsApi } = await import("@/api/prescriptions");
+      onProgress?.(50);
+      const res = await prescriptionsApi.uploadPrescription(file, {});
+      onProgress?.(100);
+      const previewUrl = await this.createLocalPreview(file);
+      return {
+        url: previewUrl,
+        secureUrl: previewUrl,
+        publicId: res.data?.id || `rx_${Date.now()}`,
+        fileName: file.name,
+        fileSize: file.size,
+        format: file.type.split("/")[1] || "jpeg",
+      };
+    } catch {
+      return this.uploadToCloudinary(file, {
+        folder: "prescriptions",
+        tags: ["medical_rx", "patient_upload"],
+        onProgress,
+      });
+    }
   },
 
   /**

@@ -12,20 +12,26 @@
   --color-brand-surface: #FAFCFB;
   --color-brand-border: #E7ECEF;
 
-  --font-sans: var(--font-manrope), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  --font-heading: var(--font-heading), var(--font-manrope), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  --font-serif: var(--font-serif), "DM Serif Display", Georgia, serif;
+  --font-sans: var(--font-inter), var(--font-manrope), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-heading: "Satoshi", var(--font-manrope), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-serif: "Satoshi", var(--font-manrope), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-script: var(--font-allura), cursive;
 }
 
 .font-heading {
-  font-family: var(--font-heading), var(--font-manrope), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-family: "Satoshi", var(--font-manrope), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
 .font-serif {
-  font-family: var(--font-serif), "DM Serif Display", Georgia, serif;
+  font-family: "Satoshi", var(--font-manrope), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+.font-script {
+  font-family: var(--font-allura), cursive;
 }
 
 :root {
+  --font-satoshi: "Satoshi", var(--font-manrope), sans-serif;
   --primary-green: #69A82F;
   --primary-blue: #315FAE;
   --dark-text: #14304A;
@@ -36,13 +42,19 @@
   --border: #E7ECEF;
 }
 
+html,
 body {
   background-color: #FFFFFF;
   color: #14304A;
-  font-family: var(--font-manrope), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-family: var(--font-inter), var(--font-manrope), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden;
+}
+
+/* Headings use Satoshi Bold / Black with clean geometric tracking */
+h1, h2, h3, h4, h5, h6 {
+  font-family: "Satoshi", var(--font-manrope), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
 /* Smooth horizontal scrollbar hiding for touch-friendly category bar */

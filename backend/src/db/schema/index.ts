@@ -17,6 +17,7 @@ import { coupons } from "./coupons";
 import { cmsBanners } from "./cms";
 import { adminActivityLogs } from "./activityLogs";
 import { wholesaleProfiles } from "./wholesaleProfiles";
+import { cancellationRequests } from "./cancellationRequests";
 
 export * from "./enums";
 export * from "./users";
@@ -38,6 +39,7 @@ export * from "./coupons";
 export * from "./cms";
 export * from "./activityLogs";
 export * from "./wholesaleProfiles";
+export * from "./cancellationRequests";
 
 // Users Relations
 export const usersRelations = relations(users, ({ one, many }) => ({
@@ -165,6 +167,7 @@ export const ordersRelations = relations(orders, ({ one, many }) => ({
   items: many(orderItems),
   statusHistory: many(orderStatusHistory),
   payments: many(payments),
+  cancellationRequests: many(cancellationRequests),
 }));
 
 // Order Items Relations
@@ -240,6 +243,22 @@ export const wholesaleProfilesRelations = relations(wholesaleProfiles, ({ one })
   }),
   approver: one(users, {
     fields: [wholesaleProfiles.approvedBy],
+    references: [users.id],
+  }),
+}));
+
+// Cancellation Requests Relations
+export const cancellationRequestsRelations = relations(cancellationRequests, ({ one }) => ({
+  order: one(orders, {
+    fields: [cancellationRequests.orderId],
+    references: [orders.id],
+  }),
+  user: one(users, {
+    fields: [cancellationRequests.userId],
+    references: [users.id],
+  }),
+  reviewer: one(users, {
+    fields: [cancellationRequests.reviewedBy],
     references: [users.id],
   }),
 }));

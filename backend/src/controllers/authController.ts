@@ -8,7 +8,7 @@ export const authController = {
    */
   async sendOtp(req: Request, res: Response) {
     try {
-      const { identifier } = req.body;
+      const identifier = req.body.identifier || req.body.phone;
       const result = await authService.requestOtp(identifier);
       return sendSuccess(res, result, result.message);
     } catch (error: any) {
@@ -21,7 +21,8 @@ export const authController = {
    */
   async verifyOtp(req: Request, res: Response) {
     try {
-      const { identifier, otp, role } = req.body;
+      const identifier = req.body.identifier || req.body.phone;
+      const { otp, role } = req.body;
       const result = await authService.verifyOtpAndLogin(identifier, otp, role);
       return sendSuccess(res, result, "Login successful");
     } catch (error: any) {

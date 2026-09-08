@@ -11,3 +11,4 @@ export * from "./users";
 export * from "./wishlist";
 export * from "./prescriptions";
 export * from "./wholesale";
+export * from "./admin";

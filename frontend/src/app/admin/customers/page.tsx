@@ -1,18 +1,27 @@
 "use client";
 
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import { Users, Search, Download, Eye, Phone, Mail, Building2 } from "lucide-react";
 import { DataTable } from "@/components/admin/DataTable";
 import { StatusBadge } from "@/components/admin/StatusBadge";
 import { FilterBar } from "@/components/admin/FilterBar";
-import { ADMIN_CUSTOMERS, AdminCustomer } from "@/data/adminData";
+import { AdminCustomer } from "@/data/adminData";
+import { adminApi } from "@/api/admin";
 import { useToast } from "@/context/ToastContext";
 
 export default function AdminCustomersPage() {
   const toast = useToast();
-  const [customers, setCustomers] = useState<AdminCustomer[]>(ADMIN_CUSTOMERS);
+  const [customers, setCustomers] = useState<AdminCustomer[]>([]);
   const [search, setSearch] = useState("");
   const [activeTab, setActiveTab] = useState<"all" | "Retail" | "Wholesale">("all");
+
+  useEffect(() => {
+    adminApi.getCustomers().then((res) => {
+      if (res.data) {
+        setCustomers(res.data);
+      }
+    });
+  }, []);
 
   const filtered = useMemo(() => {
     return customers.filter((c) => {

@@ -6,7 +6,6 @@
 import { apiClient } from "./client";
 import { UserProfile, UserAddress } from "@/types/user";
 import { ApiResponse } from "@/types/api";
-import { MOCK_ADDRESSES, MOCK_CUSTOMER } from "@/data/customer";
 
 export const usersApi = {
   /**
@@ -17,17 +16,9 @@ export const usersApi = {
       return await apiClient.get<UserProfile>("/users/profile");
     } catch {
       return {
-        success: true,
-        data: {
-          name: MOCK_CUSTOMER.name,
-          phone: MOCK_CUSTOMER.phone,
-          mobile: MOCK_CUSTOMER.phone,
-          email: MOCK_CUSTOMER.email,
-          role: "customer",
-          avatar: MOCK_CUSTOMER.avatar,
-          dateOfBirth: MOCK_CUSTOMER.dateOfBirth,
-          gender: MOCK_CUSTOMER.gender,
-        },
+        success: false,
+        message: "Could not load profile",
+        data: undefined as any,
       };
     }
   },
@@ -43,13 +34,9 @@ export const usersApi = {
         success: true,
         message: "Profile updated successfully",
         data: {
-          name: data.name || MOCK_CUSTOMER.name,
-          phone: data.phone || data.mobile || MOCK_CUSTOMER.phone,
-          mobile: data.mobile || data.phone || MOCK_CUSTOMER.phone,
-          email: data.email || MOCK_CUSTOMER.email,
           role: "customer",
           ...data,
-        },
+        } as UserProfile,
       };
     }
   },
@@ -61,22 +48,9 @@ export const usersApi = {
     try {
       return await apiClient.get<UserAddress[]>("/users/addresses");
     } catch {
-      const converted: UserAddress[] = MOCK_ADDRESSES.map((a) => ({
-        id: a.id,
-        type: a.type.toLowerCase() as "home" | "work" | "clinic" | "other",
-        name: a.name,
-        fullName: a.name,
-        phone: a.phone,
-        addressLine: a.addressLine,
-        landmark: a.locality,
-        city: a.city,
-        state: a.state,
-        pincode: a.pincode,
-        isDefault: a.isDefault,
-      }));
       return {
         success: true,
-        data: converted,
+        data: [],
       };
     }
   },
@@ -108,21 +82,20 @@ export const usersApi = {
     try {
       return await apiClient.put<UserAddress>(`/users/addresses/${id}`, address);
     } catch {
-      const match = MOCK_ADDRESSES.find((a) => a.id === id);
       return {
         success: true,
         message: "Address updated successfully",
         data: {
           id,
-          type: (address.type || match?.type.toLowerCase() || "home") as "home" | "work" | "clinic" | "other",
-          name: address.name || address.fullName || match?.name || "Prerna Sharma",
-          fullName: address.fullName || address.name || match?.name || "Prerna Sharma",
-          phone: address.phone || match?.phone || "9370102691",
-          addressLine: address.addressLine || match?.addressLine || "",
-          landmark: address.landmark || match?.locality,
-          city: address.city || match?.city || "Nagpur",
-          state: address.state || match?.state || "Maharashtra",
-          pincode: address.pincode || match?.pincode || "440010",
+          type: (address.type || "home") as "home" | "work" | "clinic" | "other",
+          name: address.name || address.fullName || "",
+          fullName: address.fullName || address.name || "",
+          phone: address.phone || "",
+          addressLine: address.addressLine || "",
+          landmark: address.landmark,
+          city: address.city || "",
+          state: address.state || "",
+          pincode: address.pincode || "",
           ...address,
         },
       };

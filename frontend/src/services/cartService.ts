@@ -92,7 +92,10 @@ export const cartService = {
         localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(INITIAL_DEFAULT_ITEMS));
         return INITIAL_DEFAULT_ITEMS;
       }
-      return JSON.parse(stored);
+      const parsed = JSON.parse(stored);
+      if (Array.isArray(parsed)) return parsed;
+      if (parsed && Array.isArray(parsed.items)) return parsed.items;
+      return INITIAL_DEFAULT_ITEMS;
     } catch {
       return INITIAL_DEFAULT_ITEMS;
     }
@@ -101,7 +104,8 @@ export const cartService = {
   saveItems(items: CartItem[]): void {
     if (typeof window === "undefined") return;
     try {
-      localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(items));
+      const safeItems = Array.isArray(items) ? items : [];
+      localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(safeItems));
     } catch (err) {
       console.error("Failed to save cart to localStorage", err);
     }
@@ -124,9 +128,7 @@ export const cartService = {
     if (subtotal < found.minOrderValue) {
       return {
         valid: false,
-        error: `Coupon "${cleanCode}" requires a minimum order value of ₹${found.minOrderValue}. Add ₹${
-          found.minOrderValue - subtotal
-        } more to apply.`,
+        error: `Coupon "${cleanCode}" requires a minimum order of ₹${found.minOrderValue}.`,
       };
     }
 
@@ -138,16 +140,22 @@ export const cartService = {
     appliedCoupon: CouponCode | null = null,
     deliveryType: "standard" | "express" = "standard"
   ): CartTotals {
-    const selectedItems = items.filter((item) => item.selected);
-    const itemCount = selectedItems.reduce((sum, item) => sum + item.quantity, 0);
+    const safeItems: CartItem[] = Array.isArray(items)
+      ? items
+      : items && Array.isArray((items as any).items)
+      ? (items as any).items
+      : [];
+
+    const selectedItems = safeItems.filter((item) => item && item.selected);
+    const itemCount = selectedItems.reduce((sum, item) => sum + (item.quantity || 1), 0);
 
     const subtotal = selectedItems.reduce(
-      (sum, item) => sum + item.price * item.quantity,
+      (sum, item) => sum + (item.price || 0) * (item.quantity || 1),
       0
     );
 
     const originalTotal = selectedItems.reduce(
-      (sum, item) => sum + item.originalPrice * item.quantity,
+      (sum, item) => sum + (item.originalPrice || item.price || 0) * (item.quantity || 1),
       0
     );
 

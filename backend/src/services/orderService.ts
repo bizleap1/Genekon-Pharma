@@ -12,6 +12,7 @@ import {
   cartItems,
   carts,
   payments,
+  cancellationRequests,
 } from "../db";
 import { Order, DeliveryAddressSnapshot } from "../db/schema/orders";
 import { OrderItem } from "../db/schema/orderItems";
@@ -32,6 +33,7 @@ export interface OrderDetailResponse extends Order {
   timeline: OrderStatusHistory[];
   prescription?: any | null;
   customer?: { id: string; name: string; email: string | null; phone: string | null } | null;
+  cancellationRequest?: any | null;
 }
 
 export const orderService = {
@@ -282,12 +284,21 @@ export const orderService = {
       }
     }
 
+    // Fetch latest cancellation request if any
+    const [cancellationRequest] = await db
+      .select()
+      .from(cancellationRequests)
+      .where(eq(cancellationRequests.orderId, order.id))
+      .orderBy(desc(cancellationRequests.createdAt))
+      .limit(1);
+
     return {
       ...order,
       items,
       timeline,
       prescription,
       customer,
+      cancellationRequest: cancellationRequest || null,
     };
   },
 
@@ -332,50 +343,13 @@ export const orderService = {
   },
 
   /**
-   * Customer order cancellation with strict policy
+   * Direct customer order cancellation is disabled.
+   * All cancellations must be requested via cancellationService.submitRequest.
    */
-  async cancelOrder(orderId: string, userId: string, reason?: string): Promise<OrderDetailResponse> {
-    const [order] = await db.select().from(orders).where(eq(orders.id, orderId)).limit(1);
-
-    if (!order) {
-      throw new Error("Order not found");
-    }
-
-    if (order.userId !== userId) {
-      throw new Error("You are not authorized to cancel this order");
-    }
-
-    if (["PACKED", "SHIPPED", "DELIVERED"].includes(order.orderStatus)) {
-      throw new Error(`Order cannot be cancelled once it is ${order.orderStatus.toLowerCase()}`);
-    }
-
-    if (order.orderStatus === "CANCELLED") {
-      throw new Error("Order is already cancelled");
-    }
-
-    // If stock was deducted, replenish it
-    if (order.stockDeducted) {
-      await this.restoreInventoryStock(order.id);
-    }
-
-    await db
-      .update(orders)
-      .set({
-        orderStatus: "CANCELLED",
-        stockDeducted: false,
-        updatedAt: new Date(),
-      })
-      .where(eq(orders.id, order.id));
-
-    await db.insert(orderStatusHistory).values({
-      orderId: order.id,
-      status: "CANCELLED",
-      notes: reason ? `Cancelled by customer: ${reason}` : "Order cancelled by customer.",
-      updatedBy: userId,
-    });
-
-    logger.info(`Order ${order.orderNumber} cancelled by customer ${userId}`);
-    return this.getOrderById(order.id, userId, false);
+  async cancelOrder(_orderId: string, _userId: string, _reason?: string): Promise<OrderDetailResponse> {
+    throw new Error(
+      "Direct order cancellation is disabled. Please submit a cancellation request from your Order Details page for dispensary review."
+    );
   },
 
   /**
@@ -534,8 +508,52 @@ export const orderService = {
     const [countResult] = await db.select({ count: sql<number>`count(*)::int` }).from(orders);
     const total = countResult?.count || 0;
 
+    const enrichedOrders = [];
+    for (const ord of orderList) {
+      const [user] = await db
+        .select({ id: users.id, name: users.name, email: users.email, phone: users.phone })
+        .from(users)
+        .where(eq(users.id, ord.userId))
+        .limit(1);
+
+      const items = await db
+        .select()
+        .from(orderItems)
+        .where(eq(orderItems.orderId, ord.id));
+
+      const deliverySnapshot = ord.deliveryAddressSnapshot as any;
+
+      const [cancelReq] = await db
+        .select()
+        .from(cancellationRequests)
+        .where(eq(cancellationRequests.orderId, ord.id))
+        .orderBy(desc(cancellationRequests.createdAt))
+        .limit(1);
+
+      enrichedOrders.push({
+        ...ord,
+        user: {
+          id: user?.id || ord.userId,
+          name: deliverySnapshot?.fullName || user?.name || "Customer",
+          email: user?.email || "customer@genekon.com",
+          phone: deliverySnapshot?.phone || user?.phone || "9876543210",
+        },
+        customerName: deliverySnapshot?.fullName || user?.name || "Customer",
+        customerPhone: deliverySnapshot?.phone || user?.phone || "9876543210",
+        items: items.map((i) => ({
+          id: i.id,
+          name: i.productNameSnapshot,
+          quantity: i.quantity,
+          sellingPrice: Number(i.price),
+          mrp: Number(i.mrp),
+        })),
+        itemCount: items.reduce((acc, i) => acc + i.quantity, 0),
+        cancellationRequest: cancelReq || null,
+      });
+    }
+
     return {
-      orders: orderList,
+      orders: enrichedOrders,
       total,
       page,
       totalPages: Math.ceil(total / limit) || 1,
@@ -543,41 +561,47 @@ export const orderService = {
   },
 
   /**
-   * Helper: Deduct stock from products table on order confirmation
+   * Helper: Deduct stock from products table atomically on order confirmation
    */
   async deductInventoryStock(orderId: string): Promise<void> {
     const items = await db.select().from(orderItems).where(eq(orderItems.orderId, orderId));
 
     for (const item of items) {
-      const [product] = await db.select().from(products).where(eq(products.id, item.productId)).limit(1);
-      if (product) {
-        if (product.stockQuantity < item.quantity) {
-          logger.warn(`Stock underflow warning for product ${product.id} during order confirmation`);
-        }
-        const newQuantity = Math.max(0, product.stockQuantity - item.quantity);
-        await db
-          .update(products)
-          .set({ stockQuantity: newQuantity, updatedAt: new Date() })
-          .where(eq(products.id, product.id));
+      // Atomic deduction with conditional GREATEST(0, stock - qty) to prevent race condition underflows
+      const result = await db
+        .update(products)
+        .set({
+          stockQuantity: sql`GREATEST(0, ${products.stockQuantity} - ${item.quantity})`,
+          updatedAt: new Date(),
+        })
+        .where(eq(products.id, item.productId))
+        .returning({ updatedStock: products.stockQuantity });
+
+      if (result.length === 0) {
+        logger.warn(`Product ${item.productId} not found during stock deduction for order ${orderId}`);
+      } else {
+        logger.info(`Atomic stock deduction for product ${item.productId}: -${item.quantity} (Stock remaining: ${result[0].updatedStock})`);
       }
     }
   },
 
   /**
-   * Helper: Replenish stock to products table upon order cancellation
+   * Helper: Replenish stock to products table atomically upon order cancellation
    */
   async restoreInventoryStock(orderId: string): Promise<void> {
     const items = await db.select().from(orderItems).where(eq(orderItems.orderId, orderId));
 
     for (const item of items) {
-      const [product] = await db.select().from(products).where(eq(products.id, item.productId)).limit(1);
-      if (product) {
-        const newQuantity = product.stockQuantity + item.quantity;
-        await db
-          .update(products)
-          .set({ stockQuantity: newQuantity, updatedAt: new Date() })
-          .where(eq(products.id, product.id));
-      }
+      // Atomic replenishment
+      await db
+        .update(products)
+        .set({
+          stockQuantity: sql`${products.stockQuantity} + ${item.quantity}`,
+          updatedAt: new Date(),
+        })
+        .where(eq(products.id, item.productId));
+
+      logger.info(`Atomic stock restoration for product ${item.productId}: +${item.quantity}`);
     }
   },
 };

@@ -64,3 +64,19 @@ export const createBannerSchema = z.object({
   startDate: z.string().optional(),
   endDate: z.string().optional(),
 });
+
+export const registerWholesaleSchema = z.object({
+  businessName: z.string().min(2, "Business name is required"),
+  ownerName: z.string().min(2, "Owner/Proprietor name is required"),
+  businessType: z.enum(["RETAIL_PHARMACY", "CLINIC_NURSING_HOME", "HOSPITAL", "DISTRIBUTOR"]),
+  gstNumber: z.string().min(10, "Valid GSTIN is required"),
+  drugLicenseNumber: z.string().min(3, "Drug license number is required"),
+  drugLicenseExpiry: z.string().optional(),
+  phone: z.string().min(10, "Valid 10-digit phone number is required"),
+  email: z.string().email("Valid email address is required"),
+  address: z.string().min(5, "Complete business address is required"),
+  city: z.string().optional(),
+  state: z.string().optional(),
+  pincode: z.string().optional(),
+});
+

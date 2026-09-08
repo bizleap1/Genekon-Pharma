@@ -1,6 +1,6 @@
 /**
  * Authentication API Service
- * Handles user login, OTP verification, registrations, and token sessions.
+ * Handles user login, OTP verification, registrations, Google OAuth, and token sessions.
  */
 
 import { apiClient } from "./client";
@@ -13,153 +13,215 @@ export interface LoginCredentials {
   role?: UserRole;
 }
 
+export interface AuthTokens {
+  accessToken: string;
+  refreshToken: string;
+  expiresIn?: number;
+}
+
 export interface AuthResponseData {
   user: UserProfile;
   token: string;
+  tokens?: AuthTokens;
   refreshToken?: string;
   expiresIn?: number;
 }
 
-const DEFAULT_MOCK_USER: UserProfile = {
-  name: "Prerna Sharma",
-  phone: "9370102691",
-  mobile: "9370102691",
-  email: "prerna.sharma@example.com",
-  role: "customer",
-  avatar: "/images/avatars/user-default.png",
-  dateOfBirth: "1994-08-14",
-  gender: "Female",
-};
+export function normalizeUserRole(backendRole?: string): UserRole {
+  const r = String(backendRole || "").toUpperCase();
+  if (r === "ADMIN") return "admin";
+  if (r === "WHOLESALE_PARTNER" || r === "WHOLESALE") return "wholesale";
+  return "customer";
+}
+
+export function mapBackendUserToProfile(u: any): UserProfile {
+  if (!u) return { name: "Guest User", mobile: "", role: "customer" };
+  return {
+    id: u.id,
+    name: u.name || "Genekon User",
+    mobile: u.phone || u.mobile || "",
+    phone: u.phone || u.mobile || "",
+    email: u.email || "",
+    role: normalizeUserRole(u.role),
+    avatar: u.avatar || "/images/avatars/user-default.png",
+    dateOfBirth: u.dateOfBirth,
+    gender: u.gender,
+    city: u.city || "Nagpur",
+    pincode: u.pincode || "440013",
+    address: u.address || "",
+    businessName: u.businessName,
+    gstNumber: u.gstNumber,
+    addresses: u.addresses || [],
+  };
+}
 
 export const authApi = {
   /**
-   * Login with password or identifier
-   */
-  async loginUser(credentials: LoginCredentials): Promise<ApiResponse<AuthResponseData>> {
-    try {
-      return await apiClient.post<AuthResponseData>("/auth/login", credentials);
-    } catch {
-      const isPharmacist = credentials.identifier.toLowerCase().includes("admin") || credentials.role === "admin";
-      const isWholesale = credentials.identifier.toLowerCase().includes("wholesale") || credentials.role === "wholesale";
-
-      const role: UserRole = isPharmacist ? "admin" : isWholesale ? "wholesale" : "customer";
-      const name = isPharmacist ? "Dr. Nikhil Rao" : isWholesale ? "Apex Pharmacy & Clinic" : "Prerna Sharma";
-
-      return {
-        success: true,
-        message: "Login successful",
-        data: {
-          user: {
-            ...DEFAULT_MOCK_USER,
-            name,
-            role,
-            mobile: credentials.identifier,
-          },
-          token: `mock_jwt_token_${Date.now()}`,
-          expiresIn: 7 * 24 * 3600,
-        },
-      };
-    }
-  },
-
-  /**
    * Request OTP for mobile authentication
    */
-  async sendOtp(mobile: string): Promise<ApiResponse<{ otpSent: boolean; message: string }>> {
-    try {
-      return await apiClient.post<{ otpSent: boolean; message: string }>("/auth/otp/send", { mobile });
-    } catch {
-      return {
-        success: true,
-        message: `OTP sent successfully to +91 ${mobile}`,
-        data: { otpSent: true, message: "Code sent via SMS & WhatsApp" },
-      };
-    }
+  async sendOtp(phone: string): Promise<ApiResponse<{ message: string; otp?: string }>> {
+    const cleanPhone = phone.replace(/\D/g, "").slice(-10);
+    return await apiClient.post<{ message: string; otp?: string }>("/auth/send-otp", {
+      identifier: cleanPhone,
+      phone: cleanPhone,
+    });
   },
 
   /**
    * Verify received OTP and generate auth session
    */
-  async verifyOtp(mobile: string, otp: string): Promise<ApiResponse<AuthResponseData>> {
-    try {
-      return await apiClient.post<AuthResponseData>("/auth/otp/verify", { mobile, otp });
-    } catch {
-      return {
-        success: true,
-        message: "Mobile verified successfully",
-        data: {
-          user: {
-            ...DEFAULT_MOCK_USER,
-            mobile,
-            phone: mobile,
-          },
-          token: `mock_jwt_token_${Date.now()}`,
-        },
-      };
-    }
+  async verifyOtp(
+    phone: string,
+    otp: string,
+    name?: string,
+    email?: string
+  ): Promise<ApiResponse<AuthResponseData>> {
+    const cleanPhone = phone.replace(/\D/g, "").slice(-10);
+    const res = await apiClient.post<any>("/auth/verify-otp", {
+      identifier: cleanPhone,
+      phone: cleanPhone,
+      otp,
+      name,
+      email,
+    });
+
+    const userProfile = mapBackendUserToProfile(res.data.user);
+    const token = res.data.tokens?.accessToken || res.data.token;
+    const refreshToken = res.data.tokens?.refreshToken || res.data.refreshToken;
+
+    return {
+      success: true,
+      message: res.message || "Authentication successful",
+      data: {
+        user: userProfile,
+        token,
+        tokens: res.data.tokens,
+        refreshToken,
+        expiresIn: res.data.tokens?.expiresIn || 900,
+      },
+    };
   },
 
   /**
-   * Register a new retail patient or B2B clinic user
+   * Login with email and password (for Admin or returning credentials)
    */
-  async registerUser(data: Partial<UserProfile>): Promise<ApiResponse<AuthResponseData>> {
-    try {
-      return await apiClient.post<AuthResponseData>("/auth/register", data);
-    } catch {
-      return {
-        success: true,
-        message: "Account registered successfully",
-        data: {
-          user: {
-            ...DEFAULT_MOCK_USER,
-            ...data,
-          },
-          token: `mock_jwt_token_${Date.now()}`,
-        },
-      };
-    }
+  async loginUser(credentials: LoginCredentials): Promise<ApiResponse<AuthResponseData>> {
+    const res = await apiClient.post<any>("/auth/login", {
+      identifier: credentials.identifier,
+      password: credentials.password,
+    });
+
+    const userProfile = mapBackendUserToProfile(res.data.user);
+    const token = res.data.tokens?.accessToken || res.data.token;
+    const refreshToken = res.data.tokens?.refreshToken || res.data.refreshToken;
+
+    return {
+      success: true,
+      message: res.message || "Login successful",
+      data: {
+        user: userProfile,
+        token,
+        tokens: res.data.tokens,
+        refreshToken,
+        expiresIn: res.data.tokens?.expiresIn || 900,
+      },
+    };
+  },
+
+  /**
+   * Register new user account with Name, Mobile, Email, and Password
+   */
+  async registerUser(data: {
+    name: string;
+    phone: string;
+    email?: string;
+    password?: string;
+    role?: "CUSTOMER" | "WHOLESALE_PARTNER";
+  }): Promise<ApiResponse<AuthResponseData>> {
+    const cleanPhone = data.phone.replace(/\D/g, "").slice(-10);
+    const res = await apiClient.post<any>("/auth/register", {
+      name: data.name,
+      phone: cleanPhone,
+      email: data.email?.trim() || undefined,
+      password: data.password || undefined,
+      role: data.role || "CUSTOMER",
+    });
+
+    const userProfile = mapBackendUserToProfile(res.data?.user || res.data);
+    const token = res.data?.tokens?.accessToken || res.data?.token || "mock_token";
+    const refreshToken = res.data?.tokens?.refreshToken || res.data?.refreshToken;
+
+    return {
+      success: true,
+      message: res.message || "Registration successful",
+      data: {
+        user: userProfile,
+        token,
+        tokens: res.data?.tokens,
+        refreshToken,
+        expiresIn: res.data?.tokens?.expiresIn || 900,
+      },
+    };
+  },
+
+  /**
+   * Google OAuth Login
+   */
+  async googleLogin(idToken: string): Promise<ApiResponse<AuthResponseData>> {
+    const res = await apiClient.post<any>("/auth/google", { idToken });
+    const userProfile = mapBackendUserToProfile(res.data.user);
+    const token = res.data.tokens?.accessToken || res.data.token;
+    const refreshToken = res.data.tokens?.refreshToken || res.data.refreshToken;
+
+    return {
+      success: true,
+      message: res.message || "Google login successful",
+      data: {
+        user: userProfile,
+        token,
+        tokens: res.data.tokens,
+        refreshToken,
+      },
+    };
   },
 
   /**
    * Log out active session
    */
-  async logoutUser(): Promise<ApiResponse<{ loggedOut: boolean }>> {
+  async logoutUser(refreshToken?: string): Promise<ApiResponse<{ loggedOut: boolean }>> {
     try {
-      return await apiClient.post<{ loggedOut: boolean }>("/auth/logout");
+      await apiClient.post("/auth/logout", { refreshToken });
     } catch {
-      return {
-        success: true,
-        message: "Logged out successfully",
-        data: { loggedOut: true },
-      };
+      // client-side logout anyway
     }
+    return {
+      success: true,
+      message: "Logged out successfully",
+      data: { loggedOut: true },
+    };
   },
 
   /**
    * Get authenticated user profile
    */
   async getCurrentUser(): Promise<ApiResponse<UserProfile>> {
-    try {
-      return await apiClient.get<UserProfile>("/auth/me");
-    } catch {
-      return {
-        success: true,
-        data: DEFAULT_MOCK_USER,
-      };
-    }
+    const res = await apiClient.get<any>("/auth/me");
+    const userProfile = mapBackendUserToProfile(res.data.user || res.data);
+    return {
+      success: true,
+      data: userProfile,
+      message: "Profile retrieved successfully",
+    };
   },
 
   /**
    * Refresh session token
    */
-  async refreshSession(): Promise<ApiResponse<{ token: string }>> {
-    try {
-      return await apiClient.post<{ token: string }>("/auth/refresh");
-    } catch {
-      return {
-        success: true,
-        data: { token: `mock_jwt_token_refreshed_${Date.now()}` },
-      };
-    }
+  async refreshSession(refreshToken: string): Promise<ApiResponse<{ accessToken: string }>> {
+    const res = await apiClient.post<any>("/auth/refresh-token", { refreshToken });
+    return {
+      success: true,
+      data: { accessToken: res.data.accessToken || res.data.tokens?.accessToken },
+    };
   },
 };

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import {
@@ -21,10 +21,19 @@ import { StatusBadge } from "@/components/admin/StatusBadge";
 import { FilterBar } from "@/components/admin/FilterBar";
 import { ADMIN_PRODUCTS, AdminProduct } from "@/data/adminData";
 import { useToast } from "@/context/ToastContext";
+import { adminApi } from "@/api/admin";
 
 export default function AdminInventoryPage() {
   const toast = useToast();
   const [products, setProducts] = useState<AdminProduct[]>(ADMIN_PRODUCTS);
+
+  useEffect(() => {
+    adminApi.getInventory().then((res) => {
+      if (res.data?.products?.length) {
+        setProducts(res.data.products);
+      }
+    });
+  }, []);
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [selectedProduct, setSelectedProduct] = useState<AdminProduct | null>(null);
@@ -56,6 +65,15 @@ export default function AdminInventoryPage() {
     e.preventDefault();
     if (!selectedProduct) return;
     const val = parseInt(newStockVal) || 0;
+    const diff = val - selectedProduct.stockQuantity;
+    if (diff !== 0) {
+      adminApi.adjustStock({
+        productId: selectedProduct.id,
+        quantityChanged: Math.abs(diff),
+        changeType: diff > 0 ? "PURCHASE_RECEIPT" : "MANUAL_ADJUSTMENT",
+        reason: "Stock level adjusted via Admin Inventory manager",
+      }).catch(() => {});
+    }
     setProducts((prev) =>
       prev.map((p) =>
         p.id === selectedProduct.id

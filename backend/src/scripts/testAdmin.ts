@@ -43,7 +43,7 @@ async function runAdminVerification() {
     const [created] = await db
       .insert(users)
       .values({
-        name: "Dr. Nikhil Rao (Super Admin)",
+        name: "Dr. Shreya Meshram (Super Admin)",
         email: adminEmail,
         phone: "9000000001",
         passwordHash: "$2a$10$wEkgvW4W3B298eXm5x7z7.eQp2p1yC1eA9xT9n5jJ4oM7K6z8/mGi",

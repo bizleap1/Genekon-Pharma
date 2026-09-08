@@ -11,89 +11,53 @@ import {
 
 export const adminDashboardService = {
   /**
-   * Aggregate executive statistics for the Admin Dashboard
+   * Aggregate executive statistics for the Admin Dashboard (High performance unified query)
    */
   async getDashboardStats() {
-    // 1. Total Customers
-    const [customerCount] = await db
-      .select({ count: sql<number>`count(*)::int` })
-      .from(users)
-      .where(eq(users.role, "CUSTOMER"));
+    // Run summary aggregates and recent records concurrently via Promise.all
+    const [summaryResult, recentOrders, recentActivities] = await Promise.all([
+      db.execute(sql`
+        SELECT
+          (SELECT count(*)::int FROM users WHERE role = 'CUSTOMER') AS "totalCustomers",
+          (SELECT count(*)::int FROM users WHERE role = 'WHOLESALE_PARTNER') AS "totalWholesalePartners",
+          (SELECT count(*)::int FROM products WHERE status = 'ACTIVE') AS "totalProducts",
+          (SELECT count(*)::int FROM orders) AS "totalOrders",
+          (SELECT coalesce(sum(case when order_status != 'CANCELLED' or payment_status in ('SUCCESS', 'PAID') then total_amount else 0 end), 0)::text FROM orders) AS "totalRevenue",
+          (SELECT count(*)::int FROM prescriptions WHERE status = 'PENDING') AS "pendingPrescriptions",
+          (SELECT count(*)::int FROM products WHERE status = 'ACTIVE' AND stock_quantity <= 20) AS "lowStockProducts",
+          (SELECT count(*)::int FROM wholesale_profiles WHERE status = 'PENDING_VERIFICATION') AS "pendingWholesaleApplications";
+      `),
+      db
+        .select({
+          id: orders.id,
+          orderNumber: orders.orderNumber,
+          totalAmount: orders.totalAmount,
+          orderStatus: orders.orderStatus,
+          paymentStatus: orders.paymentStatus,
+          createdAt: orders.createdAt,
+        })
+        .from(orders)
+        .orderBy(desc(orders.createdAt))
+        .limit(5),
+      db
+        .select()
+        .from(adminActivityLogs)
+        .orderBy(desc(adminActivityLogs.createdAt))
+        .limit(5),
+    ]);
 
-    // 2. Total Wholesale Partners
-    const [wholesaleCount] = await db
-      .select({ count: sql<number>`count(*)::int` })
-      .from(users)
-      .where(eq(users.role, "WHOLESALE_PARTNER"));
-
-    // 3. Total Active Products
-    const [productCount] = await db
-      .select({ count: sql<number>`count(*)::int` })
-      .from(products)
-      .where(eq(products.status, "ACTIVE"));
-
-    // 4. Total Orders & Revenue
-    const [orderMetrics] = await db
-      .select({
-        totalOrders: sql<number>`count(*)::int`,
-        totalRevenue: sql<string>`coalesce(sum(case when payment_status in ('SUCCESS', 'PAID') then total_amount else 0 end), 0)::text`,
-      })
-      .from(orders);
-
-    // 5. Pending Prescriptions
-    const [prescriptionCount] = await db
-      .select({ count: sql<number>`count(*)::int` })
-      .from(prescriptions)
-      .where(eq(prescriptions.status, "PENDING"));
-
-    // 6. Low Stock Products (threshold: 20 units)
-    const [lowStockCount] = await db
-      .select({ count: sql<number>`count(*)::int` })
-      .from(products)
-      .where(
-        and(
-          eq(products.status, "ACTIVE"),
-          sql`${products.stockQuantity} <= 20`
-        )
-      );
-
-    // 7. Pending Wholesale Applications
-    const [pendingWholesale] = await db
-      .select({ count: sql<number>`count(*)::int` })
-      .from(wholesaleProfiles)
-      .where(eq(wholesaleProfiles.status, "PENDING_VERIFICATION"));
-
-    // 8. Recent 5 Orders
-    const recentOrders = await db
-      .select({
-        id: orders.id,
-        orderNumber: orders.orderNumber,
-        totalAmount: orders.totalAmount,
-        orderStatus: orders.orderStatus,
-        paymentStatus: orders.paymentStatus,
-        createdAt: orders.createdAt,
-      })
-      .from(orders)
-      .orderBy(desc(orders.createdAt))
-      .limit(5);
-
-    // 9. Recent 5 Admin Activities
-    const recentActivities = await db
-      .select()
-      .from(adminActivityLogs)
-      .orderBy(desc(adminActivityLogs.createdAt))
-      .limit(5);
+    const row = ((summaryResult as any).rows?.[0] || {}) as any;
 
     return {
       summary: {
-        totalCustomers: customerCount?.count || 0,
-        totalWholesalePartners: wholesaleCount?.count || 0,
-        totalProducts: productCount?.count || 0,
-        totalOrders: orderMetrics?.totalOrders || 0,
-        totalRevenue: parseFloat(orderMetrics?.totalRevenue || "0"),
-        pendingPrescriptions: prescriptionCount?.count || 0,
-        lowStockProducts: lowStockCount?.count || 0,
-        pendingWholesaleApplications: pendingWholesale?.count || 0,
+        totalCustomers: Number(row.totalCustomers || 0),
+        totalWholesalePartners: Number(row.totalWholesalePartners || 0),
+        totalProducts: Number(row.totalProducts || 0),
+        totalOrders: Number(row.totalOrders || 0),
+        totalRevenue: parseFloat(row.totalRevenue || "0"),
+        pendingPrescriptions: Number(row.pendingPrescriptions || 0),
+        lowStockProducts: Number(row.lowStockProducts || 0),
+        pendingWholesaleApplications: Number(row.pendingWholesaleApplications || 0),
       },
       recentOrders,
       recentActivities,

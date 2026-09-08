@@ -19,10 +19,31 @@ import { CategoryNav } from "@/components/layout/CategoryNav";
 import { Footer } from "@/components/layout/Footer";
 import { Container } from "@/components/ui/Container";
 import { AccountSidebar } from "@/components/account/AccountSidebar";
-import { MOCK_CUSTOMER } from "@/data/customer";
+
+import { useAuthStore } from "@/stores/authStore";
 
 export default function ProfilePage() {
-  const [profile, setProfile] = useState(MOCK_CUSTOMER);
+  const { user } = useAuthStore();
+  const [profile, setProfile] = useState(() => ({
+    name: user?.name || "",
+    email: user?.email || "",
+    phone: user?.mobile || user?.phone || "",
+    dateOfBirth: "",
+    gender: "Female" as "Female" | "Male" | "Other",
+    avatar: user?.name ? user.name.split(" ").map((n: string) => n[0]).join("").slice(0, 2).toUpperCase() : "U",
+  }));
+
+  React.useEffect(() => {
+    if (user) {
+      setProfile((prev) => ({
+        ...prev,
+        name: user.name || prev.name,
+        email: user.email || prev.email,
+        phone: user.mobile || user.phone || prev.phone,
+      }));
+    }
+  }, [user]);
+
   const [isEditing, setIsEditing] = useState(false);
   const [savedSuccess, setSavedSuccess] = useState(false);
 

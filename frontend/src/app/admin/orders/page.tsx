@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import Link from "next/link";
 import {
   ShoppingBag,
@@ -10,26 +10,52 @@ import {
   Clock,
   Search,
   Filter,
-  Download
+  Download,
+  AlertTriangle
 } from "lucide-react";
 import { DataTable } from "@/components/admin/DataTable";
 import { StatusBadge } from "@/components/admin/StatusBadge";
 import { FilterBar } from "@/components/admin/FilterBar";
 import { ADMIN_ORDERS, AdminOrder } from "@/data/adminData";
 import { useToast } from "@/context/ToastContext";
+import { adminApi } from "@/api/admin";
 
 export default function AdminOrdersPage() {
   const toast = useToast();
-  const [orders, setOrders] = useState<AdminOrder[]>(ADMIN_ORDERS);
+  const [orders, setOrders] = useState<AdminOrder[]>([]);
+
+  useEffect(() => {
+    adminApi.getAdminOrders().then((res) => {
+      if (res.data) {
+        setOrders(res.data);
+      }
+    });
+  }, []);
   const [search, setSearch] = useState("");
   const [activeTab, setActiveTab] = useState("all");
 
+  const counts = useMemo(() => {
+    return {
+      all: orders.length,
+      cancellations: orders.filter((o) => o.cancellationRequest?.status === "PENDING").length,
+      processing: orders.filter((o) =>
+        ["processing", "placed", "confirmed", "pending_verification"].includes(o.orderStatus.toLowerCase())
+      ).length,
+      shipped: orders.filter((o) => o.orderStatus.toLowerCase() === "shipped").length,
+      delivered: orders.filter((o) => o.orderStatus.toLowerCase() === "delivered").length,
+      cancelled: orders.filter((o) => o.orderStatus.toLowerCase() === "cancelled").length,
+    };
+  }, [orders]);
+
   const tabs = [
-    { id: "all", label: `All (${orders.length})` },
-    { id: "processing", label: "Processing (1)" },
-    { id: "shipped", label: "Shipped (1)" },
-    { id: "delivered", label: "Delivered (2)" },
-    { id: "cancelled", label: "Cancelled (1)" },
+    { id: "all", label: `All (${counts.all})` },
+    ...(counts.cancellations > 0
+      ? [{ id: "cancellations", label: `Cancel Requests (${counts.cancellations})` }]
+      : []),
+    { id: "processing", label: `Processing (${counts.processing})` },
+    { id: "shipped", label: `Shipped (${counts.shipped})` },
+    { id: "delivered", label: `Delivered (${counts.delivered})` },
+    { id: "cancelled", label: `Cancelled (${counts.cancelled})` },
   ];
 
   const filtered = useMemo(() => {
@@ -41,8 +67,16 @@ export default function AdminOrdersPage() {
         const matchesPhone = o.customerPhone.includes(q);
         if (!matchesId && !matchesCust && !matchesPhone) return false;
       }
-      if (activeTab !== "all" && o.orderStatus.toLowerCase() !== activeTab.toLowerCase()) {
-        return false;
+      if (activeTab !== "all") {
+        if (activeTab === "cancellations") {
+          return o.cancellationRequest?.status === "PENDING";
+        }
+        const s = o.orderStatus.toLowerCase();
+        if (activeTab === "processing") {
+          if (!["processing", "placed", "confirmed", "pending_verification"].includes(s)) return false;
+        } else if (s !== activeTab.toLowerCase()) {
+          return false;
+        }
       }
       return true;
     });
@@ -52,12 +86,20 @@ export default function AdminOrdersPage() {
     {
       header: "Order ID",
       render: (o: AdminOrder) => (
-        <Link
-          href={`/admin/orders/${o.id}`}
-          className="font-mono font-bold text-[#14304A] hover:text-[#559620] block"
-        >
-          {o.id}
-        </Link>
+        <div className="space-y-1">
+          <Link
+            href={`/admin/orders/${o.id}`}
+            className="font-mono font-bold text-[#14304A] hover:text-[#559620] block"
+          >
+            {o.id}
+          </Link>
+          {o.cancellationRequest?.status === "PENDING" && (
+            <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-black bg-amber-100 text-amber-900 border border-amber-300">
+              <AlertTriangle className="w-2.5 h-2.5 text-amber-700" />
+              Cancel Requested
+            </span>
+          )}
+        </div>
       ),
     },
     {
@@ -74,10 +116,12 @@ export default function AdminOrdersPage() {
       render: (o: AdminOrder) => (
         <div>
           <span className="font-semibold text-[#14304A]">
-            {o.itemCount} items
+            {o.itemCount || o.items?.length || 1} items
           </span>
           <span className="text-[11px] text-[#718573] block truncate max-w-xs">
-            {o.items.map((i) => i.name).join(", ")}
+            {o.items && o.items.length > 0
+              ? o.items.map((i) => i.name).join(", ")
+              : "Healthcare products"}
           </span>
         </div>
       ),
@@ -97,7 +141,16 @@ export default function AdminOrdersPage() {
     },
     {
       header: "Order Status",
-      render: (o: AdminOrder) => <StatusBadge status={o.orderStatus} />,
+      render: (o: AdminOrder) => (
+        <div className="space-y-1">
+          <StatusBadge status={o.orderStatus} />
+          {o.cancellationRequest?.status === "PENDING" && (
+            <span className="block text-[10px] text-amber-700 font-bold">
+              Review Needed
+            </span>
+          )}
+        </div>
+      ),
     },
     {
       header: "Date & Time",

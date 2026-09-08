@@ -3,6 +3,7 @@
 import React, { createContext, useContext, useState, useEffect, useMemo } from "react";
 import { CartItem, CartTotals, CouponCode } from "@/types/cart";
 import { cartService } from "@/services/cartService";
+import { cartApi } from "@/api/cart";
 
 interface CartContextType {
   items: CartItem[];
@@ -35,7 +36,7 @@ interface CartContextType {
   updateQuantity: (itemId: string, quantity: number) => { success: boolean; capped?: boolean; maxStock?: number };
   toggleItemSelection: (itemId: string) => void;
   selectAllItems: (selected: boolean) => void;
-  applyCoupon: (code: string) => { success: boolean; message: string };
+  applyCoupon: (code: string) => Promise<{ success: boolean; message: string }>;
   removeCoupon: () => void;
   clearCart: () => void;
   toastMessage: string | null;
@@ -54,7 +55,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
   // Load cart from storage on mount
   useEffect(() => {
     const stored = cartService.getStoredItems();
-    setItems(stored);
+    setItems(Array.isArray(stored) ? stored : []);
     setIsInitialized(true);
   }, []);
 
@@ -230,18 +231,49 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setItems((prev) => prev.map((item) => ({ ...item, selected })));
   };
 
-  const applyCoupon = (code: string): { success: boolean; message: string } => {
-    const res = cartService.validateCoupon(code, totals.subtotal);
-    if (!res.valid || !res.coupon) {
-      return { success: false, message: res.error || "Invalid coupon code." };
-    }
+  const applyCoupon = async (code: string): Promise<{ success: boolean; message: string }> => {
+    const cleanCode = code.trim().toUpperCase();
+    try {
+      const apiRes = await cartApi.applyCoupon(cleanCode);
+      if (apiRes.success && apiRes.data) {
+        const c = apiRes.data.coupon;
+        const discountAmount = apiRes.data.discountAmount;
+        const mappedCoupon: CouponCode = {
+          code: c.code,
+          discountType: c.discountType === "Percentage" || (c as any).discountType === "percentage" ? "Percentage" : "Fixed",
+          discountValue: discountAmount,
+          minOrderValue: 0,
+          description: `Promotional coupon ${c.code}`,
+        };
+        setAppliedCoupon(mappedCoupon);
+        showToast(`Coupon "${mappedCoupon.code}" applied! Saved ₹${discountAmount}.`);
+        return {
+          success: true,
+          message: `Coupon "${mappedCoupon.code}" successfully applied! Saved ₹${discountAmount}.`,
+        };
+      }
+      return {
+        success: false,
+        message: apiRes.message || "Invalid coupon code.",
+      };
+    } catch (err: any) {
+      const errMsg = err?.response?.data?.message || err?.message;
+      if (errMsg && !errMsg.toLowerCase().includes("network error") && !errMsg.toLowerCase().includes("failed to fetch")) {
+        return { success: false, message: errMsg };
+      }
+      // Fallback to local validation
+      const res = cartService.validateCoupon(cleanCode, totals.subtotal);
+      if (!res.valid || !res.coupon) {
+        return { success: false, message: res.error || "Invalid coupon code." };
+      }
 
-    setAppliedCoupon(res.coupon);
-    showToast(`Coupon "${res.coupon.code}" applied! Saved on order.`);
-    return {
-      success: true,
-      message: `Coupon "${res.coupon.code}" successfully applied!`,
-    };
+      setAppliedCoupon(res.coupon);
+      showToast(`Coupon "${res.coupon.code}" applied! Saved on order.`);
+      return {
+        success: true,
+        message: `Coupon "${res.coupon.code}" successfully applied!`,
+      };
+    }
   };
 
   const removeCoupon = () => {

@@ -27,13 +27,13 @@ export const MOCK_WHOLESALE_USER: UserProfile = {
 };
 
 export const MOCK_ADMIN_USER: UserProfile = {
-  name: "Dr. Nikhil Rao",
+  name: "Dr. Shreya Meshram",
   phone: "9822001122",
   mobile: "9822001122",
-  email: "nikhil.rao@genekonpharma.com",
+  email: "admin@genekonpharma.com",
   role: "admin",
   avatar: "/images/avatars/admin-default.png",
-  gender: "Male",
+  gender: "Female",
 };
 
 export const MOCK_USER_ADDRESSES: UserAddress[] = [

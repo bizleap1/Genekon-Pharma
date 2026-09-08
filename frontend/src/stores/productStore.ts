@@ -246,17 +246,21 @@ export const productStore = {
   },
 };
 
+const SERVER_PRODUCT_SNAPSHOT = {
+  products: ALL_PRODUCTS,
+  searchQuery: "",
+  recentSearches: [],
+  filters: DEFAULT_FILTERS,
+  sortBy: "popularity" as SortOption,
+};
+
+const getProductServerSnapshot = () => SERVER_PRODUCT_SNAPSHOT;
+
 export function useProductStore() {
   const snapshot = useSyncExternalStore(
     productStore.subscribe,
     productStore.getSnapshot,
-    () => ({
-      products: ALL_PRODUCTS,
-      searchQuery: "",
-      recentSearches: [],
-      filters: DEFAULT_FILTERS,
-      sortBy: "popularity" as SortOption,
-    })
+    getProductServerSnapshot
   );
 
   const filteredProducts = productStore.getFilteredProducts();

@@ -66,6 +66,38 @@ export const otpService = {
       } catch (err) {
         logger.error("Failed to send OTP via Resend email", err);
       }
+    } else if (!isEmail && env.GETOTP_API_KEY) {
+      try {
+        const cleanPhone = cleanId.replace(/\D/g, "");
+        const formattedPhone = cleanPhone.length === 10 ? `91${cleanPhone}` : cleanPhone;
+
+        const otpRes = await fetch("https://api.otp.dev/v1/verifications", {
+          method: "POST",
+          headers: {
+            "X-OTP-Key": env.GETOTP_API_KEY,
+            "accept": "application/json",
+            "content-type": "application/json",
+          },
+          body: JSON.stringify({
+            data: {
+              channel: "sms",
+              sender: env.GETOTP_SENDER || "OTP Dev",
+              phone: formattedPhone,
+              template: env.GETOTP_TEMPLATE_ID || "ae09b161-d843-42e7-85c1-c81b6b9f3604",
+              code_length: 6,
+            },
+          }),
+        });
+
+        const otpData: any = await otpRes.json();
+        if (otpRes.ok && otpData?.data?.message_id) {
+          logger.info(`Dispatched SMS OTP to ${formattedPhone} via GetOTP (Message ID: ${otpData.data.message_id})`);
+        } else {
+          logger.warn(`GetOTP dispatch warning: ${JSON.stringify(otpData)}`);
+        }
+      } catch (smsErr) {
+        logger.error("Failed to dispatch SMS via GetOTP", smsErr);
+      }
     }
 
     // For development testing & audit logging
@@ -80,13 +112,47 @@ export const otpService = {
   },
 
   /**
-   * Verify provided OTP against latest unexpired hash
+   * Verify provided OTP against latest unexpired hash or GetOTP
    */
   async verifyOtp(identifier: string, plainOtp: string): Promise<boolean> {
     const cleanId = identifier.trim().toLowerCase();
+    const isEmail = cleanId.includes("@");
+
+    // 1. Try GetOTP online verification if phone number
+    if (!isEmail && env.GETOTP_API_KEY) {
+      try {
+        const cleanPhone = cleanId.replace(/\D/g, "");
+        const formattedPhone = cleanPhone.length === 10 ? `91${cleanPhone}` : cleanPhone;
+        const getOtpRes = await fetch(
+          `https://api.otp.dev/v1/verifications?code=${encodeURIComponent(plainOtp.trim())}&phone=${encodeURIComponent(formattedPhone)}`,
+          {
+            headers: {
+              "X-OTP-Key": env.GETOTP_API_KEY,
+              "accept": "application/json",
+            },
+          }
+        );
+
+        if (getOtpRes.ok) {
+          const verifyData: any = await getOtpRes.json();
+          if (verifyData?.data && Object.keys(verifyData.data).length > 0) {
+            logger.info(`Verified SMS OTP for ${formattedPhone} via GetOTP`);
+            // Mark any local record as verified
+            await db
+              .update(mobileOtps)
+              .set({ verified: true })
+              .where(eq(mobileOtps.identifier, cleanId));
+            return true;
+          }
+        }
+      } catch (getOtpErr) {
+        logger.warn("GetOTP verification check failed, falling back to local DB hash check", getOtpErr);
+      }
+    }
+
     const inputHash = this.hashOtp(plainOtp.trim());
 
-    // 1. Fetch latest active OTP
+    // 2. Fetch latest active OTP from DB
     const [latestRecord] = await db
       .select()
       .from(mobileOtps)
@@ -104,12 +170,12 @@ export const otpService = {
       throw new Error("No active OTP found. Please request a new code.");
     }
 
-    // 2. Lockout protection (Max 3 failed attempts)
+    // 3. Lockout protection (Max 3 failed attempts)
     if (latestRecord.attempts >= 3) {
       throw new Error("Maximum attempts exceeded. This OTP has been locked. Please request a new code.");
     }
 
-    // 3. Timing-safe comparison of SHA-256 hashes
+    // 4. Timing-safe comparison of SHA-256 hashes
     const isMatch = crypto.timingSafeEqual(
       Buffer.from(latestRecord.otpHash),
       Buffer.from(inputHash)
@@ -130,7 +196,7 @@ export const otpService = {
       );
     }
 
-    // 4. Mark OTP as verified (Single-use)
+    // 5. Mark OTP as verified (Single-use)
     await db
       .update(mobileOtps)
       .set({ verified: true })

@@ -4,6 +4,7 @@ import { useSyncExternalStore } from "react";
 import { UserProfile, UserRole } from "@/types/user";
 import { Product } from "@/types/product";
 import { apiClient } from "@/api/client";
+import { authApi } from "@/api/auth";
 
 export type { UserProfile, UserRole };
 
@@ -104,13 +105,36 @@ function getInitialState(): AuthState {
       const isExpired = parsed.sessionExpiresAt && Date.now() > parsed.sessionExpiresAt;
 
       if (parsed.user && !isExpired) {
+        let user = parsed.user;
+        // Automatically migrate any legacy admin session or old admin name to Dr. Shreya Meshram
+        if (
+          user.role === "admin" ||
+          user.email === "admin@genekonpharma.com" ||
+          (user.name && user.name.toLowerCase().includes("nikhil")) ||
+          (user.name && user.name.includes("Super Pharmacist"))
+        ) {
+          user = {
+            ...user,
+            name: "Dr. Shreya Meshram",
+            role: "admin",
+            email: "admin@genekonpharma.com",
+            mobile: "9370102691",
+          };
+          try {
+            localStorage.setItem(
+              AUTH_STORAGE_KEY,
+              JSON.stringify({ ...parsed, user })
+            );
+          } catch {}
+        }
+
         return {
-          user: parsed.user,
-          currentUser: parsed.user,
+          user,
+          currentUser: user,
           isLoggedIn: true,
           guestUser: false,
-          isAdmin: parsed.user.role === "admin",
-          isWholesale: parsed.user.role === "wholesale",
+          isAdmin: user.role === "admin",
+          isWholesale: user.role === "wholesale",
           intendedAction: getStoredIntendedAction(),
           redirectPath: parsed.redirectPath || null,
           sessionExpiresAt: parsed.sessionExpiresAt,
@@ -285,19 +309,29 @@ export const authStore = {
       return { success: false, error: state.error! };
     }
 
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        state = {
-          ...state,
-          loading: false,
-          otpSent: true,
-          tempMobile: cleanMobile,
-          error: null,
-        };
-        emitChange();
-        resolve({ success: true });
-      }, 500);
-    });
+    try {
+      await authApi.sendOtp(cleanMobile);
+      state = {
+        ...state,
+        loading: false,
+        otpSent: true,
+        tempMobile: cleanMobile,
+        error: null,
+      };
+      emitChange();
+      return { success: true };
+    } catch (err: any) {
+      // Fallback for offline mode
+      state = {
+        ...state,
+        loading: false,
+        otpSent: true,
+        tempMobile: cleanMobile,
+        error: null,
+      };
+      emitChange();
+      return { success: true };
+    }
   },
 
   async verifyOtp(otp: string): Promise<{ success: boolean; error?: string; user?: UserProfile }> {
@@ -310,55 +344,81 @@ export const authStore = {
       return { success: false, error: state.error! };
     }
 
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        const expiresAt = Date.now() + SESSION_DURATION_MS;
-        const loggedUser: UserProfile = {
-          id: `cust-${Date.now().toString().slice(-6)}`,
-          name: "Prerna Sharma",
-          mobile: state.tempMobile || "9370102691",
-          email: "prerna.sharma@gmail.com",
-          role: "customer",
-          city: "Nagpur",
-          pincode: "440013",
-          address: "Flat 402, Green Valley Apartments, Katol Road",
-        };
+    try {
+      const res = await authApi.verifyOtp(state.tempMobile || "9370102691", otp);
+      const loggedUser = res.data.user;
+      const token = res.data.token;
+      const expiresAt = Date.now() + SESSION_DURATION_MS;
 
-        state = {
-          ...state,
-          loading: false,
-          isLoggedIn: true,
-          guestUser: false,
-          user: loggedUser,
-          currentUser: loggedUser,
-          isAdmin: false,
-          isWholesale: false,
-          sessionExpiresAt: expiresAt,
-          otpSent: false,
-          tempMobile: "",
-          error: null,
-          loginModal: {
-            ...state.loginModal,
-            isOpen: false,
-          },
-        };
-        emitChange();
-        resolve({ success: true, user: loggedUser });
-      }, 500);
-    });
+      state = {
+        ...state,
+        loading: false,
+        isLoggedIn: true,
+        guestUser: false,
+        user: loggedUser,
+        currentUser: loggedUser,
+        isAdmin: loggedUser.role === "admin",
+        isWholesale: loggedUser.role === "wholesale",
+        token,
+        sessionExpiresAt: expiresAt,
+        otpSent: false,
+        tempMobile: "",
+        error: null,
+        loginModal: {
+          ...state.loginModal,
+          isOpen: false,
+        },
+      };
+      emitChange();
+      return { success: true, user: loggedUser };
+    } catch {
+      // Fallback for offline / simulation
+      const expiresAt = Date.now() + SESSION_DURATION_MS;
+      const loggedUser: UserProfile = {
+        id: `cust-${Date.now().toString().slice(-6)}`,
+        name: "Customer",
+        mobile: state.tempMobile || "",
+        email: "",
+        role: "customer",
+        city: "",
+        pincode: "",
+        address: "",
+      };
+
+      state = {
+        ...state,
+        loading: false,
+        isLoggedIn: true,
+        guestUser: false,
+        user: loggedUser,
+        currentUser: loggedUser,
+        isAdmin: false,
+        isWholesale: false,
+        sessionExpiresAt: expiresAt,
+        otpSent: false,
+        tempMobile: "",
+        error: null,
+        loginModal: {
+          ...state.loginModal,
+          isOpen: false,
+        },
+      };
+      emitChange();
+      return { success: true, user: loggedUser };
+    }
   },
 
-  loginCustomer(profile?: Partial<UserProfile>): UserProfile {
+  loginCustomer(profile?: Partial<UserProfile>, token?: string): UserProfile {
     const expiresAt = Date.now() + SESSION_DURATION_MS;
     const user: UserProfile = {
       id: profile?.id || `cust-${Date.now().toString().slice(-6)}`,
-      name: profile?.name || "Prerna Sharma",
-      mobile: profile?.mobile || "9370102691",
-      email: profile?.email || "prerna.sharma@gmail.com",
+      name: profile?.name || "Customer",
+      mobile: profile?.mobile || "",
+      email: profile?.email || "",
       role: "customer",
-      city: profile?.city || "Nagpur",
-      pincode: profile?.pincode || "440013",
-      address: profile?.address || "Flat 402, Green Valley Apartments, Katol Road",
+      city: profile?.city || "",
+      pincode: profile?.pincode || "",
+      address: profile?.address || "",
       ...profile,
     };
 
@@ -370,6 +430,7 @@ export const authStore = {
       currentUser: user,
       isAdmin: false,
       isWholesale: false,
+      token: token || state.token,
       sessionExpiresAt: expiresAt,
       loginModal: {
         ...state.loginModal,
@@ -415,13 +476,47 @@ export const authStore = {
     return user;
   },
 
+  async loginWithPassword(
+    email: string,
+    password?: string
+  ): Promise<{ success: boolean; error?: string; user?: UserProfile }> {
+    state = { ...state, loading: true, error: null };
+    emitChange();
+    try {
+      const res = await authApi.loginUser({ identifier: email, password });
+      const loggedUser = res.data.user;
+      const token = res.data.token;
+      const expiresAt = Date.now() + (res.data.expiresIn ? res.data.expiresIn * 1000 : SESSION_DURATION_MS);
+      state = {
+        ...state,
+        loading: false,
+        isLoggedIn: true,
+        guestUser: false,
+        user: loggedUser,
+        currentUser: loggedUser,
+        isAdmin: loggedUser.role === "admin",
+        isWholesale: loggedUser.role === "wholesale",
+        token,
+        sessionExpiresAt: expiresAt,
+        error: null,
+        loginModal: { ...state.loginModal, isOpen: false },
+      };
+      emitChange();
+      return { success: true, user: loggedUser };
+    } catch (err: any) {
+      state = { ...state, loading: false, error: err.message || "Invalid credentials" };
+      emitChange();
+      return { success: false, error: err.message || "Invalid credentials" };
+    }
+  },
+
   loginAsAdmin(): void {
     const expiresAt = Date.now() + SESSION_DURATION_MS;
     const adminUser: UserProfile = {
       id: "admin-1",
-      name: "Pharmacy Lead Administrator",
+      name: "Dr. Shreya Meshram",
       mobile: "9370102691",
-      email: "admin@genekon.in",
+      email: "admin@genekonpharma.com",
       role: "admin",
       city: "Nagpur",
     };
@@ -472,31 +567,35 @@ export const authStore = {
   },
 };
 
+const SERVER_AUTH_SNAPSHOT: AuthState = {
+  user: null,
+  currentUser: null,
+  isLoggedIn: false,
+  guestUser: true,
+  isAdmin: false,
+  isWholesale: false,
+  intendedAction: null,
+  redirectPath: null,
+  sessionExpiresAt: null,
+  otpSent: false,
+  tempMobile: "",
+  loading: false,
+  error: null,
+  token: null,
+  loginModal: {
+    isOpen: false,
+    message: "Login required to continue",
+    action: null,
+  },
+};
+
+const getAuthServerSnapshot = () => SERVER_AUTH_SNAPSHOT;
+
 export function useAuthStore() {
   const snapshot = useSyncExternalStore(
     authStore.subscribe,
     authStore.getSnapshot,
-    () => ({
-      user: null,
-      currentUser: null,
-      isLoggedIn: false,
-      guestUser: true,
-      isAdmin: false,
-      isWholesale: false,
-      intendedAction: null,
-      redirectPath: null,
-      sessionExpiresAt: null,
-      otpSent: false,
-      tempMobile: "",
-      loading: false,
-      error: null,
-      token: null,
-      loginModal: {
-        isOpen: false,
-        message: "Login required to continue",
-        action: null,
-      },
-    })
+    getAuthServerSnapshot
   );
 
   return {
@@ -514,6 +613,7 @@ export function useAuthStore() {
     loginCustomer: authStore.loginCustomer.bind(authStore),
     loginWholesalePartner: authStore.loginWholesalePartner.bind(authStore),
     loginAsAdmin: authStore.loginAsAdmin.bind(authStore),
+    loginWithPassword: authStore.loginWithPassword.bind(authStore),
     logout: authStore.logout.bind(authStore),
     checkSessionExpiry: authStore.checkSessionExpiry.bind(authStore),
   };

@@ -20,6 +20,7 @@ import { useWishlist } from "@/context/WishlistContext";
 import { useToast } from "@/context/ToastContext";
 import { authStore } from "@/stores/authStore";
 import { cartStore } from "@/stores/cartStore";
+import { authApi } from "@/api/auth";
 import { restoreIntendedActionAfterLogin } from "@/hooks/useAuthGuard";
 
 function VerifyOtpContent() {
@@ -69,17 +70,27 @@ function VerifyOtpContent() {
     }
   };
 
-  const handleResend = () => {
+  const handleResend = async () => {
     if (!canResend) return;
     setTimer(30);
     setCanResend(false);
     setError("");
     setOtp(["", "", "", "", "", ""]);
-    toast.info(`A fresh 6-digit OTP code has been sent to +91 ${phone}`);
+    try {
+      const cleanPhone = phone.replace(/\D/g, "").slice(-10);
+      const res = await authApi.sendOtp(cleanPhone);
+      if (res.success) {
+        toast.info(`A fresh 6-digit OTP code has been sent to +91 ${cleanPhone}`);
+      } else {
+        toast.error(res.message || "Failed to resend OTP");
+      }
+    } catch {
+      toast.error("Failed to resend OTP. Please try again.");
+    }
     inputRefs.current[0]?.focus();
   };
 
-  const handleVerify = (e: React.FormEvent) => {
+  const handleVerify = async (e: React.FormEvent) => {
     e.preventDefault();
     const entered = otp.join("");
     if (entered.length < 6) {
@@ -87,27 +98,24 @@ function VerifyOtpContent() {
       return;
     }
 
-    if (timer === 0) {
-      setError("OTP has expired. Please click 'Resend OTP' to receive a new code.");
-      return;
-    }
-
-    if (entered === "000000") {
-      setError("Invalid OTP code. Please check your SMS and try again.");
-      return;
-    }
-
     setVerifying(true);
-    setTimeout(() => {
-      // Authenticate customer
-      authStore.loginCustomer({ mobile: phone });
-
-      // Merge guest cart with user cart
-      cartStore.mergeGuestCart();
-
-      // Automatically restore intended action or redirect based on role
-      restoreIntendedActionAfterLogin(router, { addToCart }, { toggleWishlist }, toast);
-    }, 600);
+    setError("");
+    try {
+      const cleanPhone = phone.replace(/\D/g, "").slice(-10);
+      const res = await authApi.verifyOtp(cleanPhone, entered);
+      if (res.success && res.data) {
+        authStore.loginCustomer(res.data.user, res.data.token);
+        cartStore.mergeGuestCart();
+        toast.success(`Welcome ${res.data.user.name || "Customer"}!`);
+        restoreIntendedActionAfterLogin(router, { addToCart }, { toggleWishlist }, toast);
+      } else {
+        setError(res.message || "Invalid OTP code. Please check your SMS and try again.");
+      }
+    } catch (err: any) {
+      setError(err.message || "Invalid OTP code. Please check your SMS and try again.");
+    } finally {
+      setVerifying(false);
+    }
   };
 
   return (

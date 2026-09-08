@@ -23,6 +23,7 @@ import { CategoryNav } from "@/components/layout/CategoryNav";
 import { Footer } from "@/components/layout/Footer";
 import { Container } from "@/components/ui/Container";
 import { ProductCard } from "@/components/ui/ProductCard";
+import { useCategoryProductsQuery } from "@/hooks/api/useProductsQuery";
 import { ALL_PRODUCTS } from "@/data/products";
 
 interface CategoryMeta {
@@ -145,17 +146,25 @@ export default function CategoryPage({
   const [sortBy, setSortBy] = useState<CategorySortOption>("popular");
   const [mobileFilterOpen, setMobileFilterOpen] = useState(false);
 
+  // Dynamic live products for this category
+  const { data: liveCategoryProducts } = useCategoryProductsQuery(slug);
+
   // Match products for this category or fallback
   const categoryProducts = useMemo(() => {
+    if (liveCategoryProducts && liveCategoryProducts.length > 0) {
+      return liveCategoryProducts;
+    }
     return ALL_PRODUCTS.filter((p) => {
       if (meta.productCategoryMatch.length > 0) {
         return meta.productCategoryMatch.some(
-          (m) => p.category.toLowerCase().includes(m.toLowerCase()) || m.toLowerCase().includes(p.category.toLowerCase())
+          (m) =>
+            p.category.toLowerCase().includes(m.toLowerCase()) ||
+            m.toLowerCase().includes(p.category.toLowerCase())
         );
       }
       return true;
     });
-  }, [meta]);
+  }, [liveCategoryProducts, meta]);
 
   // Extract brands for this category
   const availableBrands = useMemo(() => {

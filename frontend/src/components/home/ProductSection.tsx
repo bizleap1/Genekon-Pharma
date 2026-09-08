@@ -5,10 +5,13 @@ import Link from "next/link";
 import { ChevronLeft, ChevronRight, ArrowRight } from "lucide-react";
 import { Container } from "@/components/ui/Container";
 import { ProductCard } from "@/components/ui/ProductCard";
+import { useProductsQuery } from "@/hooks/api/useProductsQuery";
 import { REFERENCE_PRODUCTS } from "@/data/products";
 
 export const ProductSection: React.FC = () => {
   const scrollRef = useRef<HTMLDivElement>(null);
+  const { data: liveProducts } = useProductsQuery({ limit: 6 });
+  const displayProducts = liveProducts && liveProducts.length > 0 ? liveProducts.slice(0, 6) : REFERENCE_PRODUCTS;
 
   const scroll = (direction: "left" | "right") => {
     if (scrollRef.current) {
@@ -65,7 +68,7 @@ export const ProductSection: React.FC = () => {
           ref={scrollRef}
           className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4"
         >
-          {REFERENCE_PRODUCTS.map((product) => (
+          {displayProducts.map((product) => (
             <ProductCard key={product.id} product={product} />
           ))}
         </div>

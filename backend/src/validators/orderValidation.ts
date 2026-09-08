@@ -44,3 +44,16 @@ export const reviewPrescriptionSchema = z
 export type CreateOrderInput = z.infer<typeof createOrderSchema>;
 export type UpdateOrderStatusInput = z.infer<typeof updateOrderStatusSchema>;
 export type ReviewPrescriptionInput = z.infer<typeof reviewPrescriptionSchema>;
+
+export const requestCancellationSchema = z.object({
+  reason: z.string().min(3, "Cancellation reason must be at least 3 characters").max(255),
+  details: z.string().max(1000, "Details cannot exceed 1000 characters").optional(),
+});
+
+export const reviewCancellationSchema = z.object({
+  decision: z.enum(["APPROVE", "REJECT"]),
+  comment: z.string().max(500, "Comment cannot exceed 500 characters").optional(),
+});
+
+export type RequestCancellationInput = z.infer<typeof requestCancellationSchema>;
+export type ReviewCancellationInput = z.infer<typeof reviewCancellationSchema>;

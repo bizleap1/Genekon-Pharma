@@ -19,8 +19,10 @@ export interface WholesaleApplication {
   drugLicenseNumber: string;
   phone: string;
   email: string;
+  address?: string;
   city: string;
   state?: string;
+  pincode?: string;
   monthlyExpectedVolume?: string;
   applicationDate?: string;
   appliedDate?: string;

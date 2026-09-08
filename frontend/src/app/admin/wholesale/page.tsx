@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Building2,
   FileCheck,
@@ -17,9 +17,19 @@ import { DataTable } from "@/components/admin/DataTable";
 import { StatusBadge } from "@/components/admin/StatusBadge";
 import { FilterBar } from "@/components/admin/FilterBar";
 import { ADMIN_WHOLESALE_APPS, AdminWholesaleApp } from "@/data/adminData";
+import { adminApi } from "@/api/admin";
 
 export default function AdminWholesalePage() {
-  const [apps, setApps] = useState<AdminWholesaleApp[]>(ADMIN_WHOLESALE_APPS);
+  const [apps, setApps] = useState<AdminWholesaleApp[]>([]);
+
+  useEffect(() => {
+    adminApi.getWholesaleApplications().then((res) => {
+      if (res.data) {
+        setApps(res.data);
+      }
+    });
+  }, []);
+
   const [search, setSearch] = useState("");
   const [selectedApp, setSelectedApp] = useState<AdminWholesaleApp | null>(null);
   const [alertMsg, setAlertMsg] = useState("");
@@ -35,6 +45,9 @@ export default function AdminWholesalePage() {
   });
 
   const handleStatus = (id: string, status: "Approved" | "Rejected") => {
+    const decision = status === "Approved" ? "APPROVED" : "REJECTED";
+    adminApi.reviewWholesaleApplication(id, decision).catch(() => {});
+
     setApps((prev) =>
       prev.map((a) => (a.id === id ? { ...a, status } : a))
     );

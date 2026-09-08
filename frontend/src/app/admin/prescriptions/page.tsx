@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import {
   FileText,
@@ -18,9 +18,19 @@ import { DataTable } from "@/components/admin/DataTable";
 import { StatusBadge } from "@/components/admin/StatusBadge";
 import { FilterBar } from "@/components/admin/FilterBar";
 import { ADMIN_PRESCRIPTIONS, AdminPrescription } from "@/data/adminData";
+import { adminApi } from "@/api/admin";
 
 export default function AdminPrescriptionsPage() {
-  const [prescriptions, setPrescriptions] = useState<AdminPrescription[]>(ADMIN_PRESCRIPTIONS);
+  const [prescriptions, setPrescriptions] = useState<AdminPrescription[]>([]);
+
+  useEffect(() => {
+    adminApi.getPendingPrescriptions().then((res) => {
+      if (res.data) {
+        setPrescriptions(res.data);
+      }
+    });
+  }, []);
+
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [inspectRx, setInspectRx] = useState<AdminPrescription | null>(null);
@@ -38,6 +48,9 @@ export default function AdminPrescriptionsPage() {
   });
 
   const handleAction = (id: string, newStatus: "Approved" | "Rejected" | "Information Requested") => {
+    const decision = newStatus === "Approved" ? "APPROVED" : "REJECTED";
+    adminApi.reviewPrescription(id, decision).catch(() => {});
+
     setPrescriptions((prev) =>
       prev.map((r) => (r.id === id ? { ...r, status: newStatus } : r))
     );

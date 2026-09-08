@@ -20,7 +20,10 @@ router.put("/items/:itemId", validateRequest(updateCartItemSchema), cartControll
 router.patch("/items/:itemId", validateRequest(updateCartItemSchema), cartController.updateItem);
 router.delete("/items/:itemId", cartController.removeItem);
 router.delete("/", cartController.clearCart);
-router.delete("/clear", cartController.clearCart);
 router.post("/merge", validateRequest(mergeCartSchema), cartController.mergeCart);
+
+// Coupon application endpoints
+router.post("/apply-coupon", cartController.applyCoupon);
+router.post("/coupon", cartController.applyCoupon);
 
 export default router;

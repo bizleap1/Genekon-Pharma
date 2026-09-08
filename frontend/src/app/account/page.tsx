@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import {
@@ -24,17 +24,20 @@ import { Footer } from "@/components/layout/Footer";
 import { Container } from "@/components/ui/Container";
 import { AccountSidebar } from "@/components/account/AccountSidebar";
 import { ProductCard } from "@/components/ui/ProductCard";
-import {
-  MOCK_CUSTOMER,
-  MOCK_ORDERS,
-  MOCK_PRESCRIPTIONS,
-  MOCK_ADDRESSES
-} from "@/data/customer";
+import { CustomerOrder, CustomerPrescription, CustomerAddress } from "@/data/customer";
 import { ALL_PRODUCTS } from "@/data/products";
 import { useAuthStore } from "@/stores/authStore";
+import { ordersApi } from "@/api/orders";
+import { orderService } from "@/services/orderService";
+import { InvoiceModal } from "@/components/invoice/InvoiceModal";
 
 export default function AccountDashboardPage() {
-  const { isLoggedIn, openLoginModal } = useAuthStore();
+  const { isLoggedIn, openLoginModal, user } = useAuthStore();
+  const [selectedInvoiceOrder, setSelectedInvoiceOrder] = useState<any>(null);
+  const [orders, setOrders] = useState<CustomerOrder[]>([]);
+  const [prescriptions, setPrescriptions] = useState<CustomerPrescription[]>([]);
+  const [addresses, setAddresses] = useState<CustomerAddress[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (!isLoggedIn) {
@@ -49,9 +52,122 @@ export default function AccountDashboardPage() {
     }
   }, [isLoggedIn, openLoginModal]);
 
-  const latestOrder = MOCK_ORDERS[0];
-  const activePrescription = MOCK_PRESCRIPTIONS[0];
-  const defaultAddress = MOCK_ADDRESSES.find((a) => a.isDefault) || MOCK_ADDRESSES[0];
+  useEffect(() => {
+    async function loadData() {
+      try {
+        let userOrders: CustomerOrder[] = [];
+        const res = await ordersApi.getUserOrders();
+        if (res.success && res.data && res.data.length > 0) {
+          userOrders = res.data.map((o) => ({
+            id: o.orderId,
+            date: o.date,
+            totalAmount: o.totals.totalAmount,
+            paymentMethod: o.formData.paymentMethod === "cod" ? "Cash on Delivery" : "Online / UPI",
+            paymentStatus: (o.formData.paymentMethod === "cod" ? "Cash on Delivery" : "Paid") as any,
+            deliveryStatus: (o.status === "Delivered" ? "Delivered" : o.status === "Shipped" ? "Shipped" : "Confirmed") as any,
+            currentStep: o.status === "Delivered" ? 5 : o.status === "Shipped" ? 4 : 2,
+            estimatedDelivery: o.estimatedDelivery || "In 2-4 business days",
+            deliveryAddress: `${o.formData.addressLine}, ${o.formData.city}, ${o.formData.state} - ${o.formData.pincode}`,
+            items: o.items.map((it) => ({
+              id: it.id || it.productId || "p1",
+              name: it.name,
+              brand: it.brand || "Genekon",
+              variant: it.variant || "Standard",
+              price: it.price,
+              quantity: it.quantity,
+              image: it.image || "/images/products/cipla-paracetamol-v2.jpg",
+            })),
+            priceBreakdown: {
+              subtotal: o.totals.subtotal,
+              discount: o.totals.discount,
+              deliveryFee: o.totals.deliveryCost,
+              total: o.totals.totalAmount,
+            },
+          }));
+        } else {
+          const local = orderService.getStoredOrders();
+          if (local && local.length > 0) {
+            userOrders = local.map((o) => ({
+              id: o.orderId,
+              date: o.date,
+              totalAmount: o.totals.totalAmount,
+              paymentMethod: o.formData.paymentMethod === "cod" ? "Cash on Delivery" : "Online / UPI",
+              paymentStatus: (o.formData.paymentMethod === "cod" ? "Cash on Delivery" : "Paid") as any,
+              deliveryStatus: (o.status === "Delivered" ? "Delivered" : o.status === "Shipped" ? "Shipped" : "Confirmed") as any,
+              currentStep: o.status === "Delivered" ? 5 : o.status === "Shipped" ? 4 : 2,
+              estimatedDelivery: o.estimatedDelivery || "In 2-4 business days",
+              deliveryAddress: `${o.formData.addressLine}, ${o.formData.city}, ${o.formData.state} - ${o.formData.pincode}`,
+              items: o.items.map((it) => ({
+                id: it.id || it.productId || "p1",
+                name: it.name,
+                brand: it.brand || "Genekon",
+                variant: it.variant || "Standard",
+                price: it.price,
+                quantity: it.quantity,
+                image: it.image || "/images/products/cipla-paracetamol-v2.jpg",
+              })),
+              priceBreakdown: {
+                subtotal: o.totals.subtotal,
+                discount: o.totals.discount,
+                deliveryFee: o.totals.deliveryCost,
+                total: o.totals.totalAmount,
+              },
+            }));
+          }
+        }
+        setOrders(userOrders);
+
+        if (typeof window !== "undefined") {
+          const savedAddrs = localStorage.getItem("genekon_user_addresses_v1");
+          if (savedAddrs) {
+            setAddresses(JSON.parse(savedAddrs));
+          } else if (user?.address) {
+            setAddresses([
+              {
+                id: "addr-1",
+                type: "Home",
+                name: user.name || "Customer",
+                phone: user.mobile || "",
+                addressLine: user.address,
+                locality: "",
+                city: user.city || "Nagpur",
+                state: "Maharashtra",
+                pincode: user.pincode || "440013",
+                isDefault: true,
+              },
+            ]);
+          } else {
+            setAddresses([]);
+          }
+
+          const savedRx = localStorage.getItem("genekon_prescriptions_v1");
+          if (savedRx) {
+            setPrescriptions(JSON.parse(savedRx));
+          } else {
+            setPrescriptions([]);
+          }
+        }
+      } catch {
+        setOrders([]);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    if (isLoggedIn) {
+      loadData();
+    } else {
+      setOrders([]);
+      setPrescriptions([]);
+      setAddresses([]);
+      setLoading(false);
+    }
+  }, [isLoggedIn, user]);
+
+  const latestOrder = orders[0] || null;
+  const activePrescription = prescriptions[0] || null;
+  const defaultAddress = addresses.find((a) => a.isDefault) || addresses[0] || null;
+  const totalSavings = orders.reduce((sum, o) => sum + (o.priceBreakdown?.discount || 0), 0);
   const reorderProducts = ALL_PRODUCTS.slice(0, 4);
 
   return (
@@ -86,30 +202,43 @@ export default function AccountDashboardPage() {
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                   <div>
                     <span className="text-[11px] font-bold uppercase tracking-wider text-[#447719] bg-[#EDF7E9] px-2.5 py-1 rounded-full">
-                      PATIENT ACCOUNT DASHBOARD
+                      {user?.role === "admin" ? "SUPER PHARMACIST ADMIN ACCOUNT" : "PATIENT ACCOUNT DASHBOARD"}
                     </span>
                     <h1 className="font-serif text-2xl sm:text-3xl text-[#14304A] font-bold mt-2">
-                      Hello, {MOCK_CUSTOMER.name} 👋
+                      Hello, {user?.name || "Customer"} 👋
                     </h1>
                     <p className="text-xs sm:text-sm text-[#5C715E] mt-1">
-                      Manage your active prescriptions, track current dispatches, and reorder regular healthcare essentials.
+                      {user?.role === "admin"
+                        ? "Signed in as Clinical Super Admin. Manage medicines, inventory, dispatch tracking, orders, and pharmacy operations."
+                        : "Manage your active prescriptions, track current dispatches, and reorder regular healthcare essentials."}
                     </p>
                   </div>
 
-                  <Link
-                    href="/prescription/upload"
-                    className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#559620] hover:bg-[#467E19] text-white text-xs font-bold transition-all shadow-xs shrink-0"
-                  >
-                    <Plus className="w-3.5 h-3.5" />
-                    <span>Upload New Prescription</span>
-                  </Link>
+                  <div className="flex flex-wrap items-center gap-2.5 shrink-0">
+                    {user?.role === "admin" && (
+                      <Link
+                        href="/admin/dashboard"
+                        className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#14304A] hover:bg-[#1E4366] text-white text-xs font-bold transition-all shadow-xs"
+                      >
+                        <ShieldCheck className="w-3.5 h-3.5 text-[#7BD434]" />
+                        <span>Admin Dashboard</span>
+                      </Link>
+                    )}
+                    <Link
+                      href="/prescription/upload"
+                      className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#559620] hover:bg-[#467E19] text-white text-xs font-bold transition-all shadow-xs"
+                    >
+                      <Plus className="w-3.5 h-3.5" />
+                      <span>Upload New Prescription</span>
+                    </Link>
+                  </div>
                 </div>
 
                 {/* Quick Metric Counters */}
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-3.5 mt-6 pt-6 border-t border-[#E3EDE1]">
                   <div className="rounded-2xl bg-white border border-[#E3EDE1] p-3.5 text-center shadow-2xs">
                     <p className="font-serif text-2xl font-bold text-[#14304A]">
-                      {MOCK_ORDERS.length}
+                      {orders.length}
                     </p>
                     <p className="text-[11px] text-[#697D6B] font-semibold mt-0.5">
                       Total Orders
@@ -118,7 +247,7 @@ export default function AccountDashboardPage() {
 
                   <div className="rounded-2xl bg-white border border-[#E3EDE1] p-3.5 text-center shadow-2xs">
                     <p className="font-serif text-2xl font-bold text-[#559620]">
-                      {MOCK_PRESCRIPTIONS.length}
+                      {prescriptions.length}
                     </p>
                     <p className="text-[11px] text-[#697D6B] font-semibold mt-0.5">
                       Active Prescriptions
@@ -127,7 +256,7 @@ export default function AccountDashboardPage() {
 
                   <div className="rounded-2xl bg-white border border-[#E3EDE1] p-3.5 text-center shadow-2xs">
                     <p className="font-serif text-2xl font-bold text-[#1853A8]">
-                      {MOCK_ADDRESSES.length}
+                      {addresses.length}
                     </p>
                     <p className="text-[11px] text-[#697D6B] font-semibold mt-0.5">
                       Saved Addresses
@@ -136,7 +265,7 @@ export default function AccountDashboardPage() {
 
                   <div className="rounded-2xl bg-white border border-[#E3EDE1] p-3.5 text-center shadow-2xs">
                     <p className="font-serif text-2xl font-bold text-[#D97706]">
-                      ₹422
+                      ₹{totalSavings}
                     </p>
                     <p className="text-[11px] text-[#697D6B] font-semibold mt-0.5">
                       Lifetime Savings
@@ -163,7 +292,7 @@ export default function AccountDashboardPage() {
                   </Link>
                 </div>
 
-                {latestOrder && (
+                {latestOrder ? (
                   <div className="rounded-2xl border border-[#E3EDE1] bg-[#FAFCFA] p-5">
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-[#E8F0E6]">
                       <div>
@@ -181,7 +310,16 @@ export default function AccountDashboardPage() {
                         </p>
                       </div>
 
-                      <div className="flex items-center gap-2">
+                      <div className="flex flex-wrap items-center gap-2">
+                        <button
+                          type="button"
+                          onClick={() => setSelectedInvoiceOrder(latestOrder)}
+                          className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl border border-[#D5E5D1] bg-[#EDF7E9] hover:bg-[#DCF0D6] text-xs font-bold text-[#447719] transition-colors cursor-pointer"
+                          title="View and Download Tax Invoice"
+                        >
+                          <FileText className="w-3.5 h-3.5 text-[#559620]" />
+                          <span>Invoice (PDF)</span>
+                        </button>
                         <Link
                           href={`/account/orders/${latestOrder.id}`}
                           className="px-3.5 py-1.5 rounded-xl border border-[#CCDCCD] bg-white hover:bg-[#F2F7F2] text-xs font-bold text-[#14304A] transition-colors"
@@ -225,6 +363,23 @@ export default function AccountDashboardPage() {
                       </div>
                     </div>
                   </div>
+                ) : (
+                  <div className="rounded-2xl border border-dashed border-[#D2E2D0] bg-[#FAFCFB] p-8 text-center">
+                    <div className="w-12 h-12 rounded-full bg-[#EDF7E9] text-[#559620] flex items-center justify-center mx-auto mb-2">
+                      <Package className="w-6 h-6" />
+                    </div>
+                    <h3 className="font-serif text-base font-bold text-[#14304A]">No orders yet</h3>
+                    <p className="text-xs text-[#637766] max-w-sm mx-auto mt-1 mb-4 leading-relaxed">
+                      You haven&apos;t placed any medicine orders yet. Explore our genuine healthcare catalog to place your first order.
+                    </p>
+                    <Link
+                      href="/products"
+                      className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#559620] hover:bg-[#467E19] text-white text-xs font-bold transition-colors shadow-xs"
+                    >
+                      <span>Explore Catalog</span>
+                      <ArrowRight className="w-3.5 h-3.5" />
+                    </Link>
+                  </div>
                 )}
               </div>
 
@@ -249,7 +404,7 @@ export default function AccountDashboardPage() {
                       </Link>
                     </div>
 
-                    {activePrescription && (
+                    {activePrescription ? (
                       <div className="space-y-2">
                         <div className="flex items-center justify-between">
                           <span className="font-mono text-xs font-bold text-[#14304A]">
@@ -268,6 +423,11 @@ export default function AccountDashboardPage() {
                         <p className="text-[11px] text-[#637766]">
                           Uploaded on {activePrescription.uploadDate} &bull; Valid till {activePrescription.validUntil}
                         </p>
+                      </div>
+                    ) : (
+                      <div className="py-4 text-center">
+                        <p className="text-xs text-[#637766]">No active prescriptions uploaded yet.</p>
+                        <p className="text-[11px] text-[#869988] mt-0.5">Upload a doctor&apos;s note for quick pharmacist validation.</p>
                       </div>
                     )}
                   </div>
@@ -301,7 +461,7 @@ export default function AccountDashboardPage() {
                       </Link>
                     </div>
 
-                    {defaultAddress && (
+                    {defaultAddress ? (
                       <div className="space-y-1.5 text-xs text-[#4B5E4E]">
                         <div className="flex items-center gap-2">
                           <span className="font-bold text-[#14304A]">{defaultAddress.name}</span>
@@ -318,6 +478,11 @@ export default function AccountDashboardPage() {
                         <p className="text-[#6C806E]">
                           Phone: +91 {defaultAddress.phone}
                         </p>
+                      </div>
+                    ) : (
+                      <div className="py-4 text-center">
+                        <p className="text-xs text-[#637766]">No saved delivery addresses found.</p>
+                        <p className="text-[11px] text-[#869988] mt-0.5">Add an address for fast 1-click checkout.</p>
                       </div>
                     )}
                   </div>
@@ -368,6 +533,45 @@ export default function AccountDashboardPage() {
           </div>
 
         </Container>
+
+        {/* Invoice Modal for selected order */}
+        {selectedInvoiceOrder && (
+          <InvoiceModal
+            isOpen={Boolean(selectedInvoiceOrder)}
+            onClose={() => setSelectedInvoiceOrder(null)}
+            invoice={{
+              orderId: selectedInvoiceOrder.id,
+              invoiceNo: `GKPL/2026/${selectedInvoiceOrder.id.replace(/[^0-9]/g, "").slice(-4) || "0428"}`,
+              invoiceDate: selectedInvoiceOrder.date,
+              dueDate: selectedInvoiceOrder.date,
+              paymentTerms: selectedInvoiceOrder.paymentMethod.toLowerCase().includes("cod") ? "Cash on Delivery" : "Prepaid",
+              customerName: user?.name || "Prerna Sharma",
+              customerPhone: user?.mobile ? `+91 ${user.mobile}` : "+91 9370102691",
+              shippingAddress: selectedInvoiceOrder.deliveryAddress,
+              billingAddress: selectedInvoiceOrder.deliveryAddress,
+              paymentMethod: selectedInvoiceOrder.paymentMethod,
+              transactionId: `UPI/${selectedInvoiceOrder.id.replace(/[^0-9]/g, "").padEnd(12, "512874639201").slice(0, 12)}`,
+              paymentDate: selectedInvoiceOrder.date,
+              paymentStatus: selectedInvoiceOrder.paymentStatus,
+              items: selectedInvoiceOrder.items.map((item: any, idx: number) => ({
+                name: item.name,
+                variant: item.variant,
+                hsn: idx % 2 === 0 ? "30049099" : "21069099",
+                batchNo: `PC${24080 + idx}`,
+                expiryDate: idx % 2 === 0 ? "DEC 2026" : "JAN 2027",
+                quantity: item.quantity,
+                mrp: Math.round(item.price * 1.25),
+                price: item.price,
+                gstRate: idx % 2 === 0 ? 12 : 18,
+              })),
+              subtotal: selectedInvoiceOrder.items.reduce((acc: number, i: any) => acc + i.price * i.quantity, 0),
+              discount: Math.round(selectedInvoiceOrder.totalAmount * 0.1),
+              taxableAmount: Math.round(selectedInvoiceOrder.totalAmount * 0.9),
+              gstAmount: Math.round(selectedInvoiceOrder.totalAmount * 0.9 * 0.12),
+              grandTotal: selectedInvoiceOrder.totalAmount,
+            }}
+          />
+        )}
       </main>
 
       <Footer />

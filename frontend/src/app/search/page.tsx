@@ -19,6 +19,7 @@ import { CategoryNav } from "@/components/layout/CategoryNav";
 import { Footer } from "@/components/layout/Footer";
 import { Container } from "@/components/ui/Container";
 import { ProductCard } from "@/components/ui/ProductCard";
+import { useProductsQuery } from "@/hooks/api/useProductsQuery";
 import { ALL_PRODUCTS } from "@/data/products";
 
 function SearchContent() {
@@ -36,22 +37,28 @@ function SearchContent() {
   const [sortBy, setSortBy] = useState<SearchSortOption>("popularity");
   const [mobileFilterOpen, setMobileFilterOpen] = useState(false);
 
+  // Dynamic live catalog with fallback
+  const { data: liveCatalog } = useProductsQuery();
+  const catalog = useMemo(() => {
+    return liveCatalog && liveCatalog.length > 0 ? liveCatalog : ALL_PRODUCTS;
+  }, [liveCatalog]);
+
   // Extract unique filter facets from catalog
   const categories = useMemo(() => {
     const set = new Set<string>();
-    ALL_PRODUCTS.forEach((p) => set.add(p.category));
+    catalog.forEach((p) => set.add(p.category));
     return Array.from(set);
-  }, []);
+  }, [catalog]);
 
   const brands = useMemo(() => {
     const set = new Set<string>();
-    ALL_PRODUCTS.forEach((p) => set.add(p.brand));
+    catalog.forEach((p) => set.add(p.brand));
     return Array.from(set);
-  }, []);
+  }, [catalog]);
 
   // Filter & Sort Logic
   const filteredProducts = useMemo(() => {
-    return ALL_PRODUCTS.filter((product) => {
+    return catalog.filter((product) => {
       // Query match
       if (query.trim()) {
         const q = query.toLowerCase();

@@ -20,7 +20,7 @@ export interface RazorpayCheckoutOptions {
   name: string;
   description: string;
   image?: string;
-  order_id: string;
+  order_id?: string;
   prefill?: {
     name?: string;
     email?: string;
@@ -38,7 +38,8 @@ export interface RazorpayCheckoutOptions {
 
 export interface PaymentVerificationPayload {
   orderId: string;
-  gatewayOrderId: string;
+  gatewayOrderId?: string;
+  razorpayOrderId?: string;
   paymentId: string;
   signature: string;
 }

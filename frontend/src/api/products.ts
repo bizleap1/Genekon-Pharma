@@ -4,19 +4,89 @@
  */
 
 import { apiClient } from "./client";
-import { Product } from "@/types/product";
+import { Product, StockStatus } from "@/types/product";
 import { ApiResponse, QueryParams } from "@/types/api";
 import { ALL_PRODUCTS } from "@/data/products";
+
+export function mapBackendProductToFrontend(p: any): Product {
+  if (!p) return ALL_PRODUCTS[0];
+
+  const sellingPrice = Number(p.sellingPrice) || Number(p.price) || 0;
+  const mrp = Number(p.mrp) || Number(p.originalPrice) || sellingPrice;
+  const discount =
+    Number(p.discount) ||
+    (mrp > sellingPrice ? Math.round(((mrp - sellingPrice) / mrp) * 100) : 0);
+  const stockQuantity = Number(p.stockQuantity ?? 50);
+  const inStock =
+    p.inStock ??
+    (stockQuantity > 0 && p.status !== "OUT_OF_STOCK" && p.status !== "INACTIVE");
+  const stockStatus: StockStatus =
+    stockQuantity <= 0 ? "Out of Stock" : stockQuantity <= 10 ? "Low Stock" : "In Stock";
+
+  const imgList: string[] = Array.isArray(p.images)
+    ? p.images
+        .map((img: any) => (typeof img === "string" ? img : img.imageUrl || img.url))
+        .filter(Boolean)
+    : [];
+
+  const primaryImage =
+    imgList[0] || p.image || "/images/products/cipla-paracetamol-v2.jpg";
+
+  return {
+    id: p.id,
+    name: p.name,
+    brand: p.brand || "Genekon",
+    manufacturer: p.manufacturer || "Genekon Pharma",
+    category: p.category?.name || p.category || "Medicines",
+    subCategory: p.subCategory || "General Care",
+    composition: p.composition || "",
+    description: p.description || "",
+    usage: p.usage || "As directed by physician",
+    precautions: p.precautions || "Keep out of reach of children",
+    images: imgList.length > 0 ? imgList : [primaryImage],
+    image: primaryImage,
+    mrp,
+    sellingPrice,
+    price: sellingPrice,
+    originalPrice: mrp,
+    discount,
+    discountPercent: discount,
+    gst: Number(p.gst) || 12,
+    stockStatus,
+    quantity: 1,
+    sku: p.sku || `GNK-${p.id}`,
+    batchNumber: p.batchNumber || "BATCH-2026",
+    expiryDate: p.expiryDate || "12/2028",
+    prescriptionRequired: Boolean(p.prescriptionRequired),
+    storageInstructions: p.storageInstructions || "Store below 25°C in a dry place",
+    rating: Number(p.rating) || 4.5,
+    reviewCount: Number(p.reviewCount) || 18,
+    stockQuantity,
+    inStock,
+    dosageForm: p.dosageForm || "10 Tablets",
+    packSize: p.dosageForm || "Standard Pack",
+    variants: [],
+  };
+}
 
 export const productsApi = {
   /**
    * Fetch all products with optional query filtering (pagination, search, category)
    */
-  async getProducts(params?: QueryParams): Promise<ApiResponse<Product[]>> {
+  async getProducts(params?: QueryParams): Promise<ApiResponse<Product[]> & { pagination?: any }> {
     try {
-      return await apiClient.get<Product[]>("/products", { params });
+      const res = await apiClient.get<any>("/products", { params });
+      const rawList = res.data?.products || (Array.isArray(res.data) ? res.data : []);
+      const mapped = rawList.map(mapBackendProductToFrontend);
+
+      return {
+        success: true,
+        data: mapped.length > 0 ? mapped : ALL_PRODUCTS,
+        pagination: res.data?.pagination,
+        timestamp: new Date().toISOString(),
+      };
     } catch {
-      // Mock fallback: filter in-memory catalog
+      // Graceful offline fallback
       let filtered = [...ALL_PRODUCTS];
       if (params?.search) {
         const q = String(params.search).toLowerCase();
@@ -41,11 +111,17 @@ export const productsApi = {
   },
 
   /**
-   * Fetch single product by unique ID
+   * Fetch single product by unique ID or slug
    */
   async getProductById(id: string): Promise<ApiResponse<Product>> {
     try {
-      return await apiClient.get<Product>(`/products/${id}`);
+      const res = await apiClient.get<any>(`/products/${id}`);
+      const rawProduct = res.data?.product || res.data;
+      return {
+        success: true,
+        data: mapBackendProductToFrontend(rawProduct),
+        timestamp: new Date().toISOString(),
+      };
     } catch {
       const match = ALL_PRODUCTS.find((p) => p.id === id) || ALL_PRODUCTS[0];
       return {
@@ -61,7 +137,15 @@ export const productsApi = {
    */
   async getProductsByCategory(category: string): Promise<ApiResponse<Product[]>> {
     try {
-      return await apiClient.get<Product[]>(`/products/category/${category}`);
+      const res = await apiClient.get<any>(`/products/category/${category}`);
+      const rawList = res.data?.products || (Array.isArray(res.data) ? res.data : []);
+      const mapped = rawList.map(mapBackendProductToFrontend);
+
+      return {
+        success: true,
+        data: mapped.length > 0 ? mapped : ALL_PRODUCTS,
+        timestamp: new Date().toISOString(),
+      };
     } catch {
       const filtered = ALL_PRODUCTS.filter((p) =>
         p.category.toLowerCase().includes(category.toLowerCase())
@@ -79,7 +163,15 @@ export const productsApi = {
    */
   async getFeaturedProducts(): Promise<ApiResponse<Product[]>> {
     try {
-      return await apiClient.get<Product[]>("/products/featured");
+      const res = await apiClient.get<any>("/products/featured");
+      const rawList = res.data?.products || (Array.isArray(res.data) ? res.data : []);
+      const mapped = rawList.map(mapBackendProductToFrontend);
+
+      return {
+        success: true,
+        data: mapped.length > 0 ? mapped : ALL_PRODUCTS.slice(0, 8),
+        timestamp: new Date().toISOString(),
+      };
     } catch {
       return {
         success: true,
@@ -94,9 +186,17 @@ export const productsApi = {
    */
   async searchProducts(query: string): Promise<ApiResponse<Product[]>> {
     try {
-      return await apiClient.get<Product[]>("/products/search", {
+      const res = await apiClient.get<any>("/products/search", {
         params: { q: query },
       });
+      const rawList = res.data?.products || (Array.isArray(res.data) ? res.data : []);
+      const mapped = rawList.map(mapBackendProductToFrontend);
+
+      return {
+        success: true,
+        data: mapped,
+        timestamp: new Date().toISOString(),
+      };
     } catch {
       const q = query.toLowerCase();
       const results = ALL_PRODUCTS.filter(
@@ -118,78 +218,35 @@ export const productsApi = {
    * Admin: Create a new pharmacy product
    */
   async createProduct(data: Partial<Product>): Promise<ApiResponse<Product>> {
-    try {
-      return await apiClient.post<Product>("/products", data);
-    } catch {
-      const newProd: Product = {
-        id: `prod-${Date.now()}`,
-        name: data.name || "New Medicine",
-        brand: data.brand || "Genekon",
-        manufacturer: data.manufacturer || "Genekon Pharma",
-        category: data.category || "Medicines",
-        price: data.price || 100,
-        sellingPrice: data.sellingPrice || data.price || 100,
-        originalPrice: data.originalPrice || 120,
-        mrp: data.mrp || 120,
-        discount: data.discount || 15,
-        gst: data.gst || 12,
-        image: data.image || "/images/products/cipla-paracetamol-v2.jpg",
-        images: data.images || ["/images/products/cipla-paracetamol-v2.jpg"],
-        dosageForm: data.dosageForm || "10 Tablets",
-        inStock: true,
-        stockStatus: "In Stock",
-        stockQuantity: data.stockQuantity || 50,
-        prescriptionRequired: data.prescriptionRequired || false,
-        rating: 4.5,
-        reviewCount: 0,
-        composition: data.composition || "",
-        description: data.description || "",
-        subCategory: data.subCategory || "General",
-        usage: data.usage || "As directed by physician",
-        precautions: data.precautions || "Keep out of reach of children",
-        quantity: data.quantity || 1,
-        variants: [],
-        sku: data.sku || `GNK-SKU-${Date.now()}`,
-        batchNumber: data.batchNumber || "GNK-BATCH",
-        expiryDate: data.expiryDate || "12/2028",
-        storageInstructions: data.storageInstructions || "Store below 25°C",
-      };
-      return {
-        success: true,
-        message: "Product created successfully",
-        data: newProd,
-      };
-    }
+    const res = await apiClient.post<any>("/products", data);
+    return {
+      success: true,
+      message: res.message || "Product created successfully",
+      data: mapBackendProductToFrontend(res.data?.product || res.data),
+    };
   },
 
   /**
    * Admin: Update an existing product
    */
   async updateProduct(id: string, data: Partial<Product>): Promise<ApiResponse<Product>> {
-    try {
-      return await apiClient.put<Product>(`/products/${id}`, data);
-    } catch {
-      const match = ALL_PRODUCTS.find((p) => p.id === id) || ALL_PRODUCTS[0];
-      return {
-        success: true,
-        message: "Product updated successfully",
-        data: { ...match, ...data },
-      };
-    }
+    const res = await apiClient.put<any>(`/products/${id}`, data);
+    return {
+      success: true,
+      message: res.message || "Product updated successfully",
+      data: mapBackendProductToFrontend(res.data?.product || res.data),
+    };
   },
 
   /**
    * Admin: Delete product by ID
    */
   async deleteProduct(id: string): Promise<ApiResponse<{ id: string }>> {
-    try {
-      return await apiClient.delete<{ id: string }>(`/products/${id}`);
-    } catch {
-      return {
-        success: true,
-        message: "Product removed from catalog",
-        data: { id },
-      };
-    }
+    const res = await apiClient.delete<any>(`/products/${id}`);
+    return {
+      success: true,
+      message: res.message || "Product removed from catalog",
+      data: { id },
+    };
   },
 };

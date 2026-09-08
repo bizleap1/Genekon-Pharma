@@ -33,12 +33,12 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({
 
   const menuItems = [
     { label: "Overview Dashboard", href: "/admin/dashboard", icon: LayoutDashboard },
-    { label: "Product Catalog", href: "/admin/products", icon: Package, badge: "8" },
-    { label: "Inventory & Stock", href: "/admin/inventory", icon: Layers, badge: "Low" },
-    { label: "Orders Management", href: "/admin/orders", icon: ShoppingBag, badge: "5" },
-    { label: "Prescription Queue", href: "/admin/prescriptions", icon: FileText, badge: "14" },
+    { label: "Product Catalog", href: "/admin/products", icon: Package },
+    { label: "Inventory & Stock", href: "/admin/inventory", icon: Layers },
+    { label: "Orders Management", href: "/admin/orders", icon: ShoppingBag },
+    { label: "Prescription Queue", href: "/admin/prescriptions", icon: FileText },
     { label: "Customers", href: "/admin/customers", icon: Users },
-    { label: "Wholesale B2B", href: "/admin/wholesale", icon: Building2, badge: "2" },
+    { label: "Wholesale B2B", href: "/admin/wholesale", icon: Building2 },
     { label: "Coupons & Offers", href: "/admin/offers", icon: Tag },
     { label: "Reports & Analytics", href: "/admin/reports", icon: BarChart3 },
   ];
@@ -118,20 +118,6 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({
                   <Icon className={`w-4 h-4 ${isActive ? "text-white" : "text-[#559620]"}`} />
                   <span>{item.label}</span>
                 </div>
-
-                {item.badge && (
-                  <span
-                    className={`text-[10px] font-extrabold px-1.5 py-0.5 rounded-full ${
-                      isActive
-                        ? "bg-white text-[#559620]"
-                        : item.badge === "Low"
-                        ? "bg-[#FFF4E5] text-[#D97706]"
-                        : "bg-[#EDF7E9] text-[#447719]"
-                    }`}
-                  >
-                    {item.badge}
-                  </span>
-                )}
               </Link>
             );
           })}

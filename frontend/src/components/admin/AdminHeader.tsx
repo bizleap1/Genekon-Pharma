@@ -71,14 +71,14 @@ export const AdminHeader: React.FC<AdminHeaderProps> = ({
         {/* Admin Profile */}
         <div className="flex items-center gap-2.5 pl-3 border-l border-[#E2EAE0]">
           <div className="w-8 h-8 rounded-xl bg-[#EDF7E9] text-[#559620] font-serif text-xs font-bold flex items-center justify-center border border-[#D5E4D2]">
-            NR
+            SM
           </div>
           <div className="hidden sm:block text-left">
             <p className="text-xs font-bold text-[#14304A] leading-tight">
-              Dr. Nikhil Rao
+              Dr. Shreya Meshram
             </p>
             <p className="text-[10px] text-[#697E6B]">
-              Lead Pharmacist
+              Lead Pharmacist &amp; Super Admin
             </p>
           </div>
         </div>

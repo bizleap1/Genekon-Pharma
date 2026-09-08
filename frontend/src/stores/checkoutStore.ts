@@ -117,16 +117,20 @@ export const checkoutStore = {
   },
 };
 
+const SERVER_CHECKOUT_SNAPSHOT = {
+  formData: DEFAULT_FORM_DATA,
+  errors: {},
+  isSubmitting: false,
+  placedOrder: null,
+};
+
+const getCheckoutServerSnapshot = () => SERVER_CHECKOUT_SNAPSHOT;
+
 export function useCheckoutStore() {
   const snapshot = useSyncExternalStore(
     checkoutStore.subscribe,
     checkoutStore.getSnapshot,
-    () => ({
-      formData: DEFAULT_FORM_DATA,
-      errors: {},
-      isSubmitting: false,
-      placedOrder: null,
-    })
+    getCheckoutServerSnapshot
   );
 
   return {
