@@ -5,6 +5,8 @@ import { refreshTokens } from "./refreshTokens";
 import { categories } from "./categories";
 import { products } from "./products";
 import { productImages } from "./productImages";
+import { carts, cartItems } from "./cart";
+import { wishlists } from "./wishlist";
 
 export * from "./enums";
 export * from "./users";
@@ -14,11 +16,18 @@ export * from "./refreshTokens";
 export * from "./categories";
 export * from "./products";
 export * from "./productImages";
+export * from "./cart";
+export * from "./wishlist";
 
 // Users Relations
-export const usersRelations = relations(users, ({ many }) => ({
+export const usersRelations = relations(users, ({ one, many }) => ({
   addresses: many(userAddresses),
   refreshTokens: many(refreshTokens),
+  cart: one(carts, {
+    fields: [users.id],
+    references: [carts.userId],
+  }),
+  wishlist: many(wishlists),
 }));
 
 export const userAddressesRelations = relations(userAddresses, ({ one }) => ({
@@ -55,12 +64,47 @@ export const productsRelations = relations(products, ({ one, many }) => ({
     references: [categories.id],
   }),
   images: many(productImages),
+  cartItems: many(cartItems),
+  wishlists: many(wishlists),
 }));
 
 // Product Images Relations
 export const productImagesRelations = relations(productImages, ({ one }) => ({
   product: one(products, {
     fields: [productImages.productId],
+    references: [products.id],
+  }),
+}));
+
+// Cart Relations
+export const cartsRelations = relations(carts, ({ one, many }) => ({
+  user: one(users, {
+    fields: [carts.userId],
+    references: [users.id],
+  }),
+  items: many(cartItems),
+}));
+
+// Cart Items Relations
+export const cartItemsRelations = relations(cartItems, ({ one }) => ({
+  cart: one(carts, {
+    fields: [cartItems.cartId],
+    references: [carts.id],
+  }),
+  product: one(products, {
+    fields: [cartItems.productId],
+    references: [products.id],
+  }),
+}));
+
+// Wishlist Relations
+export const wishlistsRelations = relations(wishlists, ({ one }) => ({
+  user: one(users, {
+    fields: [wishlists.userId],
+    references: [users.id],
+  }),
+  product: one(products, {
+    fields: [wishlists.productId],
     references: [products.id],
   }),
 }));
