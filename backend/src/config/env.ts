@@ -18,6 +18,9 @@ const envSchema = z.object({
   JWT_REFRESH_EXPIRY: z.string().default("7d"),
   RESEND_API_KEY: z.string().optional(),
   GOOGLE_CLIENT_ID: z.string().optional(),
+  CLOUDINARY_CLOUD_NAME: z.string().default("hsufdlap"),
+  CLOUDINARY_API_KEY: z.string().optional(),
+  CLOUDINARY_API_SECRET: z.string().default("H53kwGjBTkMnWPKk4fWRvEmqO6k"),
 });
 
 export const env = envSchema.parse(process.env);

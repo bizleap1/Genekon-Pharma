@@ -4,7 +4,7 @@ import { logger } from "./utils/logger";
 import { sql } from "./config/database";
 
 const server = app.listen(env.PORT, async () => {
-  logger.info(`🚀 Genekon Authentication Backend running on port ${env.PORT}`);
+  logger.info(`🚀 Genekon E-Commerce API Backend running on port ${env.PORT}`);
   logger.info(`👉 Healthcheck: http://localhost:${env.PORT}/api/v1/health`);
   logger.info(`👉 Environment: ${env.NODE_ENV}`);
 

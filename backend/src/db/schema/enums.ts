@@ -31,3 +31,11 @@ export const wholesaleBusinessTypeEnum = pgEnum("wholesale_business_type_enum", 
   "HOSPITAL",
   "DISTRIBUTOR",
 ]);
+
+export const productStatusEnum = pgEnum("product_status_enum", [
+  "ACTIVE",
+  "DRAFT",
+  "ARCHIVED",
+  "OUT_OF_STOCK",
+]);
+
