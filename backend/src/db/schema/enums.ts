@@ -39,3 +39,28 @@ export const productStatusEnum = pgEnum("product_status_enum", [
   "OUT_OF_STOCK",
 ]);
 
+export const orderStatusEnum = pgEnum("order_status_enum", [
+  "PENDING_VERIFICATION",
+  "PLACED",
+  "CONFIRMED",
+  "PACKED",
+  "SHIPPED",
+  "DELIVERED",
+  "CANCELLED",
+]);
+
+export const paymentStatusEnum = pgEnum("payment_status_enum", [
+  "PENDING",
+  "PAID",
+  "FAILED",
+  "REFUNDED",
+]);
+
+export const paymentMethodEnum = pgEnum("payment_method_enum", [
+  "COD",
+  "ONLINE",
+  "UPI",
+  "CARD",
+  "NETBANKING",
+]);
+

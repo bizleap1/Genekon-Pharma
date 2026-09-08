@@ -10,6 +10,7 @@
     "test:auth": "ts-node-dev --transpile-only -r dotenv/config src/scripts/testAuth.ts",
     "test:products": "ts-node --transpile-only -r dotenv/config src/scripts/testProducts.ts",
     "test:cart": "ts-node --transpile-only -r dotenv/config src/scripts/testCartWishlist.ts",
+    "test:orders": "ts-node --transpile-only -r dotenv/config src/scripts/testOrders.ts",
     "db:push": "drizzle-kit push",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",

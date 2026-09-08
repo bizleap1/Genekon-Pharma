@@ -7,6 +7,10 @@ import { products } from "./products";
 import { productImages } from "./productImages";
 import { carts, cartItems } from "./cart";
 import { wishlists } from "./wishlist";
+import { prescriptions } from "./prescriptions";
+import { orders } from "./orders";
+import { orderItems } from "./orderItems";
+import { orderStatusHistory } from "./orderStatusHistory";
 
 export * from "./enums";
 export * from "./users";
@@ -18,6 +22,10 @@ export * from "./products";
 export * from "./productImages";
 export * from "./cart";
 export * from "./wishlist";
+export * from "./prescriptions";
+export * from "./orders";
+export * from "./orderItems";
+export * from "./orderStatusHistory";
 
 // Users Relations
 export const usersRelations = relations(users, ({ one, many }) => ({
@@ -28,6 +36,8 @@ export const usersRelations = relations(users, ({ one, many }) => ({
     references: [carts.userId],
   }),
   wishlist: many(wishlists),
+  orders: many(orders),
+  prescriptions: many(prescriptions),
 }));
 
 export const userAddressesRelations = relations(userAddresses, ({ one }) => ({
@@ -66,6 +76,7 @@ export const productsRelations = relations(products, ({ one, many }) => ({
   images: many(productImages),
   cartItems: many(cartItems),
   wishlists: many(wishlists),
+  orderItems: many(orderItems),
 }));
 
 // Product Images Relations
@@ -108,3 +119,62 @@ export const wishlistsRelations = relations(wishlists, ({ one }) => ({
     references: [products.id],
   }),
 }));
+
+// Prescriptions Relations
+export const prescriptionsRelations = relations(prescriptions, ({ one }) => ({
+  user: one(users, {
+    fields: [prescriptions.userId],
+    references: [users.id],
+  }),
+  order: one(orders, {
+    fields: [prescriptions.orderId],
+    references: [orders.id],
+  }),
+  reviewer: one(users, {
+    fields: [prescriptions.reviewedBy],
+    references: [users.id],
+  }),
+}));
+
+// Orders Relations
+export const ordersRelations = relations(orders, ({ one, many }) => ({
+  user: one(users, {
+    fields: [orders.userId],
+    references: [users.id],
+  }),
+  deliveryAddress: one(userAddresses, {
+    fields: [orders.deliveryAddressId],
+    references: [userAddresses.id],
+  }),
+  prescription: one(prescriptions, {
+    fields: [orders.prescriptionId],
+    references: [prescriptions.id],
+  }),
+  items: many(orderItems),
+  statusHistory: many(orderStatusHistory),
+}));
+
+// Order Items Relations
+export const orderItemsRelations = relations(orderItems, ({ one }) => ({
+  order: one(orders, {
+    fields: [orderItems.orderId],
+    references: [orders.id],
+  }),
+  product: one(products, {
+    fields: [orderItems.productId],
+    references: [products.id],
+  }),
+}));
+
+// Order Status History Relations
+export const orderStatusHistoryRelations = relations(orderStatusHistory, ({ one }) => ({
+  order: one(orders, {
+    fields: [orderStatusHistory.orderId],
+    references: [orders.id],
+  }),
+  updatedByUser: one(users, {
+    fields: [orderStatusHistory.updatedBy],
+    references: [users.id],
+  }),
+}));
+
