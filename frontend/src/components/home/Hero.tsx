@@ -105,13 +105,6 @@ export const Hero: React.FC = () => {
 
           </div>
 
-          {/* Right side accent matching the attached reference image */}
-          <div className="hidden lg:flex lg:col-span-5 flex-col items-center justify-center min-h-[340px] relative pointer-events-none select-none">
-            <div className="font-script text-5xl xl:text-6xl text-[#14304A] leading-tight text-center -rotate-6 opacity-90 tracking-wide">
-              Care<br />Beyond<br />Medicines
-            </div>
-          </div>
-
         </div>
       </Container>
     </section>
