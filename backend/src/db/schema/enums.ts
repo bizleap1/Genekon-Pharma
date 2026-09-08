@@ -51,6 +51,7 @@ export const orderStatusEnum = pgEnum("order_status_enum", [
 
 export const paymentStatusEnum = pgEnum("payment_status_enum", [
   "PENDING",
+  "SUCCESS",
   "PAID",
   "FAILED",
   "REFUNDED",

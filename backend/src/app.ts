@@ -18,8 +18,15 @@ app.use(
   })
 );
 
-// Body Parsing
-app.use(express.json({ limit: "2mb" }));
+// Body Parsing (with rawBody capture for webhook cryptographic verification)
+app.use(
+  express.json({
+    limit: "2mb",
+    verify: (req: any, _res, buf) => {
+      req.rawBody = buf;
+    },
+  })
+);
 app.use(express.urlencoded({ extended: true }));
 
 // Root Information

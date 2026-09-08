@@ -22,6 +22,9 @@ const envSchema = z.object({
   CLOUDINARY_CLOUD_NAME: z.string().default("hsufdlap"),
   CLOUDINARY_API_KEY: z.string().optional(),
   CLOUDINARY_API_SECRET: z.string().default("H53kwGjBTkMnWPKk4fWRvEmqO6k"),
+  RAZORPAY_KEY_ID: z.string().default("rzp_test_TZVi7dlYcaCcmf"),
+  RAZORPAY_KEY_SECRET: z.string().default("JvrjYk4Rp2cv6YeaLHKRqqJP"),
+  RAZORPAY_WEBHOOK_SECRET: z.string().default("genekon_razorpay_webhook_secret_2026"),
 });
 
 export const env = envSchema.parse(process.env);

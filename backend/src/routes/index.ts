@@ -6,6 +6,7 @@ import productRoutes from "./productRoutes";
 import cartRoutes from "./cartRoutes";
 import wishlistRoutes from "./wishlistRoutes";
 import orderRoutes from "./orderRoutes";
+import paymentRoutes from "./paymentRoutes";
 import { sendSuccess } from "../utils/apiResponse";
 
 const router = Router();
@@ -32,5 +33,6 @@ router.use("/products", productRoutes);
 router.use("/cart", cartRoutes);
 router.use("/wishlist", wishlistRoutes);
 router.use("/orders", orderRoutes);
+router.use("/payments", paymentRoutes);
 
 export default router;

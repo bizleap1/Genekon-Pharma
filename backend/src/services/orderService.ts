@@ -11,11 +11,13 @@ import {
   users,
   cartItems,
   carts,
+  payments,
 } from "../db";
 import { Order, DeliveryAddressSnapshot } from "../db/schema/orders";
 import { OrderItem } from "../db/schema/orderItems";
 import { OrderStatusHistory } from "../db/schema/orderStatusHistory";
 import { cartService } from "./cartService";
+import { emailNotificationService } from "./emailNotificationService";
 import { logger } from "../utils/logger";
 
 export interface CreateOrderPayload {
@@ -187,8 +189,35 @@ export const orderService = {
       updatedBy: userId,
     });
 
-    // 8. Clear customer cart after checkout
+    // 8. If COD, create payment entry with status PENDING
+    if (createdOrder.paymentMethod === "COD") {
+      await db.insert(payments).values({
+        orderId: createdOrder.id,
+        amount: createdOrder.totalAmount,
+        currency: "INR",
+        paymentMethod: "COD",
+        status: "PENDING",
+      });
+    }
+
+    // 9. Clear customer cart after checkout
     await cartService.clearCart(userId);
+
+    // 10. Dispatch order confirmation email (non-blocking)
+    (async () => {
+      try {
+        const [user] = await db.select().from(users).where(eq(users.id, userId)).limit(1);
+        if (user && user.email) {
+          const items = await db.select().from(orderItems).where(eq(orderItems.orderId, createdOrder.id));
+          await emailNotificationService.sendOrderPlacedConfirmation(createdOrder, items, {
+            name: user.name,
+            email: user.email,
+          });
+        }
+      } catch (err) {
+        logger.error("Failed to send order placed confirmation email:", err);
+      }
+    })();
 
     logger.info(`Created order ${createdOrder.orderNumber} for user ${userId} (Status: ${initialStatus})`);
 
@@ -444,6 +473,23 @@ export const orderService = {
       notes: notes || `Order status updated to ${newStatus} by dispensary admin.`,
       updatedBy: adminUserId,
     });
+
+    // Asynchronously dispatch status emails (SHIPPED / DELIVERED)
+    (async () => {
+      try {
+        const [user] = await db.select().from(users).where(eq(users.id, order.userId)).limit(1);
+        if (user && user.email) {
+          const customerInfo = { name: user.name, email: user.email };
+          if (newStatus === "SHIPPED") {
+            await emailNotificationService.sendOrderShippedEmail(order, { courierName: "Genekon Express Delivery", trackingNumber: order.orderNumber }, customerInfo);
+          } else if (newStatus === "DELIVERED") {
+            await emailNotificationService.sendOrderDeliveredEmail(order, customerInfo);
+          }
+        }
+      } catch (err) {
+        logger.error(`Failed to send status update email for order ${order.orderNumber}:`, err);
+      }
+    })();
 
     logger.info(`Admin ${adminUserId} updated order ${order.orderNumber} to ${newStatus}`);
     return this.getOrderById(order.id, undefined, true);

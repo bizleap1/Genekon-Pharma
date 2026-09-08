@@ -3,10 +3,10 @@ import { ZodTypeAny, ZodError } from "zod";
 import { sendError } from "../utils/apiResponse";
 
 export const validateRequest =
-  (schema: ZodTypeAny) =>
+  (schema: ZodTypeAny, source: "body" | "query" | "params" = "body") =>
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      req.body = await schema.parseAsync(req.body);
+      req[source] = await schema.parseAsync(req[source]);
       next();
     } catch (error) {
       if (error instanceof ZodError) {

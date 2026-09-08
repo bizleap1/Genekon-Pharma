@@ -11,6 +11,7 @@ import { prescriptions } from "./prescriptions";
 import { orders } from "./orders";
 import { orderItems } from "./orderItems";
 import { orderStatusHistory } from "./orderStatusHistory";
+import { payments } from "./payments";
 
 export * from "./enums";
 export * from "./users";
@@ -26,6 +27,7 @@ export * from "./prescriptions";
 export * from "./orders";
 export * from "./orderItems";
 export * from "./orderStatusHistory";
+export * from "./payments";
 
 // Users Relations
 export const usersRelations = relations(users, ({ one, many }) => ({
@@ -152,6 +154,7 @@ export const ordersRelations = relations(orders, ({ one, many }) => ({
   }),
   items: many(orderItems),
   statusHistory: many(orderStatusHistory),
+  payments: many(payments),
 }));
 
 // Order Items Relations
@@ -175,6 +178,14 @@ export const orderStatusHistoryRelations = relations(orderStatusHistory, ({ one 
   updatedByUser: one(users, {
     fields: [orderStatusHistory.updatedBy],
     references: [users.id],
+  }),
+}));
+
+// Payments Relations
+export const paymentsRelations = relations(payments, ({ one }) => ({
+  order: one(orders, {
+    fields: [payments.orderId],
+    references: [orders.id],
   }),
 }));
 
