@@ -2,7 +2,58 @@ import { Product } from "@/types/product";
 
 export const ALL_PRODUCTS: Product[] = [
   {
-    "id": "prod-1",
+    "id": "4632d5ae-3fa2-4f91-bd0d-a6883c0d40d6",
+    "legacyId": "prod-0",
+    "slug": "paracetamol-500-mg",
+    "name": "Paracetamol 500 mg",
+    "genericName": "Paracetamol 500mg",
+    "brand": "Genekon",
+    "manufacturer": "Genekon Pharmaceuticals Pvt Ltd, MIDC Industrial Area, Nagpur, Maharashtra",
+    "category": "Pain Relief & Fever",
+    "subCategory": "Tablet",
+    "price": 60,
+    "sellingPrice": 60,
+    "mrp": 80,
+    "originalPrice": 80,
+    "discount": 25,
+    "discountPercent": 25,
+    "gst": 12,
+    "sku": "GNK-PARA-500-TWIN",
+    "batchNumber": "GK-2026-001",
+    "expiryDate": "10/2028",
+    "rating": 4.6,
+    "reviewCount": 120,
+    "stockStatus": "In Stock",
+    "stockQuantity": 200,
+    "quantity": 1,
+    "prescriptionRequired": false,
+    "inStock": true,
+    "composition": "Paracetamol 500mg",
+    "description": "Paracetamol 500 mg (Twin Pack) is an effective analgesic and antipyretic formulation for fast relief from mild to moderate fever and body aches.",
+    "usage": "Take 1-2 tablets every 4-6 hours with water as required, not exceeding 8 tablets in 24 hours.",
+    "precautions": "Keep out of reach of children. If symptoms persist beyond 3 days, consult your physician immediately.",
+    "storageInstructions": "Store below 25°C in a dry place. Protect from direct heat, moisture and sunlight.",
+    "image": "/images/products/genekon-tablets-pack.jpg",
+    "images": [
+      "/images/products/genekon-tablets-pack.jpg"
+    ],
+    "dosageForm": "Tablet",
+    "packSize": "20 Tablets (Twin Pack)",
+    "tag": "Bestseller",
+    "variants": [
+      {
+        "id": "v-para-twin-1",
+        "name": "20 Tablets (Twin Pack)",
+        "price": 60,
+        "mrp": 80,
+        "stock": 200
+      }
+    ]
+  },
+  {
+    "id": "f077fd54-2dba-4179-ba45-4be8ef6dd602",
+    "legacyId": "prod-1",
+    "slug": "crocin-500",
     "name": "Crocin 500",
     "genericName": "Paracetamol 500mg",
     "brand": "Crocin",
@@ -49,7 +100,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-2",
+    "id": "6827708d-0a4b-438c-b4f1-a1fff7984038",
+    "legacyId": "prod-2",
+    "slug": "crocin-advance",
     "name": "Crocin Advance",
     "genericName": "Paracetamol 500mg",
     "brand": "Crocin",
@@ -96,7 +149,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-3",
+    "id": "99af0c13-ef1e-4228-bfab-de279f6a9611",
+    "legacyId": "prod-3",
+    "slug": "dolo-650",
     "name": "Dolo 650",
     "genericName": "Paracetamol 650mg",
     "brand": "Dolo",
@@ -143,7 +198,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-4",
+    "id": "ebae285c-1843-4b08-8c3b-a93df61b09e3",
+    "legacyId": "prod-4",
+    "slug": "dolo-500",
     "name": "Dolo 500",
     "genericName": "Paracetamol 500mg",
     "brand": "Dolo",
@@ -190,7 +247,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-5",
+    "id": "24e7fd9c-ee57-42a1-8fef-7b32021486f0",
+    "legacyId": "prod-5",
+    "slug": "calpol-500",
     "name": "Calpol 500",
     "genericName": "Paracetamol 500mg",
     "brand": "Calpol",
@@ -237,7 +296,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-6",
+    "id": "14eb7bf9-5249-4c61-8f5c-8c0909e8259c",
+    "legacyId": "prod-6",
+    "slug": "combiflam",
     "name": "Combiflam",
     "genericName": "Ibuprofen 400mg + Paracetamol 325mg",
     "brand": "Combiflam",
@@ -284,7 +345,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-7",
+    "id": "462a6019-c103-418c-9911-834207c627ea",
+    "legacyId": "prod-7",
+    "slug": "flexon",
     "name": "Flexon",
     "genericName": "Ibuprofen 400mg + Paracetamol 325mg",
     "brand": "Flexon",
@@ -331,7 +394,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-8",
+    "id": "e5d82cc4-ebb4-427a-9f44-f8c47c70ab45",
+    "legacyId": "prod-8",
+    "slug": "disprin",
     "name": "Disprin",
     "genericName": "Aspirin 350mg",
     "brand": "Disprin",
@@ -378,7 +443,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-9",
+    "id": "da7e02ed-9791-45ac-8449-17ca12866f03",
+    "legacyId": "prod-9",
+    "slug": "saridon",
     "name": "Saridon",
     "genericName": "Paracetamol + Propyphenazone + Caffeine",
     "brand": "Saridon",
@@ -425,7 +492,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-10",
+    "id": "bf04e32b-0268-497d-853f-90e516eb242a",
+    "legacyId": "prod-10",
+    "slug": "ibugesic-plus",
     "name": "Ibugesic Plus",
     "genericName": "Ibuprofen 400mg + Paracetamol 325mg",
     "brand": "Ibugesic",
@@ -472,7 +541,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-11",
+    "id": "86fa3fe2-318e-42e9-a99d-1a8458543948",
+    "legacyId": "prod-11",
+    "slug": "metacin",
     "name": "Metacin",
     "genericName": "Paracetamol 500mg",
     "brand": "Metacin",
@@ -519,7 +590,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-12",
+    "id": "2d99dad6-03bd-4da7-9338-647e0c8f85c7",
+    "legacyId": "prod-12",
+    "slug": "zerodol-p",
     "name": "Zerodol-P",
     "genericName": "Aceclofenac 100mg + Paracetamol 325mg",
     "brand": "Zerodol-P",
@@ -566,7 +639,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-13",
+    "id": "fc6ff42e-c9e9-478a-a0c1-9eb64057ff73",
+    "legacyId": "prod-13",
+    "slug": "zerodol-sp",
     "name": "Zerodol-SP",
     "genericName": "Aceclofenac + Paracetamol + Serratiopeptidase",
     "brand": "Zerodol-SP",
@@ -613,7 +688,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-14",
+    "id": "89337fc7-4bba-4855-b11b-a1a4e3e0a514",
+    "legacyId": "prod-14",
+    "slug": "voveran",
     "name": "Voveran",
     "genericName": "Diclofenac Sodium 50mg",
     "brand": "Voveran",
@@ -660,7 +737,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-15",
+    "id": "f75cb2ff-d37f-4e14-a82f-eb0d3e346c15",
+    "legacyId": "prod-15",
+    "slug": "voveran-sr",
     "name": "Voveran SR",
     "genericName": "Diclofenac Sodium 100mg",
     "brand": "Voveran",
@@ -707,7 +786,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-16",
+    "id": "9b925b41-84d8-4167-9dbf-b87f175d4720",
+    "legacyId": "prod-16",
+    "slug": "nimesulide-100",
     "name": "Nimesulide 100",
     "genericName": "Nimesulide 100mg",
     "brand": "Nimesulide",
@@ -754,7 +835,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-17",
+    "id": "84664ae0-b23f-4b73-ac9e-98f05c511385",
+    "legacyId": "prod-17",
+    "slug": "sumo-tablet",
     "name": "Sumo Tablet",
     "genericName": "Nimesulide 100mg + Paracetamol 500mg",
     "brand": "Sumo",
@@ -801,7 +884,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-18",
+    "id": "7595177a-a2fd-42f0-8ea8-2e36067b27ae",
+    "legacyId": "prod-18",
+    "slug": "enzoflam",
     "name": "Enzoflam",
     "genericName": "Diclofenac + Paracetamol + Serratiopeptidase",
     "brand": "Enzoflam",
@@ -848,7 +933,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-19",
+    "id": "3358b801-14b7-498e-8fd9-d9456943e0d3",
+    "legacyId": "prod-19",
+    "slug": "ultracet",
     "name": "Ultracet",
     "genericName": "Tramadol 37.5mg + Paracetamol 325mg",
     "brand": "Ultracet",
@@ -895,7 +982,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-20",
+    "id": "62a0c465-6aab-44ac-966a-aa405139aad5",
+    "legacyId": "prod-20",
+    "slug": "aceclofenac-100",
     "name": "Aceclofenac 100",
     "genericName": "Aceclofenac 100mg",
     "brand": "Aceclofenac",
@@ -942,7 +1031,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-21",
+    "id": "f97a40ce-277d-46c2-a610-7311e1aee01a",
+    "legacyId": "prod-21",
+    "slug": "meftal-spas",
     "name": "Meftal-Spas",
     "genericName": "Mefenamic Acid + Dicyclomine",
     "brand": "Meftal-Spas",
@@ -989,7 +1080,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-22",
+    "id": "3fa022b3-d8f3-44ff-82de-20be9a76d934",
+    "legacyId": "prod-22",
+    "slug": "meftal-forte",
     "name": "Meftal Forte",
     "genericName": "Mefenamic Acid 500mg + Paracetamol 325mg",
     "brand": "Meftal",
@@ -1036,7 +1129,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-23",
+    "id": "eda9a14e-3e27-4ee7-a50c-9fe526924a35",
+    "legacyId": "prod-23",
+    "slug": "brufen-400",
     "name": "Brufen 400",
     "genericName": "Ibuprofen 400mg",
     "brand": "Brufen",
@@ -1083,7 +1178,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-24",
+    "id": "88d35123-ed94-4a65-ab1f-9301a74aa1a0",
+    "legacyId": "prod-24",
+    "slug": "panadol-extra",
     "name": "Panadol Extra",
     "genericName": "Paracetamol + Caffeine",
     "brand": "Panadol",
@@ -1130,7 +1227,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-25",
+    "id": "108c6e73-8d2e-4dd9-bcbc-44ecdafe9376",
+    "legacyId": "prod-25",
+    "slug": "etoshine-90",
     "name": "Etoshine 90",
     "genericName": "Etoricoxib 90mg",
     "brand": "Etoshine",
@@ -1177,7 +1276,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-26",
+    "id": "83b7958a-2f62-464e-b444-24326899085b",
+    "legacyId": "prod-26",
+    "slug": "naprosyn-250",
     "name": "Naprosyn 250",
     "genericName": "Naproxen 250mg",
     "brand": "Naprosyn",
@@ -1224,7 +1325,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-27",
+    "id": "fb1e1070-f642-43a7-ad24-0a1114aaba64",
+    "legacyId": "prod-27",
+    "slug": "hifenac-p",
     "name": "Hifenac-P",
     "genericName": "Aceclofenac + Paracetamol",
     "brand": "Hifenac-P",
@@ -1271,7 +1374,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-28",
+    "id": "a4cd3c68-06ea-4fbe-9ec7-76b686ce3d82",
+    "legacyId": "prod-28",
+    "slug": "tramazac",
     "name": "Tramazac",
     "genericName": "Tramadol 50mg",
     "brand": "Tramazac",
@@ -1318,7 +1423,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-29",
+    "id": "0c0e7b06-9782-41a3-bb85-66a0d25bacdb",
+    "legacyId": "prod-29",
+    "slug": "vicks-action-500",
     "name": "Vicks Action 500",
     "genericName": "Paracetamol + Phenylephrine + Caffeine",
     "brand": "Vicks",
@@ -1365,7 +1472,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-30",
+    "id": "a4ff47d3-f244-4482-8ec6-5634d0813b80",
+    "legacyId": "prod-30",
+    "slug": "d-cold-total",
     "name": "D Cold Total",
     "genericName": "Paracetamol + Phenylephrine + Chlorpheniramine",
     "brand": "D",
@@ -1412,7 +1521,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-31",
+    "id": "67fa5702-8d08-47b2-9cb9-0c1210aa86df",
+    "legacyId": "prod-31",
+    "slug": "sinarest",
     "name": "Sinarest",
     "genericName": "Paracetamol + Phenylephrine + Chlorpheniramine",
     "brand": "Sinarest",
@@ -1459,7 +1570,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-32",
+    "id": "7ea8a55c-29bb-489f-98f7-c5e170a6399f",
+    "legacyId": "prod-32",
+    "slug": "sinarest-lp",
     "name": "Sinarest LP",
     "genericName": "Paracetamol + Cetirizine + Phenylephrine",
     "brand": "Sinarest",
@@ -1506,7 +1619,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-33",
+    "id": "14da4c05-b712-4d32-baf8-a01e947cf110",
+    "legacyId": "prod-33",
+    "slug": "wikoryl",
     "name": "Wikoryl",
     "genericName": "Paracetamol + Phenylephrine + Chlorpheniramine",
     "brand": "Wikoryl",
@@ -1553,7 +1668,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-34",
+    "id": "60a0fedc-5423-469b-84de-ab4ccf99adb1",
+    "legacyId": "prod-34",
+    "slug": "cheston-cold",
     "name": "Cheston Cold",
     "genericName": "Paracetamol + Cetirizine + Phenylephrine",
     "brand": "Cheston",
@@ -1600,7 +1717,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-35",
+    "id": "f54507c0-b2c5-430e-9eda-fcddb42af2dc",
+    "legacyId": "prod-35",
+    "slug": "corex-syrup",
     "name": "Corex Syrup",
     "genericName": "Chlorpheniramine + Codeine",
     "brand": "Corex",
@@ -1647,7 +1766,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-36",
+    "id": "a377d056-7e87-4d99-b65f-1781e49d02be",
+    "legacyId": "prod-36",
+    "slug": "ascoril-ls-syrup",
     "name": "Ascoril LS Syrup",
     "genericName": "Ambroxol + Levosalbutamol + Guaifenesin",
     "brand": "Ascoril",
@@ -1694,7 +1815,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-37",
+    "id": "ba39d373-8f74-43c4-bba3-6a78129af242",
+    "legacyId": "prod-37",
+    "slug": "ascoril-d-plus",
     "name": "Ascoril D Plus",
     "genericName": "Dextromethorphan + Chlorpheniramine + Phenylephrine",
     "brand": "Ascoril",
@@ -1741,7 +1864,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-38",
+    "id": "f281a254-bd6e-40e3-9367-0d1b47bb1ff8",
+    "legacyId": "prod-38",
+    "slug": "grilinctus-bm",
     "name": "Grilinctus BM",
     "genericName": "Bromhexine + Phenylephrine + Chlorpheniramine",
     "brand": "Grilinctus",
@@ -1788,7 +1913,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-39",
+    "id": "18c27361-0bfc-4993-8095-c24d3538ef84",
+    "legacyId": "prod-39",
+    "slug": "chericof-syrup",
     "name": "Chericof Syrup",
     "genericName": "Chlorpheniramine + Dextromethorphan + Phenylephrine",
     "brand": "Chericof",
@@ -1835,7 +1962,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-40",
+    "id": "84953f32-86bc-4eca-8cc6-9ee19695b2e9",
+    "legacyId": "prod-40",
+    "slug": "benadryl-cough-syrup",
     "name": "Benadryl Cough Syrup",
     "genericName": "Diphenhydramine + Ammonium Chloride",
     "brand": "Benadryl",
@@ -1882,7 +2011,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-41",
+    "id": "ab3c6332-2a97-44cf-b78b-6af107654abe",
+    "legacyId": "prod-41",
+    "slug": "alex-syrup",
     "name": "Alex Syrup",
     "genericName": "Dextromethorphan + Phenylephrine + Chlorpheniramine",
     "brand": "Alex",
@@ -1929,7 +2060,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-42",
+    "id": "796cb860-a4ee-495d-be53-c7db2422aa82",
+    "legacyId": "prod-42",
+    "slug": "mucinac-600",
     "name": "Mucinac 600",
     "genericName": "Acetylcysteine 600mg",
     "brand": "Mucinac",
@@ -1976,7 +2109,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-43",
+    "id": "93972b75-273a-4148-8967-198b73da858d",
+    "legacyId": "prod-43",
+    "slug": "ambrolite-syrup",
     "name": "Ambrolite Syrup",
     "genericName": "Ambroxol Hydrochloride",
     "brand": "Ambrolite",
@@ -2023,7 +2158,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-44",
+    "id": "874ad2e3-454a-48a9-81d4-7ad264c38812",
+    "legacyId": "prod-44",
+    "slug": "bro-zedex-syrup",
     "name": "Bro-Zedex Syrup",
     "genericName": "Terbutaline + Bromhexine + Guaiphenesin",
     "brand": "Bro-Zedex",
@@ -2070,7 +2207,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-45",
+    "id": "ddc0e8e3-6c0c-4616-89b7-ec81f5501d45",
+    "legacyId": "prod-45",
+    "slug": "zedex-syrup",
     "name": "Zedex Syrup",
     "genericName": "Dextromethorphan + Cetirizine",
     "brand": "Zedex",
@@ -2117,7 +2256,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-46",
+    "id": "f606d2af-7b26-4d01-ba88-62fb7ad9094b",
+    "legacyId": "prod-46",
+    "slug": "otrivin-nasal-drops",
     "name": "Otrivin Nasal Drops",
     "genericName": "Xylometazoline 0.1%",
     "brand": "Otrivin",
@@ -2164,7 +2305,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-47",
+    "id": "66e53fbb-e692-4b85-b5fd-342feca192df",
+    "legacyId": "prod-47",
+    "slug": "nasivion-nasal-spray",
     "name": "Nasivion Nasal Spray",
     "genericName": "Oxymetazoline 0.05%",
     "brand": "Nasivion",
@@ -2211,7 +2354,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-48",
+    "id": "281ad0a7-ab24-40a0-83b1-f964c1ce808f",
+    "legacyId": "prod-48",
+    "slug": "nasomist-nasal-spray",
     "name": "Nasomist Nasal Spray",
     "genericName": "Xylometazoline",
     "brand": "Nasomist",
@@ -2258,7 +2403,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-49",
+    "id": "2681ee04-c248-4ff6-80f4-aaa06e97ce03",
+    "legacyId": "prod-49",
+    "slug": "vicks-vaporub",
     "name": "Vicks Vaporub",
     "genericName": "Camphor + Menthol + Eucalyptus Oil",
     "brand": "Vicks",
@@ -2305,7 +2452,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-50",
+    "id": "47a9777b-4f65-4ba7-b62f-d7f2d6649c27",
+    "legacyId": "prod-50",
+    "slug": "vicks-inhaler",
     "name": "Vicks Inhaler",
     "genericName": "Menthol + Camphor + Eucalyptus Oil",
     "brand": "Vicks",
@@ -2352,7 +2501,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-51",
+    "id": "775cf9c7-cf08-4d2e-b4d1-7779adbaaf60",
+    "legacyId": "prod-51",
+    "slug": "zerodol-cold-tablet",
     "name": "Zerodol Cold Tablet",
     "genericName": "Paracetamol + Cetirizine + Phenylephrine",
     "brand": "Zerodol",
@@ -2399,7 +2550,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-52",
+    "id": "b67adff9-2785-41c2-9237-0a80f91c4376",
+    "legacyId": "prod-52",
+    "slug": "augmentin-625-duo",
     "name": "Augmentin 625 Duo",
     "genericName": "Amoxycillin 500mg + Clavulanic Acid 125mg",
     "brand": "Augmentin",
@@ -2446,7 +2599,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-53",
+    "id": "0026dec8-18c9-492f-a86c-67ea5c4fe427",
+    "legacyId": "prod-53",
+    "slug": "moxikind-cv-625",
     "name": "Moxikind-CV 625",
     "genericName": "Amoxycillin + Clavulanic Acid",
     "brand": "Moxikind-CV",
@@ -2493,7 +2648,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-54",
+    "id": "d8eb8849-37e2-4c52-9a49-1103145a4fa8",
+    "legacyId": "prod-54",
+    "slug": "clavam-625",
     "name": "Clavam 625",
     "genericName": "Amoxycillin + Clavulanic Acid",
     "brand": "Clavam",
@@ -2540,7 +2697,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-55",
+    "id": "fd5ac1da-1c73-46bd-8263-aa6f520da830",
+    "legacyId": "prod-55",
+    "slug": "novamox-500",
     "name": "Novamox 500",
     "genericName": "Amoxycillin 500mg",
     "brand": "Novamox",
@@ -2587,7 +2746,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-56",
+    "id": "4e6f0bca-f7df-4457-b48a-f9aa6caa98e4",
+    "legacyId": "prod-56",
+    "slug": "amoxil-500",
     "name": "Amoxil 500",
     "genericName": "Amoxycillin 500mg",
     "brand": "Amoxil",
@@ -2634,7 +2795,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-57",
+    "id": "2babd149-acc8-48ea-b4c2-0af49c08b96b",
+    "legacyId": "prod-57",
+    "slug": "azithral-500",
     "name": "Azithral 500",
     "genericName": "Azithromycin 500mg",
     "brand": "Azithral",
@@ -2681,7 +2844,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-58",
+    "id": "b0d7034e-d97e-4112-85d6-ba47863226c5",
+    "legacyId": "prod-58",
+    "slug": "zithrocin-500",
     "name": "Zithrocin 500",
     "genericName": "Azithromycin 500mg",
     "brand": "Zithrocin",
@@ -2728,7 +2893,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-59",
+    "id": "d49606a6-4141-4876-82eb-26ee6cbfe3a4",
+    "legacyId": "prod-59",
+    "slug": "azee-500",
     "name": "Azee 500",
     "genericName": "Azithromycin 500mg",
     "brand": "Azee",
@@ -2775,7 +2942,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-60",
+    "id": "2beb11d6-2993-46f6-83c4-6212942e3e93",
+    "legacyId": "prod-60",
+    "slug": "cifran-500",
     "name": "Cifran 500",
     "genericName": "Ciprofloxacin 500mg",
     "brand": "Cifran",
@@ -2822,7 +2991,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-61",
+    "id": "3768b911-e554-4be5-9679-a9e041c0b6d3",
+    "legacyId": "prod-61",
+    "slug": "ciplox-500",
     "name": "Ciplox 500",
     "genericName": "Ciprofloxacin 500mg",
     "brand": "Ciplox",
@@ -2869,7 +3040,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-62",
+    "id": "70367d40-c349-4f35-ae62-af006e41e3d4",
+    "legacyId": "prod-62",
+    "slug": "norflox-tz",
     "name": "Norflox-TZ",
     "genericName": "Norfloxacin + Tinidazole",
     "brand": "Norflox-TZ",
@@ -2916,7 +3089,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-63",
+    "id": "a0844bff-7436-4cfa-be70-ab548ef9be4c",
+    "legacyId": "prod-63",
+    "slug": "zanocin-oz",
     "name": "Zanocin OZ",
     "genericName": "Ofloxacin + Ornidazole",
     "brand": "Zanocin",
@@ -2963,7 +3138,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-64",
+    "id": "9305b176-2d7a-461e-b330-6d4347a96d29",
+    "legacyId": "prod-64",
+    "slug": "o2-tablet",
     "name": "O2 Tablet",
     "genericName": "Ofloxacin 200mg",
     "brand": "O2",
@@ -3010,7 +3187,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-65",
+    "id": "1e93bf6d-0f02-4a54-b0d7-2882db47c0e3",
+    "legacyId": "prod-65",
+    "slug": "levoflox-500",
     "name": "Levoflox 500",
     "genericName": "Levofloxacin 500mg",
     "brand": "Levoflox",
@@ -3057,7 +3236,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-66",
+    "id": "8fbc81e0-3309-47d8-8fad-cae87450c407",
+    "legacyId": "prod-66",
+    "slug": "taxim-o-200",
     "name": "Taxim-O 200",
     "genericName": "Cefixime 200mg",
     "brand": "Taxim-O",
@@ -3104,7 +3285,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-67",
+    "id": "cd2e0a94-34c5-4586-bd2c-9d17f2776531",
+    "legacyId": "prod-67",
+    "slug": "zifi-200",
     "name": "Zifi 200",
     "genericName": "Cefixime 200mg",
     "brand": "Zifi",
@@ -3151,7 +3334,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-68",
+    "id": "30f80965-b952-47bc-b8c7-381bf0ac18e7",
+    "legacyId": "prod-68",
+    "slug": "monocef-200",
     "name": "Monocef 200",
     "genericName": "Cefixime 200mg",
     "brand": "Monocef",
@@ -3198,7 +3383,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-69",
+    "id": "3b505c28-d630-4991-842b-3d9730d8f57c",
+    "legacyId": "prod-69",
+    "slug": "ceftum-500",
     "name": "Ceftum 500",
     "genericName": "Cefuroxime 500mg",
     "brand": "Ceftum",
@@ -3245,7 +3432,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-70",
+    "id": "4797de4c-8090-4525-b46e-037fb53fb34b",
+    "legacyId": "prod-70",
+    "slug": "doxt-sl",
     "name": "Doxt-SL",
     "genericName": "Doxycycline + Lactic Acid Bacillus",
     "brand": "Doxt-SL",
@@ -3292,7 +3481,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-71",
+    "id": "4a723498-af37-4332-96c3-5b38bbb72d45",
+    "legacyId": "prod-71",
+    "slug": "doxycycline-100",
     "name": "Doxycycline 100",
     "genericName": "Doxycycline 100mg",
     "brand": "Doxycycline",
@@ -3339,7 +3530,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-72",
+    "id": "b8bcffc2-1ba1-405d-8dac-926559d3436b",
+    "legacyId": "prod-72",
+    "slug": "metrogyl-400",
     "name": "Metrogyl 400",
     "genericName": "Metronidazole 400mg",
     "brand": "Metrogyl",
@@ -3386,7 +3579,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-73",
+    "id": "2b6700a4-8cce-48a8-8e54-9d76f9d3782c",
+    "legacyId": "prod-73",
+    "slug": "flagyl-400",
     "name": "Flagyl 400",
     "genericName": "Metronidazole 400mg",
     "brand": "Flagyl",
@@ -3433,7 +3628,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-74",
+    "id": "5507a4e1-7fed-4e50-8137-e74c8dac5e2d",
+    "legacyId": "prod-74",
+    "slug": "roxid-150",
     "name": "Roxid 150",
     "genericName": "Roxithromycin 150mg",
     "brand": "Roxid",
@@ -3480,7 +3677,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-75",
+    "id": "8071b192-58b2-4f78-896f-b73983c7eddf",
+    "legacyId": "prod-75",
+    "slug": "combutol-400",
     "name": "Combutol 400",
     "genericName": "Ethambutol 400mg",
     "brand": "Combutol",
@@ -3527,7 +3726,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-76",
+    "id": "0df32aba-1359-4d8e-b885-7a989d3abc60",
+    "legacyId": "prod-76",
+    "slug": "augpen-375",
     "name": "Augpen 375",
     "genericName": "Amoxycillin + Clavulanic Acid",
     "brand": "Augpen",
@@ -3574,7 +3775,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-77",
+    "id": "e0bcb324-f51d-48b2-b890-34bf232a231e",
+    "legacyId": "prod-77",
+    "slug": "glycomet-500",
     "name": "Glycomet 500",
     "genericName": "Metformin 500mg",
     "brand": "Glycomet",
@@ -3621,7 +3824,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-78",
+    "id": "995eb92d-f0a9-4652-bf9b-63feedf5a3ff",
+    "legacyId": "prod-78",
+    "slug": "glycomet-gp-1",
     "name": "Glycomet-GP 1",
     "genericName": "Metformin + Glimepiride 1mg",
     "brand": "Glycomet-GP",
@@ -3668,7 +3873,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-79",
+    "id": "b9bfb50c-344f-4d3b-8639-5252276e8a47",
+    "legacyId": "prod-79",
+    "slug": "glycomet-gp-2",
     "name": "Glycomet-GP 2",
     "genericName": "Metformin + Glimepiride 2mg",
     "brand": "Glycomet-GP",
@@ -3715,7 +3922,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-80",
+    "id": "f050f0a2-09d4-4c40-af4b-b5d1870bac53",
+    "legacyId": "prod-80",
+    "slug": "amaryl-2",
     "name": "Amaryl 2",
     "genericName": "Glimepiride 2mg",
     "brand": "Amaryl",
@@ -3762,7 +3971,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-81",
+    "id": "9cc43af0-af41-4bab-ba18-b3d06219fc9e",
+    "legacyId": "prod-81",
+    "slug": "amaryl-m-1",
     "name": "Amaryl-M 1",
     "genericName": "Glimepiride 1mg + Metformin",
     "brand": "Amaryl-M",
@@ -3809,7 +4020,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-82",
+    "id": "b34da9e4-035c-40c3-a064-d54e6d56bbbb",
+    "legacyId": "prod-82",
+    "slug": "janumet-50500",
     "name": "Janumet 50/500",
     "genericName": "Sitagliptin 50mg + Metformin 500mg",
     "brand": "Janumet",
@@ -3856,7 +4069,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-83",
+    "id": "a08b1e5f-b9fb-41dc-ab02-f00defbd08e8",
+    "legacyId": "prod-83",
+    "slug": "galvus-met-50500",
     "name": "Galvus Met 50/500",
     "genericName": "Vildagliptin + Metformin",
     "brand": "Galvus",
@@ -3903,7 +4118,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-84",
+    "id": "ebea377e-0a7b-4f58-a509-113de40d659d",
+    "legacyId": "prod-84",
+    "slug": "istamet-50500",
     "name": "Istamet 50/500",
     "genericName": "Sitagliptin + Metformin",
     "brand": "Istamet",
@@ -3950,7 +4167,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-85",
+    "id": "787036b6-b554-41f4-9504-c45566c13f74",
+    "legacyId": "prod-85",
+    "slug": "glimestar-1",
     "name": "Glimestar 1",
     "genericName": "Glimepiride 1mg",
     "brand": "Glimestar",
@@ -3997,7 +4216,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-86",
+    "id": "16dc03de-0b11-453b-a086-275946a7b2dd",
+    "legacyId": "prod-86",
+    "slug": "metformin-sr-1000",
     "name": "Metformin SR 1000",
     "genericName": "Metformin SR 1000mg",
     "brand": "Metformin",
@@ -4044,7 +4265,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-87",
+    "id": "11d437a0-db2b-4836-98ef-bca86cb5fb03",
+    "legacyId": "prod-87",
+    "slug": "human-mixtard-3070",
     "name": "Human Mixtard 30/70",
     "genericName": "Insulin (Biphasic)",
     "brand": "Human",
@@ -4091,7 +4314,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-88",
+    "id": "cae10103-a284-4053-9baa-395b7ee86d27",
+    "legacyId": "prod-88",
+    "slug": "lantus-solostar",
     "name": "Lantus Solostar",
     "genericName": "Insulin Glargine",
     "brand": "Lantus",
@@ -4138,7 +4363,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-89",
+    "id": "0c5881e0-c166-4e21-8161-bcb65736be82",
+    "legacyId": "prod-89",
+    "slug": "humalog",
     "name": "Humalog",
     "genericName": "Insulin Lispro",
     "brand": "Humalog",
@@ -4185,7 +4412,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-90",
+    "id": "6939c2e6-ed29-4327-ba07-9b9ec73042d8",
+    "legacyId": "prod-90",
+    "slug": "novomix-30",
     "name": "Novomix 30",
     "genericName": "Insulin Aspart (Biphasic)",
     "brand": "Novomix",
@@ -4232,7 +4461,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-91",
+    "id": "bfe866cd-3138-4b56-81f3-634ebd78a73d",
+    "legacyId": "prod-91",
+    "slug": "forxiga-10",
     "name": "Forxiga 10",
     "genericName": "Dapagliflozin 10mg",
     "brand": "Forxiga",
@@ -4279,7 +4510,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-92",
+    "id": "3328984a-498b-447d-9512-3fb1931ecac2",
+    "legacyId": "prod-92",
+    "slug": "jardiance-10",
     "name": "Jardiance 10",
     "genericName": "Empagliflozin 10mg",
     "brand": "Jardiance",
@@ -4326,7 +4559,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-93",
+    "id": "50bea9c6-7cf1-4394-b971-a73f31ea50ec",
+    "legacyId": "prod-93",
+    "slug": "diamicron-mr-60",
     "name": "Diamicron MR 60",
     "genericName": "Gliclazide 60mg",
     "brand": "Diamicron",
@@ -4373,7 +4608,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-94",
+    "id": "e2b29140-eb54-4782-aec0-98691db73cb0",
+    "legacyId": "prod-94",
+    "slug": "voglibose-03",
     "name": "Voglibose 0.3",
     "genericName": "Voglibose 0.3mg",
     "brand": "Voglibose",
@@ -4420,7 +4657,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-95",
+    "id": "8c933627-7aaf-4cf7-ba2d-40d85b93d273",
+    "legacyId": "prod-95",
+    "slug": "ecosprin-75",
     "name": "Ecosprin 75",
     "genericName": "Aspirin 75mg",
     "brand": "Ecosprin",
@@ -4467,7 +4706,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-96",
+    "id": "a5cde9c6-45b2-4c7c-86a9-a26094fd41b7",
+    "legacyId": "prod-96",
+    "slug": "ecosprin-av-75",
     "name": "Ecosprin AV 75",
     "genericName": "Aspirin + Atorvastatin",
     "brand": "Ecosprin",
@@ -4514,7 +4755,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-97",
+    "id": "a80fe0c7-ee98-499d-8fe7-34e1b309dec0",
+    "legacyId": "prod-97",
+    "slug": "atorva-10",
     "name": "Atorva 10",
     "genericName": "Atorvastatin 10mg",
     "brand": "Atorva",
@@ -4561,7 +4804,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-98",
+    "id": "33ccbc2f-7d7c-40a5-9c29-a59cc8cac4b8",
+    "legacyId": "prod-98",
+    "slug": "rosuvas-10",
     "name": "Rosuvas 10",
     "genericName": "Rosuvastatin 10mg",
     "brand": "Rosuvas",
@@ -4608,7 +4853,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-99",
+    "id": "52ea7892-5699-4a2f-9b29-3d157e7ab87c",
+    "legacyId": "prod-99",
+    "slug": "telma-40",
     "name": "Telma 40",
     "genericName": "Telmisartan 40mg",
     "brand": "Telma",
@@ -4655,7 +4902,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-100",
+    "id": "b5a45c62-e59f-4f5f-a84e-5c2118961762",
+    "legacyId": "prod-100",
+    "slug": "telma-h",
     "name": "Telma-H",
     "genericName": "Telmisartan + Hydrochlorothiazide",
     "brand": "Telma-H",
@@ -4702,7 +4951,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-101",
+    "id": "fec0be14-d4a3-42e3-b66b-8be2ff23c448",
+    "legacyId": "prod-101",
+    "slug": "losar-50",
     "name": "Losar 50",
     "genericName": "Losartan 50mg",
     "brand": "Losar",
@@ -4749,7 +5000,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-102",
+    "id": "d7026696-e102-4c05-a664-45dd41026e26",
+    "legacyId": "prod-102",
+    "slug": "losar-h",
     "name": "Losar-H",
     "genericName": "Losartan + Hydrochlorothiazide",
     "brand": "Losar-H",
@@ -4796,7 +5049,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-103",
+    "id": "ca795324-eba0-42be-b46f-30f82f329d28",
+    "legacyId": "prod-103",
+    "slug": "amlokind-5",
     "name": "Amlokind 5",
     "genericName": "Amlodipine 5mg",
     "brand": "Amlokind",
@@ -4843,7 +5098,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-104",
+    "id": "00b915fc-952e-4b93-bb50-4072cfbf3851",
+    "legacyId": "prod-104",
+    "slug": "amlopres-5",
     "name": "Amlopres 5",
     "genericName": "Amlodipine 5mg",
     "brand": "Amlopres",
@@ -4890,7 +5147,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-105",
+    "id": "2a86a494-ecac-4e51-9eb9-998f129d6bf9",
+    "legacyId": "prod-105",
+    "slug": "cardace-5",
     "name": "Cardace 5",
     "genericName": "Ramipril 5mg",
     "brand": "Cardace",
@@ -4937,7 +5196,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-106",
+    "id": "85152c43-d715-4a26-9347-4c27586fe4ac",
+    "legacyId": "prod-106",
+    "slug": "concor-5",
     "name": "Concor 5",
     "genericName": "Bisoprolol 5mg",
     "brand": "Concor",
@@ -4984,7 +5245,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-107",
+    "id": "a59767ac-7d8b-425a-8831-b71b8b94ec4c",
+    "legacyId": "prod-107",
+    "slug": "met-xl-25",
     "name": "Met XL 25",
     "genericName": "Metoprolol 25mg",
     "brand": "Met",
@@ -5031,7 +5294,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-108",
+    "id": "09c4fa12-746f-4b33-9be9-e6e7953049fc",
+    "legacyId": "prod-108",
+    "slug": "stamlo-5",
     "name": "Stamlo 5",
     "genericName": "Amlodipine 5mg",
     "brand": "Stamlo",
@@ -5078,7 +5343,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-109",
+    "id": "d21cd751-ef5a-467d-b121-ae3e50775387",
+    "legacyId": "prod-109",
+    "slug": "aten-50",
     "name": "Aten 50",
     "genericName": "Atenolol 50mg",
     "brand": "Aten",
@@ -5125,7 +5392,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-110",
+    "id": "ab6c81c5-413c-4e75-9bb9-a8cf6ae18925",
+    "legacyId": "prod-110",
+    "slug": "storvas-20",
     "name": "Storvas 20",
     "genericName": "Atorvastatin 20mg",
     "brand": "Storvas",
@@ -5172,7 +5441,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-111",
+    "id": "4b0a44f9-4b99-4205-96ac-78af2c8b7ea3",
+    "legacyId": "prod-111",
+    "slug": "clopilet-75",
     "name": "Clopilet 75",
     "genericName": "Clopidogrel 75mg",
     "brand": "Clopilet",
@@ -5219,7 +5490,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-112",
+    "id": "863a7722-1d06-4977-9ec0-ed09badb3312",
+    "legacyId": "prod-112",
+    "slug": "deplatt-a-75",
     "name": "Deplatt A 75",
     "genericName": "Clopidogrel + Aspirin",
     "brand": "Deplatt",
@@ -5266,7 +5539,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-113",
+    "id": "bd848de2-1440-4c11-a218-927d08b7f0f9",
+    "legacyId": "prod-113",
+    "slug": "digene",
     "name": "Digene",
     "genericName": "Magaldrate + Simethicone",
     "brand": "Digene",
@@ -5313,7 +5588,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-114",
+    "id": "e9efd721-c3a1-4600-b7b2-9813222f4d43",
+    "legacyId": "prod-114",
+    "slug": "gelusil",
     "name": "Gelusil",
     "genericName": "Magnesium Hydroxide + Aluminium Hydroxide",
     "brand": "Gelusil",
@@ -5360,7 +5637,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-115",
+    "id": "d5c7fb53-3404-49ab-aa54-b10aac7e2e7c",
+    "legacyId": "prod-115",
+    "slug": "eno-fruit-salt",
     "name": "Eno Fruit Salt",
     "genericName": "Sodium Bicarbonate + Citric Acid",
     "brand": "Eno",
@@ -5407,7 +5686,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-116",
+    "id": "3eaeadd7-42f5-4f7b-b0e3-2993e74ac244",
+    "legacyId": "prod-116",
+    "slug": "pan-40",
     "name": "Pan 40",
     "genericName": "Pantoprazole 40mg",
     "brand": "Pan",
@@ -5454,7 +5735,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-117",
+    "id": "12ce9d31-4e7d-41c3-addc-353445346ef1",
+    "legacyId": "prod-117",
+    "slug": "pantop-40",
     "name": "Pantop 40",
     "genericName": "Pantoprazole 40mg",
     "brand": "Pantop",
@@ -5501,7 +5784,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-118",
+    "id": "08c0b241-53fb-441d-8f76-ff325ee89b11",
+    "legacyId": "prod-118",
+    "slug": "pan-d",
     "name": "Pan-D",
     "genericName": "Pantoprazole + Domperidone",
     "brand": "Pan-D",
@@ -5548,7 +5833,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-119",
+    "id": "19a14249-0734-4d6f-9a13-e123fd370b61",
+    "legacyId": "prod-119",
+    "slug": "rablet-d",
     "name": "Rablet-D",
     "genericName": "Rabeprazole + Domperidone",
     "brand": "Rablet-D",
@@ -5595,7 +5882,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-120",
+    "id": "ba1bad11-8565-43e7-8d9b-df3779e03956",
+    "legacyId": "prod-120",
+    "slug": "nexpro-40",
     "name": "Nexpro 40",
     "genericName": "Esomeprazole 40mg",
     "brand": "Nexpro",
@@ -5642,7 +5931,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-121",
+    "id": "674aa536-9b73-454c-99db-585ab07db60d",
+    "legacyId": "prod-121",
+    "slug": "rantac-150",
     "name": "Rantac 150",
     "genericName": "Ranitidine 150mg",
     "brand": "Rantac",
@@ -5689,7 +5980,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-122",
+    "id": "51d9677e-88db-4736-b164-e4ff0147e18f",
+    "legacyId": "prod-122",
+    "slug": "zinetac-150",
     "name": "Zinetac 150",
     "genericName": "Ranitidine 150mg",
     "brand": "Zinetac",
@@ -5736,7 +6029,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-123",
+    "id": "489e5f84-2b3c-494a-8d2d-ac3b7053fc93",
+    "legacyId": "prod-123",
+    "slug": "omez-20",
     "name": "Omez 20",
     "genericName": "Omeprazole 20mg",
     "brand": "Omez",
@@ -5783,7 +6078,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-124",
+    "id": "f0d1c7d5-4d93-4f5c-8ac1-bd2bf074a945",
+    "legacyId": "prod-124",
+    "slug": "cyclopam",
     "name": "Cyclopam",
     "genericName": "Dicyclomine + Paracetamol",
     "brand": "Cyclopam",
@@ -5830,7 +6127,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-125",
+    "id": "a48600e1-48bf-43b4-84a2-b265104dac59",
+    "legacyId": "prod-125",
+    "slug": "meftal-spas-gastro-digestive",
     "name": "Meftal Spas",
     "genericName": "Mefenamic Acid + Dicyclomine",
     "brand": "Meftal",
@@ -5877,7 +6176,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-126",
+    "id": "028a4b39-9794-40b2-856c-823f2be776f9",
+    "legacyId": "prod-126",
+    "slug": "buscopan",
     "name": "Buscopan",
     "genericName": "Hyoscine Butylbromide",
     "brand": "Buscopan",
@@ -5924,7 +6225,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-127",
+    "id": "02445678-b8ed-4a1d-abb9-f9d439b4b87e",
+    "legacyId": "prod-127",
+    "slug": "domstal-10",
     "name": "Domstal 10",
     "genericName": "Domperidone 10mg",
     "brand": "Domstal",
@@ -5971,7 +6274,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-128",
+    "id": "4b4a032c-f980-48d1-bbf6-962ce1f47884",
+    "legacyId": "prod-128",
+    "slug": "ondem-4",
     "name": "Ondem 4",
     "genericName": "Ondansetron 4mg",
     "brand": "Ondem",
@@ -6018,7 +6323,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-129",
+    "id": "6617db1b-9840-4764-adbc-e26b2e63961a",
+    "legacyId": "prod-129",
+    "slug": "emeset-4",
     "name": "Emeset 4",
     "genericName": "Ondansetron 4mg",
     "brand": "Emeset",
@@ -6065,7 +6372,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-130",
+    "id": "d763e8da-ee24-424d-9fbf-08375e7a6627",
+    "legacyId": "prod-130",
+    "slug": "sporlac-ds",
     "name": "Sporlac-DS",
     "genericName": "Lactobacillus Sporogenes",
     "brand": "Sporlac-DS",
@@ -6112,7 +6421,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-131",
+    "id": "508e3452-d5a5-48f1-8912-285a8265d778",
+    "legacyId": "prod-131",
+    "slug": "enterogermina",
     "name": "Enterogermina",
     "genericName": "Bacillus Clausii",
     "brand": "Enterogermina",
@@ -6159,7 +6470,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-132",
+    "id": "55d771c0-7ff1-4914-a48e-569540cbba2a",
+    "legacyId": "prod-132",
+    "slug": "bifilac",
     "name": "Bifilac",
     "genericName": "Probiotic Blend",
     "brand": "Bifilac",
@@ -6206,7 +6519,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-133",
+    "id": "258dc113-f1ff-429e-a1e6-8a3cb2a97daf",
+    "legacyId": "prod-133",
+    "slug": "digeplex-syrup",
     "name": "Digeplex Syrup",
     "genericName": "Digestive Enzyme Complex",
     "brand": "Digeplex",
@@ -6253,7 +6568,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-134",
+    "id": "fbc4d56b-693b-4548-b04f-05999c675408",
+    "legacyId": "prod-134",
+    "slug": "unienzyme",
     "name": "Unienzyme",
     "genericName": "Digestive Enzyme + Activated Charcoal",
     "brand": "Unienzyme",
@@ -6300,7 +6617,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-135",
+    "id": "e4bac25f-f7dc-4487-a0c0-20aef945abf1",
+    "legacyId": "prod-135",
+    "slug": "cremaffin-syrup",
     "name": "Cremaffin Syrup",
     "genericName": "Liquid Paraffin + Milk of Magnesia",
     "brand": "Cremaffin",
@@ -6347,7 +6666,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-136",
+    "id": "532f2155-3a4b-4e9e-846c-d384a822839f",
+    "legacyId": "prod-136",
+    "slug": "duphalac-syrup",
     "name": "Duphalac Syrup",
     "genericName": "Lactulose",
     "brand": "Duphalac",
@@ -6394,7 +6715,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-137",
+    "id": "30504da0-37df-40f7-934c-6c18af147492",
+    "legacyId": "prod-137",
+    "slug": "electral-powder",
     "name": "Electral Powder",
     "genericName": "Oral Rehydration Salts",
     "brand": "Electral",
@@ -6441,7 +6764,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-138",
+    "id": "dfdebb98-6079-43e9-8607-1c7de7482b65",
+    "legacyId": "prod-138",
+    "slug": "ors-l",
     "name": "ORS-L",
     "genericName": "Oral Rehydration Salts",
     "brand": "ORS-L",
@@ -6488,7 +6813,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-139",
+    "id": "03569ebc-94a7-437b-9cd6-d5e65becf37b",
+    "legacyId": "prod-139",
+    "slug": "gasex",
     "name": "Gasex",
     "genericName": "Ayurvedic Antacid + Carminative",
     "brand": "Gasex",
@@ -6535,7 +6862,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-140",
+    "id": "df165f8a-6b6b-46fe-86c4-cf4d4d3e2798",
+    "legacyId": "prod-140",
+    "slug": "perinorm",
     "name": "Perinorm",
     "genericName": "Metoclopramide 10mg",
     "brand": "Perinorm",
@@ -6582,7 +6911,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-141",
+    "id": "9a05c1d7-7e67-4621-b26d-3e4ff42251bb",
+    "legacyId": "prod-141",
+    "slug": "sucral-suspension",
     "name": "Sucral Suspension",
     "genericName": "Sucralfate",
     "brand": "Sucral",
@@ -6629,7 +6960,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-142",
+    "id": "233f2878-62c9-4f2b-906b-1d85c424269b",
+    "legacyId": "prod-142",
+    "slug": "becosules-capsule",
     "name": "Becosules Capsule",
     "genericName": "B-Complex + Vitamin C",
     "brand": "Becosules",
@@ -6676,7 +7009,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-143",
+    "id": "21597aef-468a-4ff9-b2f3-8b49cffc212b",
+    "legacyId": "prod-143",
+    "slug": "zincovit-tablet",
     "name": "Zincovit Tablet",
     "genericName": "Multivitamin + Zinc",
     "brand": "Zincovit",
@@ -6723,7 +7058,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-144",
+    "id": "ac3b61cd-4f4a-456d-a980-8637b0f25b67",
+    "legacyId": "prod-144",
+    "slug": "revital-h",
     "name": "Revital H",
     "genericName": "Multivitamin + Ginseng + Zinc",
     "brand": "Revital",
@@ -6770,7 +7107,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-145",
+    "id": "2afae5ea-0195-47cc-b33a-2cc224cf7c40",
+    "legacyId": "prod-145",
+    "slug": "supradyn",
     "name": "Supradyn",
     "genericName": "Multivitamin + Minerals",
     "brand": "Supradyn",
@@ -6817,7 +7156,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-146",
+    "id": "adb59361-4545-4876-b7af-42cc127ec1e7",
+    "legacyId": "prod-146",
+    "slug": "a-to-z-tablet",
     "name": "A to Z Tablet",
     "genericName": "Multivitamin + Multimineral",
     "brand": "A",
@@ -6864,7 +7205,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-147",
+    "id": "1410ab83-c638-49bb-ac9c-b158f30709e6",
+    "legacyId": "prod-147",
+    "slug": "neurobion-forte",
     "name": "Neurobion Forte",
     "genericName": "Vitamin B1, B6, B12",
     "brand": "Neurobion",
@@ -6911,7 +7254,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-148",
+    "id": "d4c481ae-708e-47b1-bd81-90d13e3d9fa6",
+    "legacyId": "prod-148",
+    "slug": "shelcal-500",
     "name": "Shelcal 500",
     "genericName": "Calcium Citrate + Vitamin D3",
     "brand": "Shelcal",
@@ -6958,7 +7303,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-149",
+    "id": "ae267bca-0e88-4e6a-bbe0-1b1d7be3cd08",
+    "legacyId": "prod-149",
+    "slug": "shelcal-hd",
     "name": "Shelcal-HD",
     "genericName": "Calcium + Vitamin D3 (higher dose)",
     "brand": "Shelcal-HD",
@@ -7005,7 +7352,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-150",
+    "id": "91249739-2ffa-4156-8e7e-9c43b961688b",
+    "legacyId": "prod-150",
+    "slug": "calcirol-sachet",
     "name": "Calcirol Sachet",
     "genericName": "Vitamin D3 60,000 IU",
     "brand": "Calcirol",
@@ -7052,7 +7401,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-151",
+    "id": "7eb0c7b3-e54b-48e3-8153-40f822003d8f",
+    "legacyId": "prod-151",
+    "slug": "uprise-d3",
     "name": "Uprise D3",
     "genericName": "Vitamin D3 60,000 IU",
     "brand": "Uprise",
@@ -7099,7 +7450,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-152",
+    "id": "eb3e6f4c-38d3-4623-b321-b64c94bb469a",
+    "legacyId": "prod-152",
+    "slug": "limcee-500",
     "name": "Limcee 500",
     "genericName": "Vitamin C 500mg",
     "brand": "Limcee",
@@ -7146,7 +7499,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-153",
+    "id": "777b32df-ca3a-40a2-99c4-0d557338922a",
+    "legacyId": "prod-153",
+    "slug": "celin-500",
     "name": "Celin 500",
     "genericName": "Vitamin C 500mg",
     "brand": "Celin",
@@ -7193,7 +7548,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-154",
+    "id": "a2763384-d76b-4014-9661-a39a78bff62b",
+    "legacyId": "prod-154",
+    "slug": "evion-400",
     "name": "Evion 400",
     "genericName": "Vitamin E 400mg",
     "brand": "Evion",
@@ -7240,7 +7597,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-155",
+    "id": "140cf13f-c72b-4ebb-97a3-93744817df08",
+    "legacyId": "prod-155",
+    "slug": "folinine",
     "name": "Folinine",
     "genericName": "Folic Acid 5mg",
     "brand": "Folinine",
@@ -7287,7 +7646,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-156",
+    "id": "c3056bff-4368-4e46-aa41-052715fd6117",
+    "legacyId": "prod-156",
+    "slug": "zincoseal",
     "name": "Zincoseal",
     "genericName": "Zinc Sulphate",
     "brand": "Zincoseal",
@@ -7334,7 +7695,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-157",
+    "id": "9f12e3fa-4100-4069-8a44-7970fcdad495",
+    "legacyId": "prod-157",
+    "slug": "cobadex-czs",
     "name": "Cobadex CZS",
     "genericName": "Vitamin B Complex + Zinc + Selenium",
     "brand": "Cobadex",
@@ -7381,7 +7744,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-158",
+    "id": "aee047bc-900a-40cd-8d6a-cce80d9cf0a3",
+    "legacyId": "prod-158",
+    "slug": "protinex-original",
     "name": "Protinex Original",
     "genericName": "Protein Supplement Powder",
     "brand": "Protinex",
@@ -7428,7 +7793,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-159",
+    "id": "9e2f4044-095a-4dfc-9e86-8c37e9b5396f",
+    "legacyId": "prod-159",
+    "slug": "ensure-diabetes-care",
     "name": "Ensure Diabetes Care",
     "genericName": "Balanced Nutrition Powder",
     "brand": "Ensure",
@@ -7475,7 +7842,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-160",
+    "id": "fd65b164-83ac-4ac3-90a6-15c75f7bc2df",
+    "legacyId": "prod-160",
+    "slug": "pediasure",
     "name": "Pediasure",
     "genericName": "Child Nutrition Powder",
     "brand": "Pediasure",
@@ -7522,7 +7891,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-161",
+    "id": "8212fae7-b720-4c71-bc39-6137af0ad1b5",
+    "legacyId": "prod-161",
+    "slug": "dexolac-infant-formula",
     "name": "Dexolac Infant Formula",
     "genericName": "Infant Milk Formula",
     "brand": "Dexolac",
@@ -7569,7 +7940,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-162",
+    "id": "076abf79-ba34-4e68-99d9-309299bee702",
+    "legacyId": "prod-162",
+    "slug": "cetrizine-10",
     "name": "Cetrizine 10",
     "genericName": "Cetirizine 10mg",
     "brand": "Cetrizine",
@@ -7616,7 +7989,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-163",
+    "id": "b6cae34b-274e-4ba8-9b42-5ac7dffc7813",
+    "legacyId": "prod-163",
+    "slug": "zyncet",
     "name": "Zyncet",
     "genericName": "Cetirizine 10mg",
     "brand": "Zyncet",
@@ -7663,7 +8038,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-164",
+    "id": "a198ce12-ad71-4cd7-b59f-c4aaee01301e",
+    "legacyId": "prod-164",
+    "slug": "alerid",
     "name": "Alerid",
     "genericName": "Cetirizine 10mg",
     "brand": "Alerid",
@@ -7710,7 +8087,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-165",
+    "id": "072325b9-05e2-43d0-8154-36c08c8d7bc4",
+    "legacyId": "prod-165",
+    "slug": "allegra-120",
     "name": "Allegra 120",
     "genericName": "Fexofenadine 120mg",
     "brand": "Allegra",
@@ -7757,7 +8136,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-166",
+    "id": "310d813f-b4db-42cf-9b8f-367f6fce311f",
+    "legacyId": "prod-166",
+    "slug": "allegra-m",
     "name": "Allegra-M",
     "genericName": "Fexofenadine + Montelukast",
     "brand": "Allegra-M",
@@ -7804,7 +8185,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-167",
+    "id": "5c9c5e45-1426-4519-8ec9-64332546f26d",
+    "legacyId": "prod-167",
+    "slug": "montair-lc",
     "name": "Montair-LC",
     "genericName": "Montelukast + Levocetirizine",
     "brand": "Montair-LC",
@@ -7851,7 +8234,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-168",
+    "id": "dd808cb8-373b-4dc9-b2b6-277dd8f60b6d",
+    "legacyId": "prod-168",
+    "slug": "montair-10",
     "name": "Montair 10",
     "genericName": "Montelukast 10mg",
     "brand": "Montair",
@@ -7898,7 +8283,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-169",
+    "id": "837d9e2b-b540-4d7d-b4a7-b3c569497383",
+    "legacyId": "prod-169",
+    "slug": "levocet-5",
     "name": "Levocet 5",
     "genericName": "Levocetirizine 5mg",
     "brand": "Levocet",
@@ -7945,7 +8332,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-170",
+    "id": "f9e629a7-8bbc-4ec9-be8f-231364030090",
+    "legacyId": "prod-170",
+    "slug": "avil-25",
     "name": "Avil 25",
     "genericName": "Pheniramine Maleate 25mg",
     "brand": "Avil",
@@ -7992,7 +8381,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-171",
+    "id": "aa5bc0d6-6559-4a1f-9028-c1241c074d90",
+    "legacyId": "prod-171",
+    "slug": "atarax-25",
     "name": "Atarax 25",
     "genericName": "Hydroxyzine 25mg",
     "brand": "Atarax",
@@ -8039,7 +8430,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-172",
+    "id": "8ae6d0f1-37ef-4ec6-ae2c-dbd24cf5d996",
+    "legacyId": "prod-172",
+    "slug": "practin",
     "name": "Practin",
     "genericName": "Cyproheptadine 4mg",
     "brand": "Practin",
@@ -8086,7 +8479,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-173",
+    "id": "1e35eb80-786b-43a8-a670-aa6c8af76daa",
+    "legacyId": "prod-173",
+    "slug": "betnovate-n-cream",
     "name": "Betnovate-N Cream",
     "genericName": "Betamethasone + Neomycin",
     "brand": "Betnovate-N",
@@ -8133,7 +8528,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-174",
+    "id": "c69d99ea-f52a-44b3-babf-bbed58c9cf34",
+    "legacyId": "prod-174",
+    "slug": "candid-cream",
     "name": "Candid Cream",
     "genericName": "Clotrimazole 1%",
     "brand": "Candid",
@@ -8180,7 +8577,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-175",
+    "id": "048286d5-9a51-431b-bf9f-06fcc786549d",
+    "legacyId": "prod-175",
+    "slug": "candiderm-cream",
     "name": "Candiderm Cream",
     "genericName": "Clotrimazole + Beclomethasone + Neomycin",
     "brand": "Candiderm",
@@ -8227,7 +8626,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-176",
+    "id": "3d786cdc-4d33-46b2-b1d1-938cda62893a",
+    "legacyId": "prod-176",
+    "slug": "quadriderm-cream",
     "name": "Quadriderm Cream",
     "genericName": "Clobetasol + Neomycin + Miconazole",
     "brand": "Quadriderm",
@@ -8274,7 +8675,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-177",
+    "id": "ad632ec7-60f6-4f01-86ba-5d1d331dcf3a",
+    "legacyId": "prod-177",
+    "slug": "panderm-cream",
     "name": "Panderm+ Cream",
     "genericName": "Clobetasol + Gentamicin + Miconazole",
     "brand": "Panderm",
@@ -8321,7 +8724,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-178",
+    "id": "54dd2400-8a90-4867-a4b4-3dae4d0bddb2",
+    "legacyId": "prod-178",
+    "slug": "fungoid-cream",
     "name": "Fungoid Cream",
     "genericName": "Miconazole 2%",
     "brand": "Fungoid",
@@ -8368,7 +8773,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-179",
+    "id": "8a2d8ce5-f9cf-4928-bf85-283619cca90d",
+    "legacyId": "prod-179",
+    "slug": "terbicip-tablet",
     "name": "Terbicip Tablet",
     "genericName": "Terbinafine 250mg",
     "brand": "Terbicip",
@@ -8415,7 +8822,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-180",
+    "id": "bac1bc4e-6ea0-40ca-a707-2188e2fdfddd",
+    "legacyId": "prod-180",
+    "slug": "candiforce-100",
     "name": "Candiforce 100",
     "genericName": "Itraconazole 100mg",
     "brand": "Candiforce",
@@ -8462,7 +8871,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-181",
+    "id": "4a8ff19f-fc2c-4f5a-a739-8f3cb7f66b2d",
+    "legacyId": "prod-181",
+    "slug": "forcan-150",
     "name": "Forcan 150",
     "genericName": "Fluconazole 150mg",
     "brand": "Forcan",
@@ -8509,7 +8920,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-182",
+    "id": "a1ce734c-2376-4fa7-9d6b-64ab97ba210d",
+    "legacyId": "prod-182",
+    "slug": "nizral-cream",
     "name": "Nizral Cream",
     "genericName": "Ketoconazole 2%",
     "brand": "Nizral",
@@ -8556,7 +8969,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-183",
+    "id": "3927e7be-60a8-4359-ac43-01fd4ef32555",
+    "legacyId": "prod-183",
+    "slug": "daktarin-gel",
     "name": "Daktarin Gel",
     "genericName": "Miconazole Oral Gel",
     "brand": "Daktarin",
@@ -8603,7 +9018,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-184",
+    "id": "16255433-eaa9-4254-8abd-7b28cf6167bc",
+    "legacyId": "prod-184",
+    "slug": "ketomac-shampoo",
     "name": "Ketomac Shampoo",
     "genericName": "Ketoconazole 2%",
     "brand": "Ketomac",
@@ -8650,7 +9067,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-185",
+    "id": "14e7e23c-881d-45bf-85c2-2555bf863749",
+    "legacyId": "prod-185",
+    "slug": "selsun-shampoo",
     "name": "Selsun Shampoo",
     "genericName": "Selenium Sulphide 2.5%",
     "brand": "Selsun",
@@ -8697,7 +9116,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-186",
+    "id": "277da24b-8b90-4bd5-809f-bbfba77fdb06",
+    "legacyId": "prod-186",
+    "slug": "clindac-a-gel",
     "name": "Clindac-A Gel",
     "genericName": "Clindamycin 1%",
     "brand": "Clindac-A",
@@ -8744,7 +9165,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-187",
+    "id": "da220412-fc4e-43d1-9226-721f5d85f8a8",
+    "legacyId": "prod-187",
+    "slug": "acnestar-gel",
     "name": "Acnestar Gel",
     "genericName": "Clindamycin + Nicotinamide",
     "brand": "Acnestar",
@@ -8791,7 +9214,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-188",
+    "id": "d73f8c44-2c78-44be-b8e9-852f6f881ca9",
+    "legacyId": "prod-188",
+    "slug": "retino-a-cream-0025",
     "name": "Retino-A Cream 0.025%",
     "genericName": "Tretinoin 0.025%",
     "brand": "Retino-A",
@@ -8838,7 +9263,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-189",
+    "id": "d2424fdb-1d4e-4501-91df-7089a5e33e52",
+    "legacyId": "prod-189",
+    "slug": "persol-ac-gel",
     "name": "Persol AC Gel",
     "genericName": "Benzoyl Peroxide 2.5%",
     "brand": "Persol",
@@ -8885,7 +9312,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-190",
+    "id": "9e09ce29-d93c-4ccb-bc8e-7113484491f8",
+    "legacyId": "prod-190",
+    "slug": "melacare-cream",
     "name": "Melacare Cream",
     "genericName": "Hydroquinone + Tretinoin + Mometasone",
     "brand": "Melacare",
@@ -8932,7 +9361,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-191",
+    "id": "03fc5b3c-1f19-452f-92ef-9146c63bc898",
+    "legacyId": "prod-191",
+    "slug": "melalite-15-cream",
     "name": "Melalite 15 Cream",
     "genericName": "Hydroquinone 4%",
     "brand": "Melalite",
@@ -8979,7 +9410,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-192",
+    "id": "485baffb-ff90-45ec-8ad0-5ef027927628",
+    "legacyId": "prod-192",
+    "slug": "boroline-antiseptic-cream",
     "name": "Boroline Antiseptic Cream",
     "genericName": "Boric Acid + Lanolin",
     "brand": "Boroline",
@@ -9026,7 +9459,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-193",
+    "id": "4586384d-452c-452a-a828-64612573404b",
+    "legacyId": "prod-193",
+    "slug": "lacto-calamine",
     "name": "Lacto Calamine",
     "genericName": "Calamine + Aloe Vera",
     "brand": "Lacto",
@@ -9073,7 +9508,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-194",
+    "id": "1962f709-b1f5-4f73-b7a5-6e041023f4b0",
+    "legacyId": "prod-194",
+    "slug": "cetaphil-gentle-cleanser",
     "name": "Cetaphil Gentle Cleanser",
     "genericName": "Mild Cleansing Lotion",
     "brand": "Cetaphil",
@@ -9120,7 +9557,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-195",
+    "id": "7e765087-80f3-4f90-a5eb-24f08d34ed23",
+    "legacyId": "prod-195",
+    "slug": "sebamed-face-wash",
     "name": "Sebamed Face Wash",
     "genericName": "pH 5.5 Cleansing Lotion",
     "brand": "Sebamed",
@@ -9167,7 +9606,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-196",
+    "id": "86d89822-a9ce-4192-9ccd-6aed4d3e83b8",
+    "legacyId": "prod-196",
+    "slug": "dettol-antiseptic-liquid",
     "name": "Dettol Antiseptic Liquid",
     "genericName": "Chloroxylenol 4.8%",
     "brand": "Dettol",
@@ -9214,7 +9655,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-197",
+    "id": "ef7c0848-f3a0-4d46-8170-0867fe9e3c1c",
+    "legacyId": "prod-197",
+    "slug": "savlon-antiseptic-liquid",
     "name": "Savlon Antiseptic Liquid",
     "genericName": "Chlorhexidine + Cetrimide",
     "brand": "Savlon",
@@ -9261,7 +9704,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-198",
+    "id": "56b36e4b-bd58-473a-85d4-bd296b83e521",
+    "legacyId": "prod-198",
+    "slug": "betadine-solution",
     "name": "Betadine Solution",
     "genericName": "Povidone Iodine 10%",
     "brand": "Betadine",
@@ -9308,7 +9753,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-199",
+    "id": "b8848a60-0327-42e9-b690-8d96ea9f94fb",
+    "legacyId": "prod-199",
+    "slug": "betadine-ointment",
     "name": "Betadine Ointment",
     "genericName": "Povidone Iodine 5%",
     "brand": "Betadine",
@@ -9355,7 +9802,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-200",
+    "id": "3c511cb5-9220-40a7-8b6a-423badbd18bc",
+    "legacyId": "prod-200",
+    "slug": "soframycin-cream",
     "name": "Soframycin Cream",
     "genericName": "Framycetin Sulphate",
     "brand": "Soframycin",
@@ -9402,7 +9851,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-201",
+    "id": "c54c2efc-7e3c-4b3d-af9c-8f1619cea177",
+    "legacyId": "prod-201",
+    "slug": "neosporin-powder",
     "name": "Neosporin Powder",
     "genericName": "Neomycin + Bacitracin",
     "brand": "Neosporin",
@@ -9449,7 +9900,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-202",
+    "id": "65269f4a-edc5-48cf-a6fc-09ec1c4be9c5",
+    "legacyId": "prod-202",
+    "slug": "burnol-cream",
     "name": "Burnol Cream",
     "genericName": "Povidone Iodine Burn Ointment",
     "brand": "Burnol",
@@ -9496,7 +9949,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-203",
+    "id": "03038202-36f8-4ec3-b209-40e01318347c",
+    "legacyId": "prod-203",
+    "slug": "band-aid-strips",
     "name": "Band-Aid Strips",
     "genericName": "Adhesive Bandage",
     "brand": "Band-Aid",
@@ -9543,7 +9998,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-204",
+    "id": "9b6f6c79-5b0a-4495-a987-eec9bfba4301",
+    "legacyId": "prod-204",
+    "slug": "hansaplast-roll",
     "name": "Hansaplast Roll",
     "genericName": "Elastic Adhesive Bandage",
     "brand": "Hansaplast",
@@ -9590,7 +10047,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-205",
+    "id": "d9904446-d42f-45f4-878a-5759237f9ddc",
+    "legacyId": "prod-205",
+    "slug": "cotton-roll",
     "name": "Cotton Roll",
     "genericName": "Absorbent Cotton",
     "brand": "Cotton",
@@ -9637,7 +10096,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-206",
+    "id": "7b123c09-7294-41fd-b41e-5d20d4da2b4d",
+    "legacyId": "prod-206",
+    "slug": "gauze-bandage",
     "name": "Gauze Bandage",
     "genericName": "Sterile Gauze",
     "brand": "Gauze",
@@ -9684,7 +10145,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-207",
+    "id": "a7125ee8-d94e-42a0-9479-796706624833",
+    "legacyId": "prod-207",
+    "slug": "micropore-tape",
     "name": "Micropore Tape",
     "genericName": "Surgical Adhesive Tape",
     "brand": "Micropore",
@@ -9731,7 +10194,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-208",
+    "id": "7fd42a77-435e-4a34-bf6f-33de54883ccb",
+    "legacyId": "prod-208",
+    "slug": "meftal-spas-tablet",
     "name": "Meftal-Spas Tablet",
     "genericName": "Mefenamic Acid + Dicyclomine",
     "brand": "Meftal-Spas",
@@ -9778,7 +10243,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-209",
+    "id": "a6b80fe7-181c-4d47-8297-74e9e4cbc525",
+    "legacyId": "prod-209",
+    "slug": "evecare-syrup",
     "name": "Evecare Syrup",
     "genericName": "Ayurvedic Uterine Tonic",
     "brand": "Evecare",
@@ -9825,7 +10292,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-210",
+    "id": "7103e4e7-95f8-4b1d-a260-270e18adf634",
+    "legacyId": "prod-210",
+    "slug": "menosan-tablet",
     "name": "Menosan Tablet",
     "genericName": "Sage Extract (Menopause Support)",
     "brand": "Menosan",
@@ -9872,7 +10341,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-211",
+    "id": "ddfd3f3c-c65d-4afe-83c0-79437acde4f3",
+    "legacyId": "prod-211",
+    "slug": "susten-200-capsule",
     "name": "Susten 200 Capsule",
     "genericName": "Micronized Progesterone 200mg",
     "brand": "Susten",
@@ -9919,7 +10390,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-212",
+    "id": "f917668c-a18e-4cba-a2c6-8c7eabe44b7a",
+    "legacyId": "prod-212",
+    "slug": "duphaston-10",
     "name": "Duphaston 10",
     "genericName": "Dydrogesterone 10mg",
     "brand": "Duphaston",
@@ -9966,7 +10439,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-213",
+    "id": "9daff4be-f30b-437d-8f69-e75676a0fd03",
+    "legacyId": "prod-213",
+    "slug": "i-pill",
     "name": "I-Pill",
     "genericName": "Levonorgestrel 1.5mg (Emergency Contraceptive)",
     "brand": "I-Pill",
@@ -10013,7 +10488,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-214",
+    "id": "70432f5b-ebec-4ffb-b21b-e35f0167fa22",
+    "legacyId": "prod-214",
+    "slug": "unwanted-72",
     "name": "Unwanted 72",
     "genericName": "Levonorgestrel 1.5mg",
     "brand": "Unwanted",
@@ -10060,7 +10537,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-215",
+    "id": "93532f99-bf4b-42c1-8d5e-aeab4e03baeb",
+    "legacyId": "prod-215",
+    "slug": "mala-d",
     "name": "Mala-D",
     "genericName": "Ethinylestradiol + Levonorgestrel",
     "brand": "Mala-D",
@@ -10107,7 +10586,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-216",
+    "id": "56280fd4-7338-444a-90f6-046417de21f2",
+    "legacyId": "prod-216",
+    "slug": "whitfield-feminine-wash",
     "name": "Whitfield Feminine Wash",
     "genericName": "pH Balanced Intimate Wash",
     "brand": "Whitfield",
@@ -10154,7 +10635,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-217",
+    "id": "458c3796-8d35-4b82-8255-217d45746127",
+    "legacyId": "prod-217",
+    "slug": "folinine-tablet",
     "name": "Folinine Tablet",
     "genericName": "Folic Acid 5mg (Pregnancy)",
     "brand": "Folinine",
@@ -10201,7 +10684,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-218",
+    "id": "83ad62a3-cf62-41df-b1b8-f8f7c0e9da11",
+    "legacyId": "prod-218",
+    "slug": "autrin-capsule-anemia-iron-supplements",
     "name": "Autrin Capsule",
     "genericName": "Iron + Folic Acid + B12",
     "brand": "Autrin",
@@ -10248,7 +10733,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-219",
+    "id": "a2869537-2672-44c1-9261-a3c46e895982",
+    "legacyId": "prod-219",
+    "slug": "asthalin-inhaler",
     "name": "Asthalin Inhaler",
     "genericName": "Salbutamol 100mcg",
     "brand": "Asthalin",
@@ -10295,7 +10782,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-220",
+    "id": "40a46759-7d7d-49e2-8a5a-e0f02d9d7538",
+    "legacyId": "prod-220",
+    "slug": "levolin-inhaler",
     "name": "Levolin Inhaler",
     "genericName": "Levosalbutamol 50mcg",
     "brand": "Levolin",
@@ -10342,7 +10831,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-221",
+    "id": "f2124b30-c03c-44a8-8bc0-d431803ff35f",
+    "legacyId": "prod-221",
+    "slug": "foracort-200-inhaler",
     "name": "Foracort 200 Inhaler",
     "genericName": "Formoterol + Budesonide",
     "brand": "Foracort",
@@ -10389,7 +10880,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-222",
+    "id": "ff1c7324-0c20-41f1-978e-d26eb43a8d00",
+    "legacyId": "prod-222",
+    "slug": "budecort-200-rotacap",
     "name": "Budecort 200 Rotacap",
     "genericName": "Budesonide 200mcg",
     "brand": "Budecort",
@@ -10436,7 +10929,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-223",
+    "id": "21be6c81-aeee-4265-9fb7-174bdf2d7f7e",
+    "legacyId": "prod-223",
+    "slug": "duolin-inhaler",
     "name": "Duolin Inhaler",
     "genericName": "Ipratropium + Levosalbutamol",
     "brand": "Duolin",
@@ -10483,7 +10978,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-224",
+    "id": "a87b1338-f07d-4bb4-b498-bb1103156b2f",
+    "legacyId": "prod-224",
+    "slug": "seroflo-250-inhaler",
     "name": "Seroflo 250 Inhaler",
     "genericName": "Salmeterol + Fluticasone",
     "brand": "Seroflo",
@@ -10530,7 +11027,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-225",
+    "id": "c9dfcbac-6088-4ea1-b7a9-dc1b319d291d",
+    "legacyId": "prod-225",
+    "slug": "deriphyllin-retard",
     "name": "Deriphyllin Retard",
     "genericName": "Etophylline + Theophylline",
     "brand": "Deriphyllin",
@@ -10577,7 +11076,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-226",
+    "id": "66481e89-8443-42f1-a617-1d592856ea99",
+    "legacyId": "prod-226",
+    "slug": "theo-asthalin-syrup",
     "name": "Theo-Asthalin Syrup",
     "genericName": "Theophylline + Salbutamol",
     "brand": "Theo-Asthalin",
@@ -10624,7 +11125,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-227",
+    "id": "64aa80bb-3ce0-40c9-854a-64315133e289",
+    "legacyId": "prod-227",
+    "slug": "asthalin-respirator-solution",
     "name": "Asthalin Respirator Solution",
     "genericName": "Salbutamol Nebulizer Solution",
     "brand": "Asthalin",
@@ -10671,7 +11174,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-228",
+    "id": "bf3dec2a-d284-4092-b60e-25a15830913d",
+    "legacyId": "prod-228",
+    "slug": "duolin-respules",
     "name": "Duolin Respules",
     "genericName": "Ipratropium + Levosalbutamol Nebulizer",
     "brand": "Duolin",
@@ -10718,7 +11223,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-229",
+    "id": "6b29041f-742e-497a-a1c2-c7dfb9f2fafe",
+    "legacyId": "prod-229",
+    "slug": "refresh-tears-eye-drops",
     "name": "Refresh Tears Eye Drops",
     "genericName": "Carboxymethylcellulose",
     "brand": "Refresh",
@@ -10765,7 +11272,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-230",
+    "id": "1a706684-dfa1-406e-891c-b1c17312bc4e",
+    "legacyId": "prod-230",
+    "slug": "moisol-eye-drops",
     "name": "Moisol Eye Drops",
     "genericName": "Carboxymethylcellulose 0.5%",
     "brand": "Moisol",
@@ -10812,7 +11321,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-231",
+    "id": "08d5f53a-606c-47fd-b8c4-4b18a2e9c0f7",
+    "legacyId": "prod-231",
+    "slug": "ciplox-eye-drops",
     "name": "Ciplox Eye Drops",
     "genericName": "Ciprofloxacin 0.3%",
     "brand": "Ciplox",
@@ -10859,7 +11370,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-232",
+    "id": "42e460b3-7bc5-4b1b-9bc3-9cbaeffd0e82",
+    "legacyId": "prod-232",
+    "slug": "tobramycin-eye-drops",
     "name": "Tobramycin Eye Drops",
     "genericName": "Tobramycin 0.3%",
     "brand": "Tobramycin",
@@ -10906,7 +11419,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-233",
+    "id": "b37fa882-ddb7-4225-85a9-1569caeed61a",
+    "legacyId": "prod-233",
+    "slug": "genteal-gel",
     "name": "Genteal Gel",
     "genericName": "Hypromellose Lubricant Gel",
     "brand": "Genteal",
@@ -10953,7 +11468,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-234",
+    "id": "ecc06219-caad-4fd1-adb6-d2cf1130a929",
+    "legacyId": "prod-234",
+    "slug": "otogesic-ear-drops",
     "name": "Otogesic Ear Drops",
     "genericName": "Lignocaine + Chlorbutol",
     "brand": "Otogesic",
@@ -11000,7 +11517,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-235",
+    "id": "079adef4-9fc7-4bb6-af56-8bc4f04df19a",
+    "legacyId": "prod-235",
+    "slug": "waxolve-ear-drops",
     "name": "Waxolve Ear Drops",
     "genericName": "Ear Wax Softener",
     "brand": "Waxolve",
@@ -11047,7 +11566,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-236",
+    "id": "43537d1a-8644-4a7a-9eea-b84d37af71f8",
+    "legacyId": "prod-236",
+    "slug": "sensodyne-rapid-relief",
     "name": "Sensodyne Rapid Relief",
     "genericName": "Toothpaste for Sensitivity",
     "brand": "Sensodyne",
@@ -11094,7 +11615,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-237",
+    "id": "251d9620-a630-4731-adde-1ee7e74fff18",
+    "legacyId": "prod-237",
+    "slug": "colgate-sensitive-pro-relief",
     "name": "Colgate Sensitive Pro-Relief",
     "genericName": "Toothpaste for Sensitivity",
     "brand": "Colgate",
@@ -11141,7 +11664,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-238",
+    "id": "3e7ee21f-1f54-4cfe-9317-ad032d137c1c",
+    "legacyId": "prod-238",
+    "slug": "hexigel-oral-gel",
     "name": "Hexigel Oral Gel",
     "genericName": "Chlorhexidine Gluconate Gel",
     "brand": "Hexigel",
@@ -11188,7 +11713,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-239",
+    "id": "4d253a8b-619a-4009-89e0-b803dec15b9a",
+    "legacyId": "prod-239",
+    "slug": "betadine-gargle",
     "name": "Betadine Gargle",
     "genericName": "Povidone Iodine Mouth Gargle",
     "brand": "Betadine",
@@ -11235,7 +11762,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-240",
+    "id": "9e86ec8b-ad28-4f6c-8f54-cf7b8293f48b",
+    "legacyId": "prod-240",
+    "slug": "listerine-mouthwash",
     "name": "Listerine Mouthwash",
     "genericName": "Antiseptic Mouthwash",
     "brand": "Listerine",
@@ -11282,7 +11811,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-241",
+    "id": "d39c01dd-2cfc-48cf-a66d-b4075876dd29",
+    "legacyId": "prod-241",
+    "slug": "dequadin-lozenges",
     "name": "Dequadin Lozenges",
     "genericName": "Dequalinium Chloride",
     "brand": "Dequadin",
@@ -11329,7 +11860,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-242",
+    "id": "fbd2d994-1906-4c0f-be72-13d228d1c26b",
+    "legacyId": "prod-242",
+    "slug": "strepsils",
     "name": "Strepsils",
     "genericName": "Amylmetacresol + Dichlorobenzyl Alcohol",
     "brand": "Strepsils",
@@ -11376,7 +11909,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-243",
+    "id": "dbd551f8-1134-4eec-a34c-18182b01b22f",
+    "legacyId": "prod-243",
+    "slug": "johnsons-baby-powder",
     "name": "Johnson's Baby Powder",
     "genericName": "Talc based Baby Powder",
     "brand": "Johnsons",
@@ -11423,7 +11958,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-244",
+    "id": "5d4f7f7f-894b-444c-9b37-e80e70b87530",
+    "legacyId": "prod-244",
+    "slug": "johnsons-baby-oil",
     "name": "Johnson's Baby Oil",
     "genericName": "Mineral Oil based Baby Oil",
     "brand": "Johnsons",
@@ -11470,7 +12007,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-245",
+    "id": "40b69604-c313-4ac5-b10b-a97d7f9463d7",
+    "legacyId": "prod-245",
+    "slug": "himalaya-baby-lotion",
     "name": "Himalaya Baby Lotion",
     "genericName": "Herbal Baby Moisturizing Lotion",
     "brand": "Himalaya",
@@ -11517,7 +12056,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-246",
+    "id": "bb1379e9-bc3f-473c-921e-02701ed8bb9b",
+    "legacyId": "prod-246",
+    "slug": "sudocrem",
     "name": "Sudocrem",
     "genericName": "Zinc Oxide Diaper Rash Cream",
     "brand": "Sudocrem",
@@ -11564,7 +12105,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-247",
+    "id": "603c4a16-1b7d-40d9-8832-e9038c98ca4a",
+    "legacyId": "prod-247",
+    "slug": "cetaphil-baby-wash",
     "name": "Cetaphil Baby Wash",
     "genericName": "Gentle Baby Cleanser",
     "brand": "Cetaphil",
@@ -11611,7 +12154,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-248",
+    "id": "3ec9d857-4d48-4f00-bda6-3e2566e465d3",
+    "legacyId": "prod-248",
+    "slug": "colic-aid-drops",
     "name": "Colic Aid Drops",
     "genericName": "Simethicone Drops",
     "brand": "Colic",
@@ -11658,7 +12203,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-249",
+    "id": "99ddcb6e-0505-45e0-8dc6-e7a0efe25c56",
+    "legacyId": "prod-249",
+    "slug": "volini-gel",
     "name": "Volini Gel",
     "genericName": "Diclofenac + Menthol + Linseed Oil",
     "brand": "Volini",
@@ -11705,7 +12252,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-250",
+    "id": "fc897bd1-7adc-40e9-8ba2-5f299748c142",
+    "legacyId": "prod-250",
+    "slug": "moov-cream",
     "name": "Moov Cream",
     "genericName": "Diclofenac + Methyl Salicylate",
     "brand": "Moov",
@@ -11752,7 +12301,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-251",
+    "id": "d0c26dc2-1aef-4391-9dce-ff600d9d2f8e",
+    "legacyId": "prod-251",
+    "slug": "iodex-ultra-gel",
     "name": "Iodex Ultra Gel",
     "genericName": "Diclofenac + Methyl Salicylate",
     "brand": "Iodex",
@@ -11799,7 +12350,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-252",
+    "id": "df5d7a29-b4f1-41c3-9fa7-20177351bec7",
+    "legacyId": "prod-252",
+    "slug": "zandu-balm",
     "name": "Zandu Balm",
     "genericName": "Menthol + Camphor + Eucalyptus Oil",
     "brand": "Zandu",
@@ -11846,7 +12399,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-253",
+    "id": "4819f16b-d1b3-426b-bb42-d9c5c295b68b",
+    "legacyId": "prod-253",
+    "slug": "amrutanjan-balm",
     "name": "Amrutanjan Balm",
     "genericName": "Menthol + Camphor + Eucalyptus Oil",
     "brand": "Amrutanjan",
@@ -11893,7 +12448,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-254",
+    "id": "2283ea50-06ed-44d9-b56d-9082e2326cb4",
+    "legacyId": "prod-254",
+    "slug": "tiger-balm-red",
     "name": "Tiger Balm Red",
     "genericName": "Camphor + Menthol + Clove Oil",
     "brand": "Tiger",
@@ -11940,7 +12497,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-255",
+    "id": "dcb76639-519d-4986-9f7c-6087b5e7ff4c",
+    "legacyId": "prod-255",
+    "slug": "relispray",
     "name": "Relispray",
     "genericName": "Diclofenac + Methyl Salicylate Spray",
     "brand": "Relispray",
@@ -11987,7 +12546,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-256",
+    "id": "79464113-63a0-446d-ab07-cb2ac7d148ca",
+    "legacyId": "prod-256",
+    "slug": "volini-spray",
     "name": "Volini Spray",
     "genericName": "Diclofenac Spray",
     "brand": "Volini",
@@ -12034,7 +12595,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-257",
+    "id": "155dee29-43ec-4acc-8fdc-506df784c87c",
+    "legacyId": "prod-257",
+    "slug": "rumalaya-gel",
     "name": "Rumalaya Gel",
     "genericName": "Ayurvedic Anti-inflammatory Gel",
     "brand": "Rumalaya",
@@ -12081,7 +12644,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-258",
+    "id": "db813664-370b-46d6-9f28-fb374a494833",
+    "legacyId": "prod-258",
+    "slug": "chyawanprash-dabur",
     "name": "Chyawanprash (Dabur)",
     "genericName": "Herbal Immunity Booster",
     "brand": "Chyawanprash",
@@ -12128,7 +12693,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-259",
+    "id": "23d1b721-24b2-42ce-bae1-120fd55c4cd8",
+    "legacyId": "prod-259",
+    "slug": "chyawanprash-zandu",
     "name": "Chyawanprash (Zandu)",
     "genericName": "Herbal Immunity Booster",
     "brand": "Chyawanprash",
@@ -12175,7 +12742,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-260",
+    "id": "a347b464-eb2a-4775-ab10-0b46ac760e65",
+    "legacyId": "prod-260",
+    "slug": "liv-52",
     "name": "Liv 52",
     "genericName": "Herbal Liver Support",
     "brand": "Liv",
@@ -12222,7 +12791,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-261",
+    "id": "3e689480-7a98-4630-afb5-07e363734bc1",
+    "legacyId": "prod-261",
+    "slug": "septilin",
     "name": "Septilin",
     "genericName": "Herbal Immunity Support",
     "brand": "Septilin",
@@ -12269,7 +12840,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-262",
+    "id": "5b892d0a-0d0e-49c2-836e-e1b7c4623a51",
+    "legacyId": "prod-262",
+    "slug": "cystone",
     "name": "Cystone",
     "genericName": "Herbal Kidney/Urinary Support",
     "brand": "Cystone",
@@ -12316,7 +12889,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-263",
+    "id": "e5f514cb-d3b8-4b86-8bf7-e0700366aaec",
+    "legacyId": "prod-263",
+    "slug": "confido",
     "name": "Confido",
     "genericName": "Herbal Male Wellness",
     "brand": "Confido",
@@ -12363,7 +12938,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-264",
+    "id": "6b15e8fb-2f4d-4130-8936-dfc8ae2ec5be",
+    "legacyId": "prod-264",
+    "slug": "himcolin-gel",
     "name": "Himcolin Gel",
     "genericName": "Herbal Topical Gel",
     "brand": "Himcolin",
@@ -12410,7 +12987,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-265",
+    "id": "6fb79d9a-fc0e-460a-bf1b-c11b2857166a",
+    "legacyId": "prod-265",
+    "slug": "speman",
     "name": "Speman",
     "genericName": "Herbal Male Reproductive Health",
     "brand": "Speman",
@@ -12457,7 +13036,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-266",
+    "id": "7f49889a-6027-4436-9d1d-472ed5869a65",
+    "legacyId": "prod-266",
+    "slug": "triphala-churna",
     "name": "Triphala Churna",
     "genericName": "Herbal Digestive Powder",
     "brand": "Triphala",
@@ -12504,7 +13085,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-267",
+    "id": "bc194e9b-d697-4930-9c77-c4ccbd449f39",
+    "legacyId": "prod-267",
+    "slug": "ashwagandha-tablet",
     "name": "Ashwagandha Tablet",
     "genericName": "Withania Somnifera Extract",
     "brand": "Ashwagandha",
@@ -12551,7 +13134,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-268",
+    "id": "1539436c-bf93-4029-9cca-db5a036fe9bf",
+    "legacyId": "prod-268",
+    "slug": "brahmi-vati",
     "name": "Brahmi Vati",
     "genericName": "Herbal Brain Tonic",
     "brand": "Brahmi",
@@ -12598,7 +13183,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-269",
+    "id": "21bbe7e0-f4f6-45a2-aa6b-7532f21248ee",
+    "legacyId": "prod-269",
+    "slug": "dabur-honey",
     "name": "Dabur Honey",
     "genericName": "Pure Honey",
     "brand": "Dabur",
@@ -12645,7 +13232,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-270",
+    "id": "00cfef3e-46a7-4f1c-a517-d18a30982d39",
+    "legacyId": "prod-270",
+    "slug": "manforce-50",
     "name": "Manforce 50",
     "genericName": "Sildenafil Citrate 50mg",
     "brand": "Manforce",
@@ -12692,7 +13281,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-271",
+    "id": "f1d74009-97ef-44f0-bac0-b1ab865ac5fa",
+    "legacyId": "prod-271",
+    "slug": "caverta-50",
     "name": "Caverta 50",
     "genericName": "Sildenafil Citrate 50mg",
     "brand": "Caverta",
@@ -12739,7 +13330,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-272",
+    "id": "824ec25f-1ab3-4f9b-b348-87326b63f201",
+    "legacyId": "prod-272",
+    "slug": "manforce-condoms",
     "name": "Manforce Condoms",
     "genericName": "Latex Condoms",
     "brand": "Manforce",
@@ -12786,7 +13379,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-273",
+    "id": "fec74213-2098-4286-816f-2f6180f2ff02",
+    "legacyId": "prod-273",
+    "slug": "durex-condoms",
     "name": "Durex Condoms",
     "genericName": "Latex Condoms",
     "brand": "Durex",
@@ -12833,7 +13428,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-274",
+    "id": "677d2884-7ac4-4b65-9d66-9c970c4f51b5",
+    "legacyId": "prod-274",
+    "slug": "ky-jelly",
     "name": "KY Jelly",
     "genericName": "Personal Lubricant Gel",
     "brand": "KY",
@@ -12880,7 +13477,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-275",
+    "id": "69ae2dbd-4eee-4863-b082-7977fc932c4f",
+    "legacyId": "prod-275",
+    "slug": "wysolone-10",
     "name": "Wysolone 10",
     "genericName": "Prednisolone 10mg",
     "brand": "Wysolone",
@@ -12927,7 +13526,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-276",
+    "id": "1ea4c4ae-3b12-4a28-bdb9-e1a797608d90",
+    "legacyId": "prod-276",
+    "slug": "omnacortil-10",
     "name": "Omnacortil 10",
     "genericName": "Prednisolone 10mg",
     "brand": "Omnacortil",
@@ -12974,7 +13575,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-277",
+    "id": "25eb9fc5-b462-43b8-a515-91bf1a30b58a",
+    "legacyId": "prod-277",
+    "slug": "betnesol-05",
     "name": "Betnesol 0.5",
     "genericName": "Betamethasone 0.5mg",
     "brand": "Betnesol",
@@ -13021,7 +13624,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-278",
+    "id": "9df7bea7-c7e9-450a-a74f-4859ef7ab013",
+    "legacyId": "prod-278",
+    "slug": "predmet-4",
     "name": "Predmet 4",
     "genericName": "Methylprednisolone 4mg",
     "brand": "Predmet",
@@ -13068,7 +13673,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-279",
+    "id": "e3b8094f-fd1e-4e2d-b2fe-9fc59f10bff3",
+    "legacyId": "prod-279",
+    "slug": "deflazacort-6",
     "name": "Deflazacort 6",
     "genericName": "Deflazacort 6mg",
     "brand": "Deflazacort",
@@ -13115,7 +13722,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-280",
+    "id": "c8949f4a-bcae-4297-8913-404233c48d87",
+    "legacyId": "prod-280",
+    "slug": "ensure-original",
     "name": "Ensure Original",
     "genericName": "Balanced Nutrition Powder",
     "brand": "Ensure",
@@ -13162,7 +13771,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-281",
+    "id": "89e10da7-20de-41a2-8a74-f26a533e9211",
+    "legacyId": "prod-281",
+    "slug": "horlicks-classic-malt",
     "name": "Horlicks Classic Malt",
     "genericName": "Health & Nutrition Drink",
     "brand": "Horlicks",
@@ -13209,7 +13820,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-282",
+    "id": "dc7367eb-b5eb-4fab-a815-565b8dec910c",
+    "legacyId": "prod-282",
+    "slug": "complan-nutrition",
     "name": "Complan Nutrition",
     "genericName": "Health Drink Powder",
     "brand": "Complan",
@@ -13256,7 +13869,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-283",
+    "id": "14463fa8-d66b-4902-bb10-b7b15c0d5b6c",
+    "legacyId": "prod-283",
+    "slug": "bournvita-health-drink",
     "name": "Bournvita Health Drink",
     "genericName": "Chocolate Health Drink",
     "brand": "Bournvita",
@@ -13303,7 +13918,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-284",
+    "id": "e7098905-2974-4775-ab88-4fbec1ccc907",
+    "legacyId": "prod-284",
+    "slug": "protinex-diabetic-care",
     "name": "Protinex Diabetic Care",
     "genericName": "Protein Powder for Diabetics",
     "brand": "Protinex",
@@ -13350,7 +13967,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-285",
+    "id": "1c4b6b0a-8d9f-429b-a132-665e6abfb6d2",
+    "legacyId": "prod-285",
+    "slug": "endura-mass-weight-gainer",
     "name": "Endura Mass Weight Gainer",
     "genericName": "Weight Gain Nutrition Powder",
     "brand": "Endura",
@@ -13397,7 +14016,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-286",
+    "id": "e7ab4860-c5a5-4412-bbfc-a7d4b7b6818e",
+    "legacyId": "prod-286",
+    "slug": "thyronorm-25",
     "name": "Thyronorm 25",
     "genericName": "Levothyroxine 25mcg",
     "brand": "Thyronorm",
@@ -13444,7 +14065,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-287",
+    "id": "1443a517-5949-4126-8f4d-aab80ae5be1e",
+    "legacyId": "prod-287",
+    "slug": "thyronorm-50",
     "name": "Thyronorm 50",
     "genericName": "Levothyroxine 50mcg",
     "brand": "Thyronorm",
@@ -13491,7 +14114,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-288",
+    "id": "0e3243d8-f1d4-4162-a6cf-3a3cfa15da64",
+    "legacyId": "prod-288",
+    "slug": "thyronorm-100",
     "name": "Thyronorm 100",
     "genericName": "Levothyroxine 100mcg",
     "brand": "Thyronorm",
@@ -13538,7 +14163,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-289",
+    "id": "640c5af2-1073-40a7-a96b-6a84535abb45",
+    "legacyId": "prod-289",
+    "slug": "eltroxin-50",
     "name": "Eltroxin 50",
     "genericName": "Levothyroxine 50mcg",
     "brand": "Eltroxin",
@@ -13585,7 +14212,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-290",
+    "id": "96e1a9f1-630e-4474-8684-3c00807d3587",
+    "legacyId": "prod-290",
+    "slug": "thyrox-75",
     "name": "Thyrox 75",
     "genericName": "Levothyroxine 75mcg",
     "brand": "Thyrox",
@@ -13632,7 +14261,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-291",
+    "id": "bdd110ed-88d0-41d1-8cd1-42e739a4841a",
+    "legacyId": "prod-291",
+    "slug": "neomercazole-5",
     "name": "Neomercazole 5",
     "genericName": "Carbimazole 5mg",
     "brand": "Neomercazole",
@@ -13679,7 +14310,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-292",
+    "id": "83ad62a3-cf62-41df-b1b8-f8f7c0e9da11",
+    "legacyId": "prod-292",
+    "slug": "autrin-capsule-anemia-iron-supplements",
     "name": "Autrin Capsule",
     "genericName": "Iron + Folic Acid + B12",
     "brand": "Autrin",
@@ -13726,7 +14359,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-293",
+    "id": "784fa890-9c49-4b9e-8d94-c04054b3d546",
+    "legacyId": "prod-293",
+    "slug": "fefol-capsule",
     "name": "Fefol Capsule",
     "genericName": "Ferrous Sulphate + Folic Acid",
     "brand": "Fefol",
@@ -13773,7 +14408,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-294",
+    "id": "cc5d5860-a287-45c4-81d5-b91006dde7ea",
+    "legacyId": "prod-294",
+    "slug": "ferium-xt",
     "name": "Ferium XT",
     "genericName": "Iron + Folic Acid + Zinc",
     "brand": "Ferium",
@@ -13820,7 +14457,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-295",
+    "id": "0059b2b9-eb26-44a3-bcb0-687243593583",
+    "legacyId": "prod-295",
+    "slug": "orofer-xt",
     "name": "Orofer XT",
     "genericName": "Iron + Folic Acid",
     "brand": "Orofer",
@@ -13867,7 +14506,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-296",
+    "id": "02288499-7b30-44dc-a082-16a51648da76",
+    "legacyId": "prod-296",
+    "slug": "dexorange-syrup",
     "name": "Dexorange Syrup",
     "genericName": "Iron + Vitamin B12 + Folic Acid",
     "brand": "Dexorange",
@@ -13914,7 +14555,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-297",
+    "id": "cf53f518-e4e5-4c38-9c2a-83606ef66a23",
+    "legacyId": "prod-297",
+    "slug": "livogen-tablet",
     "name": "Livogen Tablet",
     "genericName": "Ferrous Fumarate + Folic Acid",
     "brand": "Livogen",
@@ -13961,7 +14604,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-298",
+    "id": "47656919-60e3-4a25-88cc-ce56f9ca2447",
+    "legacyId": "prod-298",
+    "slug": "feronia-xt",
     "name": "Feronia XT",
     "genericName": "Iron + Folic Acid + Zinc",
     "brand": "Feronia",
@@ -14008,7 +14653,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-299",
+    "id": "d7e78ffc-f964-48a2-be60-dac650449f3a",
+    "legacyId": "prod-299",
+    "slug": "volini-max-gel",
     "name": "Volini Max Gel",
     "genericName": "Diclofenac + Linseed Oil (higher strength)",
     "brand": "Volini",
@@ -14055,7 +14702,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-300",
+    "id": "3e2229ef-bc01-42a9-b217-63c5fd6672fb",
+    "legacyId": "prod-300",
+    "slug": "glucosamine-msm-tablet",
     "name": "Glucosamine + MSM Tablet",
     "genericName": "Glucosamine Sulphate + MSM",
     "brand": "Glucosamine",
@@ -14102,7 +14751,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-301",
+    "id": "8cb3904e-064b-46f3-9e39-306ef32be94e",
+    "legacyId": "prod-301",
+    "slug": "calcimax-forte",
     "name": "Calcimax Forte",
     "genericName": "Calcium + Vitamin D3 + Zinc",
     "brand": "Calcimax",
@@ -14149,7 +14800,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-302",
+    "id": "25bab218-32ce-4eba-ac1e-d69af478a3b8",
+    "legacyId": "prod-302",
+    "slug": "ostocalcium-syrup",
     "name": "Ostocalcium Syrup",
     "genericName": "Calcium + Vitamin D3",
     "brand": "Ostocalcium",
@@ -14196,7 +14849,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-303",
+    "id": "f7f2aa96-1a27-4ff8-a70a-fefd31ec2d4b",
+    "legacyId": "prod-303",
+    "slug": "cheston-cold-joint-variant",
     "name": "Cheston Cold (Joint variant)",
     "genericName": "Multivitamin + Calcium Joint Support",
     "brand": "Cheston",
@@ -14243,7 +14898,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-304",
+    "id": "98fbea4d-c043-4525-b217-13fc4f42a10c",
+    "legacyId": "prod-304",
+    "slug": "joint-ease-tablet",
     "name": "Joint Ease Tablet",
     "genericName": "Glucosamine + Chondroitin",
     "brand": "Joint",
@@ -14290,7 +14947,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-305",
+    "id": "375f9db6-9bf6-48b7-baf1-b67be6b563df",
+    "legacyId": "prod-305",
+    "slug": "albendazole-400",
     "name": "Albendazole 400",
     "genericName": "Albendazole 400mg",
     "brand": "Albendazole",
@@ -14337,7 +14996,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-306",
+    "id": "60e5445b-fdc9-4737-830d-f9ef96adbc7b",
+    "legacyId": "prod-306",
+    "slug": "zentel-400",
     "name": "Zentel 400",
     "genericName": "Albendazole 400mg",
     "brand": "Zentel",
@@ -14384,7 +15045,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-307",
+    "id": "76cd34be-d260-44f5-9bfa-56c9496f0e6d",
+    "legacyId": "prod-307",
+    "slug": "bandy-400",
     "name": "Bandy 400",
     "genericName": "Albendazole 400mg Chewable",
     "brand": "Bandy",
@@ -14431,7 +15094,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-308",
+    "id": "ce04adbe-edf6-44df-9e9d-a444a71aa44c",
+    "legacyId": "prod-308",
+    "slug": "ivermectin-12",
     "name": "Ivermectin 12",
     "genericName": "Ivermectin 12mg",
     "brand": "Ivermectin",
@@ -14478,7 +15143,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-309",
+    "id": "ab1001ec-483e-48da-9ded-4c301365f3a7",
+    "legacyId": "prod-309",
+    "slug": "pilex-tablet",
     "name": "Pilex Tablet",
     "genericName": "Herbal Piles Support",
     "brand": "Pilex",
@@ -14525,7 +15192,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-310",
+    "id": "105aaa88-1ec4-4730-bee5-9eec9ce91b93",
+    "legacyId": "prod-310",
+    "slug": "pilex-ointment",
     "name": "Pilex Ointment",
     "genericName": "Herbal Anti-inflammatory Ointment",
     "brand": "Pilex",
@@ -14572,7 +15241,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-311",
+    "id": "d0f909f7-dbd8-43cb-9498-f62706df2790",
+    "legacyId": "prod-311",
+    "slug": "anovate-cream",
     "name": "Anovate Cream",
     "genericName": "Hydrocortisone + Lignocaine",
     "brand": "Anovate",
@@ -14619,7 +15290,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-312",
+    "id": "fb3f83e2-66e7-497c-bd99-2b1a3807f466",
+    "legacyId": "prod-312",
+    "slug": "lasoride-ointment",
     "name": "Lasoride Ointment",
     "genericName": "Lignocaine + Hydrocortisone",
     "brand": "Lasoride",
@@ -14666,7 +15339,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-313",
+    "id": "86f1ddb3-7057-447a-849c-d597fd81e04b",
+    "legacyId": "prod-313",
+    "slug": "accu-chek-active-glucometer",
     "name": "Accu-Chek Active Glucometer",
     "genericName": "Blood Glucose Monitor",
     "brand": "Accu-Chek",
@@ -14713,7 +15388,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-314",
+    "id": "255cdb01-73ad-4632-a75f-527c98952f2b",
+    "legacyId": "prod-314",
+    "slug": "dr-morepen-glucometer",
     "name": "Dr Morepen Glucometer",
     "genericName": "Blood Glucose Monitor",
     "brand": "Dr",
@@ -14760,7 +15437,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-315",
+    "id": "e0f36a82-d964-4ea9-be53-a19ebb8d0216",
+    "legacyId": "prod-315",
+    "slug": "accu-chek-test-strips",
     "name": "Accu-Chek Test Strips",
     "genericName": "Glucose Test Strips",
     "brand": "Accu-Chek",
@@ -14807,7 +15486,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-316",
+    "id": "b473a25f-8e9a-4e99-881d-7ce0711d8d64",
+    "legacyId": "prod-316",
+    "slug": "omron-bp-monitor-hem-7120",
     "name": "Omron BP Monitor HEM-7120",
     "genericName": "Digital Blood Pressure Monitor",
     "brand": "Omron",
@@ -14854,7 +15535,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-317",
+    "id": "eea3afa0-1018-4454-97e7-a25a4c56af26",
+    "legacyId": "prod-317",
+    "slug": "dr-trust-bp-monitor",
     "name": "Dr Trust BP Monitor",
     "genericName": "Digital Blood Pressure Monitor",
     "brand": "Dr",
@@ -14901,7 +15584,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-318",
+    "id": "cb948a38-4307-42de-9c77-ceb4566fc301",
+    "legacyId": "prod-318",
+    "slug": "digital-thermometer",
     "name": "Digital Thermometer",
     "genericName": "Digital Body Thermometer",
     "brand": "Digital",
@@ -14948,7 +15633,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-319",
+    "id": "01955956-dca7-4e64-a13e-2b2777e84548",
+    "legacyId": "prod-319",
+    "slug": "infrared-thermometer",
     "name": "Infrared Thermometer",
     "genericName": "Non-contact Infrared Thermometer",
     "brand": "Infrared",
@@ -14995,7 +15682,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-320",
+    "id": "f5533c2f-225e-48b4-9107-dcfd46390e4c",
+    "legacyId": "prod-320",
+    "slug": "pulse-oximeter",
     "name": "Pulse Oximeter",
     "genericName": "Fingertip Blood Oxygen Monitor",
     "brand": "Pulse",
@@ -15042,7 +15731,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-321",
+    "id": "f4e3b3cf-045b-4520-a7c4-179c4824c151",
+    "legacyId": "prod-321",
+    "slug": "nebulizer-machine",
     "name": "Nebulizer Machine",
     "genericName": "Compressor Nebulizer",
     "brand": "Nebulizer",
@@ -15089,7 +15780,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-322",
+    "id": "02422c56-3886-4efd-a3cf-fc33b561bc32",
+    "legacyId": "prod-322",
+    "slug": "pregnancy-test-kit-prega-news",
     "name": "Pregnancy Test Kit (Prega News)",
     "genericName": "hCG Detection Kit",
     "brand": "Pregnancy",
@@ -15136,7 +15829,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-323",
+    "id": "002ab5f5-2b04-42de-8610-9704542b2cba",
+    "legacyId": "prod-323",
+    "slug": "i-can-pregnancy-test-kit",
     "name": "i-Can Pregnancy Test Kit",
     "genericName": "hCG Detection Kit",
     "brand": "i-Can",
@@ -15183,7 +15878,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-324",
+    "id": "a7e45a49-7735-41a5-b5c1-01456ec236c6",
+    "legacyId": "prod-324",
+    "slug": "ovulation-test-kit",
     "name": "Ovulation Test Kit",
     "genericName": "LH Detection Kit",
     "brand": "Ovulation",
@@ -15230,7 +15927,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-325",
+    "id": "c2f7eacc-a8b9-4d9d-a7da-ec640d7246e9",
+    "legacyId": "prod-325",
+    "slug": "insulin-syringes-bd",
     "name": "Insulin Syringes (BD)",
     "genericName": "1ml Insulin Syringe",
     "brand": "Insulin",
@@ -15277,7 +15976,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-326",
+    "id": "d59e4f4b-805f-470f-9550-b9d22db4393d",
+    "legacyId": "prod-326",
+    "slug": "n95-mask",
     "name": "N95 Mask",
     "genericName": "Protective Face Mask",
     "brand": "N95",
@@ -15324,7 +16025,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-327",
+    "id": "764ed00f-d5cb-4ff9-84bb-c786a4fc9df1",
+    "legacyId": "prod-327",
+    "slug": "surgical-face-mask-3-ply",
     "name": "Surgical Face Mask (3-ply)",
     "genericName": "Disposable Face Mask",
     "brand": "Surgical",
@@ -15371,7 +16074,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-328",
+    "id": "bfb84b8d-c107-4702-ab8d-78d5f8e8b8b3",
+    "legacyId": "prod-328",
+    "slug": "hand-sanitizer-500ml",
     "name": "Hand Sanitizer 500ml",
     "genericName": "Alcohol-based Hand Sanitizer",
     "brand": "Hand",
@@ -15418,7 +16123,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-329",
+    "id": "28ed6351-4482-4df5-b014-0b7e97fa9402",
+    "legacyId": "prod-329",
+    "slug": "whisper-ultra-sanitary-pads",
     "name": "Whisper Ultra Sanitary Pads",
     "genericName": "Sanitary Napkins",
     "brand": "Whisper",
@@ -15465,7 +16172,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-330",
+    "id": "fc3851bd-8548-4771-88b2-8c7394db8c3b",
+    "legacyId": "prod-330",
+    "slug": "stayfree-secure-pads",
     "name": "Stayfree Secure Pads",
     "genericName": "Sanitary Napkins",
     "brand": "Stayfree",
@@ -15512,7 +16221,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-331",
+    "id": "8b5d545b-c056-4b4a-91f2-e22b4b665a32",
+    "legacyId": "prod-331",
+    "slug": "adult-diapers-friends",
     "name": "Adult Diapers (Friends)",
     "genericName": "Adult Diapers",
     "brand": "Adult",
@@ -15559,7 +16270,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-332",
+    "id": "e5209cda-8a5e-453d-8983-ab43de2c2956",
+    "legacyId": "prod-332",
+    "slug": "dettol-handwash",
     "name": "Dettol Handwash",
     "genericName": "Antibacterial Handwash",
     "brand": "Dettol",
@@ -15606,7 +16319,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-333",
+    "id": "53b49bda-ea08-4cde-b135-5d62f73eac39",
+    "legacyId": "prod-333",
+    "slug": "lifebuoy-soap",
     "name": "Lifebuoy Soap",
     "genericName": "Antibacterial Soap",
     "brand": "Lifebuoy",
@@ -15653,7 +16368,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-334",
+    "id": "58a601a1-f931-4c1e-8d59-6b1c54b5f81b",
+    "legacyId": "prod-334",
+    "slug": "head-shoulders-anti-dandruff-shampoo",
     "name": "Head & Shoulders Anti-Dandruff Shampoo",
     "genericName": "Anti-Dandruff Shampoo",
     "brand": "Head",
@@ -15700,7 +16417,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-335",
+    "id": "45c2e94b-2723-476b-a97a-938560a4994e",
+    "legacyId": "prod-335",
+    "slug": "anti-lice-lotion-mediker",
     "name": "Anti-Lice Lotion (Mediker)",
     "genericName": "Permethrin based Anti-Lice Lotion",
     "brand": "Anti-Lice",
@@ -15747,7 +16466,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-336",
+    "id": "cbc9d385-5c87-4e31-93eb-fac975050fb5",
+    "legacyId": "prod-336",
+    "slug": "nix-anti-lice-shampoo",
     "name": "Nix Anti-Lice Shampoo",
     "genericName": "Permethrin 1%",
     "brand": "Nix",
@@ -15794,7 +16515,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-337",
+    "id": "0fb62594-9cfc-43d6-a5e7-89b3b3294387",
+    "legacyId": "prod-337",
+    "slug": "crocin-650",
     "name": "Crocin 650",
     "genericName": "Paracetamol 650mg",
     "brand": "Crocin",
@@ -15841,7 +16564,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-338",
+    "id": "200b9cc9-ed0f-43f9-a6a5-9bc80d33842b",
+    "legacyId": "prod-338",
+    "slug": "dolo-250-paediatric",
     "name": "Dolo 250 (Paediatric)",
     "genericName": "Paracetamol 250mg",
     "brand": "Dolo",
@@ -15888,7 +16613,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-339",
+    "id": "281e5e49-58c8-40c0-b853-a5604342e1ce",
+    "legacyId": "prod-339",
+    "slug": "calpol-250-syrup",
     "name": "Calpol 250 Syrup",
     "genericName": "Paracetamol 250mg/5ml",
     "brand": "Calpol",
@@ -15935,7 +16662,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-340",
+    "id": "af743880-b976-42e0-b97b-7675416a55d1",
+    "legacyId": "prod-340",
+    "slug": "crocin-pain-relief",
     "name": "Crocin Pain Relief",
     "genericName": "Paracetamol 650mg",
     "brand": "Crocin",
@@ -15982,7 +16711,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-341",
+    "id": "37e0c8c7-9316-431e-beb6-1f8742f272a1",
+    "legacyId": "prod-341",
+    "slug": "voveran-gel",
     "name": "Voveran Gel",
     "genericName": "Diclofenac Diethylamine 1%",
     "brand": "Voveran",
@@ -16029,7 +16760,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-342",
+    "id": "144b057b-b2af-49a6-ab57-579a89363e94",
+    "legacyId": "prod-342",
+    "slug": "dynapar-gel",
     "name": "Dynapar Gel",
     "genericName": "Diclofenac 1%",
     "brand": "Dynapar",
@@ -16076,7 +16809,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-343",
+    "id": "159cc756-3bee-4658-92c0-5fff53a0c163",
+    "legacyId": "prod-343",
+    "slug": "nise-gel",
     "name": "Nise Gel",
     "genericName": "Nimesulide Gel",
     "brand": "Nise",
@@ -16123,7 +16858,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-344",
+    "id": "41710183-47ff-4aaa-af16-6c82c941dd71",
+    "legacyId": "prod-344",
+    "slug": "zerodol-sp-gel",
     "name": "Zerodol-SP Gel",
     "genericName": "Aceclofenac Gel",
     "brand": "Zerodol-SP",
@@ -16170,7 +16907,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-345",
+    "id": "34cbc89d-7d43-4b1a-b960-abf7ece3daa8",
+    "legacyId": "prod-345",
+    "slug": "augmentin-375",
     "name": "Augmentin 375",
     "genericName": "Amoxycillin 250mg + Clavulanic Acid 125mg",
     "brand": "Augmentin",
@@ -16217,7 +16956,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-346",
+    "id": "7c4fa16d-f683-4dc0-9fe7-6ed3f09a1342",
+    "legacyId": "prod-346",
+    "slug": "augmentin-duo-syrup",
     "name": "Augmentin Duo Syrup",
     "genericName": "Amoxycillin + Clavulanic Acid (Paediatric)",
     "brand": "Augmentin",
@@ -16264,7 +17005,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-347",
+    "id": "aad86691-f892-4da7-82b7-587ea658eab4",
+    "legacyId": "prod-347",
+    "slug": "azithral-250",
     "name": "Azithral 250",
     "genericName": "Azithromycin 250mg",
     "brand": "Azithral",
@@ -16311,7 +17054,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-348",
+    "id": "242406b5-ca6c-4e11-9282-12b4155e7a34",
+    "legacyId": "prod-348",
+    "slug": "azithral-syrup",
     "name": "Azithral Syrup",
     "genericName": "Azithromycin Suspension (Paediatric)",
     "brand": "Azithral",
@@ -16358,7 +17103,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-349",
+    "id": "3ece6f50-dd3f-4c02-ba1d-951d843ee6c6",
+    "legacyId": "prod-349",
+    "slug": "amoxyclav-625",
     "name": "Amoxyclav 625",
     "genericName": "Amoxycillin + Clavulanic Acid",
     "brand": "Amoxyclav",
@@ -16405,7 +17152,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-350",
+    "id": "9b6a1f59-78f3-45cb-b4b6-f34504f78eab",
+    "legacyId": "prod-350",
+    "slug": "cefpodoxime-200",
     "name": "Cefpodoxime 200",
     "genericName": "Cefpodoxime 200mg",
     "brand": "Cefpodoxime",
@@ -16452,7 +17201,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-351",
+    "id": "cb728fee-4950-423a-8551-3c95e5652cf7",
+    "legacyId": "prod-351",
+    "slug": "cefadroxil-500",
     "name": "Cefadroxil 500",
     "genericName": "Cefadroxil 500mg",
     "brand": "Cefadroxil",
@@ -16499,7 +17250,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-352",
+    "id": "147c6b4a-5da7-4558-85a5-6334df06b41e",
+    "legacyId": "prod-352",
+    "slug": "clindamycin-300",
     "name": "Clindamycin 300",
     "genericName": "Clindamycin 300mg",
     "brand": "Clindamycin",
@@ -16546,7 +17299,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-353",
+    "id": "e3dfb1fc-f447-4917-832a-3c5f21a90229",
+    "legacyId": "prod-353",
+    "slug": "linezolid-600",
     "name": "Linezolid 600",
     "genericName": "Linezolid 600mg",
     "brand": "Linezolid",
@@ -16593,7 +17348,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-354",
+    "id": "36a54b9f-8848-4fcf-adfb-523950d9f1d2",
+    "legacyId": "prod-354",
+    "slug": "metformin-1000",
     "name": "Metformin 1000",
     "genericName": "Metformin 1000mg",
     "brand": "Metformin",
@@ -16640,7 +17397,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-355",
+    "id": "9a0248e7-7f6f-4f6b-9b09-4976d9e4819b",
+    "legacyId": "prod-355",
+    "slug": "glimepiride-2",
     "name": "Glimepiride 2",
     "genericName": "Glimepiride 2mg",
     "brand": "Glimepiride",
@@ -16687,7 +17446,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-356",
+    "id": "7a8e66de-46fa-4dcb-8cd1-671dfb065ee0",
+    "legacyId": "prod-356",
+    "slug": "sitagliptin-100",
     "name": "Sitagliptin 100",
     "genericName": "Sitagliptin 100mg",
     "brand": "Sitagliptin",
@@ -16734,7 +17495,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-357",
+    "id": "46fb35ee-247f-46ad-89fe-e79849010bb0",
+    "legacyId": "prod-357",
+    "slug": "human-actrapid-insulin",
     "name": "Human Actrapid Insulin",
     "genericName": "Insulin (Regular)",
     "brand": "Human",
@@ -16781,7 +17544,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-358",
+    "id": "51c1a1f1-ed7e-48c2-b323-96e4c6a01485",
+    "legacyId": "prod-358",
+    "slug": "telma-20",
     "name": "Telma 20",
     "genericName": "Telmisartan 20mg",
     "brand": "Telma",
@@ -16828,7 +17593,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-359",
+    "id": "60f03d2c-1ea2-4d3c-bf56-a2e4a768eba3",
+    "legacyId": "prod-359",
+    "slug": "amlopres-at",
     "name": "Amlopres-AT",
     "genericName": "Amlodipine + Atenolol",
     "brand": "Amlopres-AT",
@@ -16875,7 +17642,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-360",
+    "id": "ec248978-1dfa-4a6a-b434-335d0fbad91b",
+    "legacyId": "prod-360",
+    "slug": "rosuvas-20",
     "name": "Rosuvas 20",
     "genericName": "Rosuvastatin 20mg",
     "brand": "Rosuvas",
@@ -16922,7 +17691,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-361",
+    "id": "2fafd998-618f-419a-81b6-17d433dd9d04",
+    "legacyId": "prod-361",
+    "slug": "nitrocontin-26",
     "name": "Nitrocontin 2.6",
     "genericName": "Nitroglycerin 2.6mg",
     "brand": "Nitrocontin",
@@ -16969,7 +17740,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-362",
+    "id": "60384321-64f6-4f89-8df5-bb6d712029f4",
+    "legacyId": "prod-362",
+    "slug": "sorbitrate-5",
     "name": "Sorbitrate 5",
     "genericName": "Isosorbide Dinitrate 5mg",
     "brand": "Sorbitrate",
@@ -17016,7 +17789,9 @@ export const ALL_PRODUCTS: Product[] = [
     ]
   },
   {
-    "id": "prod-363",
+    "id": "5f988d9f-383d-4761-a278-85414270ae1c",
+    "legacyId": "prod-363",
+    "slug": "ivabradine-5",
     "name": "Ivabradine 5",
     "genericName": "Ivabradine 5mg",
     "brand": "Ivabradine",

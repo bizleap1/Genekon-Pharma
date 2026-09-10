@@ -25,7 +25,8 @@ export const otpService = {
       .from(mobileOtps)
       .where(and(eq(mobileOtps.identifier, cleanId), gt(mobileOtps.createdAt, fifteenMinsAgo)));
 
-    if (recentOtps.length >= 4) {
+    const maxOtps = env.NODE_ENV === "production" ? 4 : 50;
+    if (recentOtps.length >= maxOtps) {
       throw new Error("Too many OTP requests. Please wait 15 minutes before requesting again.");
     }
 

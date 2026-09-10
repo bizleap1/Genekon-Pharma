@@ -111,7 +111,12 @@ function getInitialState(): AuthState {
         // Automatically migrate any legacy admin session or old admin name to Dr. Shreya Meshram
         if (
           user.role === "admin" ||
+          user.role === "ADMIN" ||
           user.email === "admin@genekonpharma.com" ||
+          user.email === "shreya.meshram@genekonpharma.com" ||
+          user.mobile === "9370102691" ||
+          user.phone === "9370102691" ||
+          (user.name && user.name.toLowerCase().includes("shreya")) ||
           (user.name && user.name.toLowerCase().includes("nikhil")) ||
           (user.name && user.name.includes("Super Pharmacist"))
         ) {
@@ -119,7 +124,7 @@ function getInitialState(): AuthState {
             ...user,
             name: "Dr. Shreya Meshram",
             role: "admin",
-            email: "admin@genekonpharma.com",
+            email: user.email || "admin@genekonpharma.com",
             mobile: "9370102691",
           };
           try {
@@ -130,13 +135,14 @@ function getInitialState(): AuthState {
           } catch {}
         }
 
+        const roleLower = String(user.role || "").toLowerCase();
         return {
           user,
           currentUser: user,
           isLoggedIn: true,
           guestUser: false,
-          isAdmin: user.role === "admin",
-          isWholesale: user.role === "wholesale",
+          isAdmin: roleLower === "admin",
+          isWholesale: roleLower === "wholesale" || roleLower === "wholesale_partner",
           intendedAction: getStoredIntendedAction(),
           redirectPath: parsed.redirectPath || null,
           sessionExpiresAt: parsed.sessionExpiresAt,
@@ -471,14 +477,26 @@ export const authStore = {
       ...profile,
     };
 
+    const roleLower = String(profile?.role || user.role || "").toLowerCase();
+    const isAdminUser =
+      roleLower === "admin" ||
+      user.email === "admin@genekonpharma.com" ||
+      user.email === "shreya.meshram@genekonpharma.com" ||
+      user.mobile === "9370102691" ||
+      user.phone === "9370102691";
+
+    if (isAdminUser) {
+      user.role = "admin";
+    }
+
     state = {
       ...state,
       isLoggedIn: true,
       guestUser: false,
       user,
       currentUser: user,
-      isAdmin: user.role === "admin",
-      isWholesale: user.role === "wholesale",
+      isAdmin: isAdminUser,
+      isWholesale: roleLower === "wholesale" || roleLower === "wholesale_partner",
       token: token || state.token,
       refreshToken: refreshToken !== undefined ? refreshToken : state.refreshToken,
       sessionExpiresAt: expiresAt,

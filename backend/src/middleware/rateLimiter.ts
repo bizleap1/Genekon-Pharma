@@ -3,7 +3,7 @@ import { sendError } from "../utils/apiResponse";
 
 export const otpRateLimiter = rateLimit({
   windowMs: 10 * 60 * 1000, // 10 minutes
-  max: 5, // 5 requests per window
+  max: process.env.NODE_ENV === "production" ? 5 : 100,
   standardHeaders: true,
   legacyHeaders: false,
   handler: (_req, res) => {
@@ -18,7 +18,7 @@ export const otpRateLimiter = rateLimit({
 
 export const authRateLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 20, // 20 requests per window
+  max: process.env.NODE_ENV === "production" ? 20 : 150,
   standardHeaders: true,
   legacyHeaders: false,
   handler: (_req, res) => {

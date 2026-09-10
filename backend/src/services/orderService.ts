@@ -28,6 +28,12 @@ export interface CreateOrderPayload {
   paymentMethod?: "COD" | "ONLINE" | "UPI" | "CARD" | "NETBANKING";
   couponCode?: string;
   notes?: string;
+  items?: Array<{
+    productId: string;
+    quantity: number;
+    name?: string;
+    price?: number;
+  }>;
 }
 
 export interface OrderDetailResponse extends Order {
@@ -66,17 +72,23 @@ export const orderService = {
     };
 
     // 2. Fetch user's cart
-    const [cart] = await db.select().from(carts).where(eq(carts.userId, userId)).limit(1);
-    if (!cart) {
-      throw new Error("Your cart is empty. Add products before placing an order.");
+    let [cart] = await db.select().from(carts).where(eq(carts.userId, userId)).limit(1);
+
+    let rawCartItems = cart
+      ? await db.select().from(cartItems).where(eq(cartItems.cartId, cart.id))
+      : [];
+
+    // Fallback: If DB cart is empty or missing, but items were provided in input payload,
+    // synchronize the cart automatically from input.items!
+    if (rawCartItems.length === 0 && input.items && input.items.length > 0) {
+      await cartService.syncCart(userId, input.items);
+      [cart] = await db.select().from(carts).where(eq(carts.userId, userId)).limit(1);
+      rawCartItems = cart
+        ? await db.select().from(cartItems).where(eq(cartItems.cartId, cart.id))
+        : [];
     }
 
-    const rawCartItems = await db
-      .select()
-      .from(cartItems)
-      .where(eq(cartItems.cartId, cart.id));
-
-    if (rawCartItems.length === 0) {
+    if (!cart || rawCartItems.length === 0) {
       throw new Error("Your cart is empty. Add products before placing an order.");
     }
 

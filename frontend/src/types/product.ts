@@ -19,6 +19,8 @@ export interface ProductVariant {
 export interface Product {
   // Core pharmacy identifiers
   id: string;
+  legacyId?: string;
+  slug?: string;
   name: string;
   brand: string;
   manufacturer: string;

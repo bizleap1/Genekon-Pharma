@@ -99,7 +99,7 @@ export const cartApi = {
    * Synchronize cart with exact item list
    */
   async syncCart(
-    items: Array<{ productId: string; quantity: number }>
+    items: Array<{ productId: string; quantity: number; name?: string; price?: number }>
   ): Promise<ApiResponse<BackendCart>> {
     return await apiClient.post<BackendCart>("/cart/sync", { items });
   },

@@ -2,6 +2,7 @@ import { eq, and, inArray } from "drizzle-orm";
 import { db, carts, cartItems, products, productImages } from "../db";
 import { Cart, CartItem as DbCartItem } from "../db/schema/cart";
 import { Product } from "../db/schema/products";
+import { productResolver } from "./productResolver";
 
 export interface EnrichedCartItem {
   id: string;
@@ -68,19 +69,15 @@ export const cartService = {
    */
   async addItemToCart(
     userId: string,
-    input: { productId: string; quantity: number }
+    input: { productId: string; quantity: number; name?: string }
   ): Promise<CartResponse & { prescriptionNotice?: string }> {
-    const { productId, quantity } = input;
+    const { productId, quantity, name } = input;
     if (quantity < 1) {
       throw new Error("Quantity must be at least 1");
     }
 
-    // 1. Validate product existence and status
-    const [product] = await db
-      .select()
-      .from(products)
-      .where(eq(products.id, productId))
-      .limit(1);
+    // 1. Validate product existence and status via productResolver
+    const product = await productResolver.resolveProduct(productId, name);
 
     if (!product) {
       throw new Error("Product not found");
@@ -101,11 +98,11 @@ export const cartService = {
       cart = created;
     }
 
-    // 3. Check if product already exists in user's cart
+    // 3. Check if product already exists in user's cart (using resolved product.id)
     const [existingItem] = await db
       .select()
       .from(cartItems)
-      .where(and(eq(cartItems.cartId, cart.id), eq(cartItems.productId, productId)))
+      .where(and(eq(cartItems.cartId, cart.id), eq(cartItems.productId, product.id)))
       .limit(1);
 
     if (existingItem) {
@@ -231,7 +228,7 @@ export const cartService = {
    */
   async mergeGuestCart(
     userId: string,
-    guestItems: Array<{ productId: string; quantity: number }>
+    guestItems: Array<{ productId: string; quantity: number; name?: string; price?: number }>
   ): Promise<CartResponse> {
     let [cart] = await db.select().from(carts).where(eq(carts.userId, userId)).limit(1);
     if (!cart) {
@@ -239,15 +236,12 @@ export const cartService = {
       cart = created;
     }
 
+    const resolvedMap = await productResolver.resolveProducts(guestItems);
+
     for (const guestItem of guestItems) {
       if (guestItem.quantity < 1) continue;
 
-      const [product] = await db
-        .select()
-        .from(products)
-        .where(eq(products.id, guestItem.productId))
-        .limit(1);
-
+      const product = resolvedMap.get(guestItem.productId);
       if (!product || product.status !== "ACTIVE" || product.stockQuantity <= 0) {
         continue; // Skip out-of-stock or deleted products safely
       }
@@ -292,7 +286,7 @@ export const cartService = {
    */
   async syncCart(
     userId: string,
-    targetItems: Array<{ productId: string; quantity: number }>
+    targetItems: Array<{ productId: string; quantity: number; name?: string; price?: number }>
   ): Promise<CartResponse> {
     let [cart] = await db.select().from(carts).where(eq(carts.userId, userId)).limit(1);
     if (!cart) {
@@ -306,46 +300,49 @@ export const cartService = {
       return this.buildCartResponse(cart);
     }
 
+    // 1. Resolve all target items using productResolver
+    const resolvedProductMap = await productResolver.resolveProducts(targetItems);
+
+    // Filter and map to valid active products
+    const validTargets: Array<{ product: Product; quantity: number }> = [];
+    const validResolvedProductIds = new Set<string>();
+
+    for (const target of targetItems) {
+      if (target.quantity < 1) continue;
+      const product = resolvedProductMap.get(target.productId);
+      if (!product || product.status !== "ACTIVE" || product.stockQuantity <= 0) {
+        continue;
+      }
+      validTargets.push({
+        product,
+        quantity: Math.min(target.quantity, product.stockQuantity),
+      });
+      validResolvedProductIds.add(product.id);
+    }
+
     // Existing items in database
     const existingItems = await db
       .select()
       .from(cartItems)
       .where(eq(cartItems.cartId, cart.id));
 
-    const existingMap = new Map(existingItems.map((i) => [i.productId, i]));
-    const targetProductIds = new Set(targetItems.map((i) => i.productId));
-
-    // 1. Remove items that are not in targetItems
+    // 2. Remove items whose resolved productId is not in valid targets
     for (const existing of existingItems) {
-      if (!targetProductIds.has(existing.productId)) {
+      if (!validResolvedProductIds.has(existing.productId)) {
         await db.delete(cartItems).where(eq(cartItems.id, existing.id));
       }
     }
 
-    // 2. Fetch live products
-    const productIds = Array.from(targetProductIds);
-    const dbProducts = await db
-      .select()
-      .from(products)
-      .where(inArray(products.id, productIds));
-    const productMap = new Map(dbProducts.map((p) => [p.id, p]));
-
     // 3. Upsert target items with exact quantities
-    for (const target of targetItems) {
-      if (target.quantity < 1) continue;
-      const product = productMap.get(target.productId);
-      if (!product || product.status !== "ACTIVE" || product.stockQuantity <= 0) {
-        continue;
-      }
-
-      const clampedQty = Math.min(target.quantity, product.stockQuantity);
-      const existing = existingMap.get(target.productId);
+    const existingMap = new Map(existingItems.map((i) => [i.productId, i]));
+    for (const { product, quantity } of validTargets) {
+      const existing = existingMap.get(product.id);
 
       if (existing) {
         await db
           .update(cartItems)
           .set({
-            quantity: clampedQty,
+            quantity,
             price: product.sellingPrice,
             updatedAt: new Date(),
           })
@@ -354,7 +351,7 @@ export const cartService = {
         await db.insert(cartItems).values({
           cartId: cart.id,
           productId: product.id,
-          quantity: clampedQty,
+          quantity,
           price: product.sellingPrice,
         });
       }

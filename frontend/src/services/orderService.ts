@@ -67,7 +67,12 @@ export const orderService = {
       if (items.length > 0) {
         try {
           await cartApi.syncCart(
-            items.map((i) => ({ productId: i.productId, quantity: i.quantity }))
+            items.map((i) => ({
+              productId: i.productId,
+              quantity: i.quantity,
+              name: i.name,
+              price: i.price,
+            }))
           );
         } catch (syncErr) {
           console.warn("Cart synchronization notice:", syncErr);
@@ -121,6 +126,12 @@ export const orderService = {
         deliveryAddressId: addressId,
         paymentMethod: paymentMethodEnum,
         notes: `Speed: ${formData.deliveryType}. Payment: ${formData.paymentMethod}`,
+        items: items.map((i) => ({
+          productId: i.productId,
+          quantity: i.quantity,
+          name: i.name,
+          price: i.price,
+        })),
       };
 
       if (totals.appliedCoupon?.code) {

@@ -9,6 +9,16 @@ export const createOrderSchema = z.object({
     .default("COD"),
   couponCode: z.string().trim().max(50).optional(),
   notes: z.string().max(500, "Notes cannot exceed 500 characters").optional(),
+  items: z
+    .array(
+      z.object({
+        productId: z.string().min(1, "Product identifier is required"),
+        quantity: z.coerce.number().int().min(1, "Quantity must be at least 1"),
+        name: z.string().optional(),
+        price: z.coerce.number().optional(),
+      })
+    )
+    .optional(),
 });
 
 export const updateOrderStatusSchema = z.object({

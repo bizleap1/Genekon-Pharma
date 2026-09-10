@@ -44,7 +44,7 @@ async function runAuthVerification() {
 
   // 2. Test Mobile OTP Flow
   logger.info("\n--- STEP 2: Testing Mobile OTP Authentication ---");
-  const testPhone = "9370102691";
+  const testPhone = "9999000001";
   const otpRes = await authService.requestOtp(testPhone);
   logger.info(`OTP Request response: ${otpRes.message}`);
   const generatedOtp = otpRes.testOtp;
