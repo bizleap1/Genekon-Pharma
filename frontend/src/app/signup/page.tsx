@@ -97,7 +97,8 @@ export default function SignUpPage() {
             mobile: res.data.user.mobile,
             email: res.data.user.email,
           },
-          res.data.token
+          res.data.token,
+          res.data.refreshToken
         );
 
         cartStore.mergeGuestCart();

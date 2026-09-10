@@ -104,7 +104,7 @@ function VerifyOtpContent() {
       const cleanPhone = phone.replace(/\D/g, "").slice(-10);
       const res = await authApi.verifyOtp(cleanPhone, entered);
       if (res.success && res.data) {
-        authStore.loginCustomer(res.data.user, res.data.token);
+        authStore.loginCustomer(res.data.user, res.data.token, res.data.refreshToken);
         cartStore.mergeGuestCart();
         toast.success(`Welcome ${res.data.user.name || "Customer"}!`);
         restoreIntendedActionAfterLogin(router, { addToCart }, { toggleWishlist }, toast);

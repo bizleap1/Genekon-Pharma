@@ -74,40 +74,57 @@ export default function CheckoutPage() {
     }
 
     let isMounted = true;
-    usersApi.getUserAddresses().then((res) => {
-      if (!isMounted) return;
-      if (res.success && res.data && res.data.length > 0) {
-        setSavedAddresses(res.data);
-        const defaultAddr = res.data.find((a) => a.isDefault) || res.data[0];
-        setSelectedAddressId(defaultAddr.id);
-        setFormData((prev) => ({
-          ...prev,
-          fullName: defaultAddr.fullName || defaultAddr.name || user?.name || prev.fullName,
-          mobileNumber: defaultAddr.phone || user?.mobile || prev.mobileNumber,
-          addressLine: defaultAddr.addressLine || prev.addressLine,
-          landmark: defaultAddr.landmark || prev.landmark || "",
-          city: defaultAddr.city || prev.city,
-          state: defaultAddr.state || prev.state || "Maharashtra",
-          pincode: defaultAddr.pincode || prev.pincode,
-          addressType: (defaultAddr.type as any) || prev.addressType,
-        }));
-        setIsEditingAddress(false);
-      } else if (user) {
-        setFormData((prev) => ({
-          ...prev,
-          fullName: prev.fullName || user.name || "",
-          mobileNumber: prev.mobileNumber || user.mobile || "",
-          addressLine: prev.addressLine || user.address || "",
-          city: prev.city || user.city || "",
-          pincode: prev.pincode || user.pincode || "",
-        }));
-        if (!user.address) {
+    usersApi
+      .getUserAddresses()
+      .then((res) => {
+        if (!isMounted) return;
+        if (res.success && res.data && res.data.length > 0) {
+          setSavedAddresses(res.data);
+          const defaultAddr = res.data.find((a) => a.isDefault) || res.data[0];
+          setSelectedAddressId(defaultAddr.id);
+          setFormData((prev) => ({
+            ...prev,
+            fullName: defaultAddr.fullName || defaultAddr.name || user?.name || prev.fullName,
+            mobileNumber: defaultAddr.phone || user?.mobile || prev.mobileNumber,
+            addressLine: defaultAddr.addressLine || prev.addressLine,
+            landmark: defaultAddr.landmark || prev.landmark || "",
+            city: defaultAddr.city || prev.city,
+            state: defaultAddr.state || prev.state || "Maharashtra",
+            pincode: defaultAddr.pincode || prev.pincode,
+            addressType: (defaultAddr.type as any) || prev.addressType,
+          }));
+          setIsEditingAddress(false);
+        } else if (user) {
+          setFormData((prev) => ({
+            ...prev,
+            fullName: prev.fullName || user.name || "",
+            mobileNumber: prev.mobileNumber || user.mobile || "",
+            addressLine: prev.addressLine || user.address || "",
+            city: prev.city || user.city || "",
+            pincode: prev.pincode || user.pincode || "",
+          }));
+          if (!user.address) {
+            setIsEditingAddress(true);
+          }
+        } else {
           setIsEditingAddress(true);
         }
-      } else {
-        setIsEditingAddress(true);
-      }
-    });
+      })
+      .catch((err: any) => {
+        if (!isMounted) return;
+        if (err?.statusCode === 401 || err?.errorCode === "INVALID_TOKEN") {
+          openLoginModal(
+            {
+              type: "CHECKOUT",
+              title: "Proceed to Checkout",
+              redirectUrl: "/checkout",
+            },
+            "Your session has expired. Please verify OTP to continue with checkout"
+          );
+        } else {
+          setIsEditingAddress(true);
+        }
+      });
 
     return () => {
       isMounted = false;
@@ -201,7 +218,24 @@ export default function CheckoutPage() {
         toast.success("Order placed successfully with Cash on Delivery!");
       }
     } catch (e: any) {
-      toast.error(e.message || "Failed to place order. Please try again.");
+      if (
+        e?.errorCode === "INVALID_TOKEN" ||
+        e?.statusCode === 401 ||
+        e?.message?.toLowerCase().includes("token") ||
+        e?.message?.toLowerCase().includes("session")
+      ) {
+        openLoginModal(
+          {
+            type: "CHECKOUT",
+            title: "Proceed to Checkout",
+            redirectUrl: "/checkout",
+          },
+          "Your session has expired. Please verify OTP to complete your order."
+        );
+        toast.warning("Your session has expired. Please verify OTP to complete your order.");
+      } else {
+        toast.error(e.message || "Failed to place order. Please try again.");
+      }
     } finally {
       setIsPlacingOrder(false);
     }

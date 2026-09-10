@@ -31,7 +31,7 @@ export function useGoogleAuth() {
         setIsGoogleLoading(true);
         const res = await authApi.googleLogin(response.credential);
         if (res.success && res.data) {
-          authStore.loginCustomer(res.data.user, res.data.token);
+          authStore.loginCustomer(res.data.user, res.data.token, res.data.refreshToken);
           cartStore.mergeGuestCart();
           toast.success(`Welcome ${res.data.user.name || "Customer"}!`);
           router.push("/account");
@@ -100,7 +100,7 @@ export function useGoogleAuth() {
         try {
           const res = await authApi.googleLogin(`mock_google_token_${Date.now()}`);
           if (res.success && res.data) {
-            authStore.loginCustomer(res.data.user, res.data.token);
+            authStore.loginCustomer(res.data.user, res.data.token, res.data.refreshToken);
             cartStore.mergeGuestCart();
             toast.success(`Signed in as ${res.data.user.name}!`);
             router.push("/account");

@@ -45,7 +45,18 @@ export const usersApi = {
    * Fetch saved delivery addresses
    */
   async getUserAddresses(): Promise<ApiResponse<UserAddress[]>> {
-    return await apiClient.get<UserAddress[]>("/users/addresses");
+    try {
+      return await apiClient.get<UserAddress[]>("/users/addresses");
+    } catch (err: any) {
+      if (err?.statusCode === 401 || err?.errorCode === "INVALID_TOKEN") {
+        throw err;
+      }
+      return {
+        success: false,
+        message: "Could not load saved addresses",
+        data: [],
+      };
+    }
   },
 
   /**

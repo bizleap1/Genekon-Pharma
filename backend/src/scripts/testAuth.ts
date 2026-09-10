@@ -34,7 +34,12 @@ async function runAuthVerification() {
     adminUser = created;
     logger.info("Created Admin user: admin@genekonpharma.com");
   } else {
-    logger.info("Admin user already exists");
+    const adminPasswordHash = await bcrypt.hash("Admin@12345", 12);
+    await db
+      .update(users)
+      .set({ passwordHash: adminPasswordHash, role: "ADMIN", isActive: true })
+      .where(eq(users.email, adminEmail));
+    logger.info("Admin user password synchronized");
   }
 
   // 2. Test Mobile OTP Flow

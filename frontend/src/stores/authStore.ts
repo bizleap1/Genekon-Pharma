@@ -50,6 +50,7 @@ export interface AuthState {
   loading: boolean;
   error: string | null;
   token: string | null;
+  refreshToken: string | null;
   loginModal: {
     isOpen: boolean;
     message: string;
@@ -90,6 +91,7 @@ function getInitialState(): AuthState {
       loading: false,
       error: null,
       token: null,
+      refreshToken: null,
       loginModal: {
         isOpen: false,
         message: "Login required to continue",
@@ -143,6 +145,7 @@ function getInitialState(): AuthState {
           loading: false,
           error: null,
           token: parsed.token || null,
+          refreshToken: parsed.refreshToken || null,
           loginModal: {
             isOpen: false,
             message: "Login required to continue",
@@ -170,6 +173,7 @@ function getInitialState(): AuthState {
     loading: false,
     error: null,
     token: null,
+    refreshToken: null,
     loginModal: {
       isOpen: false,
       message: "Login required to continue",
@@ -190,6 +194,7 @@ function emitChange() {
           JSON.stringify({
             user: state.user,
             token: state.token,
+            refreshToken: state.refreshToken,
             redirectPath: state.redirectPath,
             sessionExpiresAt: state.sessionExpiresAt,
           })
@@ -294,6 +299,48 @@ export const authStore = {
     emitChange();
   },
 
+  getRefreshToken(): string | null {
+    return state.refreshToken;
+  },
+
+  setRefreshToken(refreshToken: string | null): void {
+    state = { ...state, refreshToken };
+    emitChange();
+  },
+
+  updateTokens(accessToken: string, refreshToken?: string): void {
+    state = {
+      ...state,
+      token: accessToken,
+      refreshToken: refreshToken !== undefined ? refreshToken : state.refreshToken,
+    };
+    emitChange();
+  },
+
+  handleSessionExpired(): void {
+    state = {
+      ...state,
+      token: null,
+      refreshToken: null,
+      isLoggedIn: false,
+      guestUser: true,
+      user: null,
+      currentUser: null,
+      isAdmin: false,
+      isWholesale: false,
+      sessionExpiresAt: null,
+    };
+    emitChange();
+    this.openLoginModal(
+      {
+        type: "CHECKOUT",
+        title: "Proceed to Checkout",
+        redirectUrl: "/checkout",
+      },
+      "Your session has expired. Please verify OTP to complete your order."
+    );
+  },
+
   async requestOtp(mobile: string): Promise<{ success: boolean; error?: string }> {
     state = { ...state, loading: true, error: null };
     emitChange();
@@ -348,6 +395,7 @@ export const authStore = {
       const res = await authApi.verifyOtp(state.tempMobile || "9370102691", otp);
       const loggedUser = res.data.user;
       const token = res.data.token;
+      const refreshToken = res.data.refreshToken || res.data.tokens?.refreshToken || null;
       const expiresAt = Date.now() + SESSION_DURATION_MS;
 
       state = {
@@ -360,6 +408,7 @@ export const authStore = {
         isAdmin: loggedUser.role === "admin",
         isWholesale: loggedUser.role === "wholesale",
         token,
+        refreshToken,
         sessionExpiresAt: expiresAt,
         otpSent: false,
         tempMobile: "",
@@ -408,7 +457,7 @@ export const authStore = {
     }
   },
 
-  loginCustomer(profile?: Partial<UserProfile>, token?: string): UserProfile {
+  loginCustomer(profile?: Partial<UserProfile>, token?: string, refreshToken?: string): UserProfile {
     const expiresAt = Date.now() + SESSION_DURATION_MS;
     const user: UserProfile = {
       id: profile?.id || `cust-${Date.now().toString().slice(-6)}`,
@@ -431,6 +480,7 @@ export const authStore = {
       isAdmin: user.role === "admin",
       isWholesale: user.role === "wholesale",
       token: token || state.token,
+      refreshToken: refreshToken !== undefined ? refreshToken : state.refreshToken,
       sessionExpiresAt: expiresAt,
       loginModal: {
         ...state.loginModal,
@@ -442,7 +492,7 @@ export const authStore = {
     return user;
   },
 
-  loginWholesalePartner(profile?: Partial<UserProfile>): UserProfile {
+  loginWholesalePartner(profile?: Partial<UserProfile>, token?: string, refreshToken?: string): UserProfile {
     const expiresAt = Date.now() + SESSION_DURATION_MS;
     const user: UserProfile = {
       id: profile?.id || `whl-${Date.now().toString().slice(-6)}`,
@@ -465,6 +515,8 @@ export const authStore = {
       currentUser: user,
       isAdmin: false,
       isWholesale: true,
+      token: token || state.token,
+      refreshToken: refreshToken !== undefined ? refreshToken : state.refreshToken,
       sessionExpiresAt: expiresAt,
       loginModal: {
         ...state.loginModal,
@@ -486,6 +538,7 @@ export const authStore = {
       const res = await authApi.loginUser({ identifier: email, password });
       const loggedUser = res.data.user;
       const token = res.data.token;
+      const refreshToken = res.data.refreshToken || res.data.tokens?.refreshToken || null;
       const expiresAt = Date.now() + (res.data.expiresIn ? res.data.expiresIn * 1000 : SESSION_DURATION_MS);
       state = {
         ...state,
@@ -497,6 +550,7 @@ export const authStore = {
         isAdmin: loggedUser.role === "admin",
         isWholesale: loggedUser.role === "wholesale",
         token,
+        refreshToken,
         sessionExpiresAt: expiresAt,
         error: null,
         loginModal: { ...state.loginModal, isOpen: false },
@@ -549,6 +603,8 @@ export const authStore = {
       error: null,
       intendedAction: null,
       redirectPath: null,
+      token: null,
+      refreshToken: null,
     };
     emitChange();
   },
@@ -582,6 +638,7 @@ const SERVER_AUTH_SNAPSHOT: AuthState = {
   loading: false,
   error: null,
   token: null,
+  refreshToken: null,
   loginModal: {
     isOpen: false,
     message: "Login required to continue",
@@ -608,6 +665,10 @@ export function useAuthStore() {
     clearIntendedAction: authStore.clearIntendedAction.bind(authStore),
     getToken: authStore.getToken.bind(authStore),
     setToken: authStore.setToken.bind(authStore),
+    getRefreshToken: authStore.getRefreshToken.bind(authStore),
+    setRefreshToken: authStore.setRefreshToken.bind(authStore),
+    updateTokens: authStore.updateTokens.bind(authStore),
+    handleSessionExpired: authStore.handleSessionExpired.bind(authStore),
     requestOtp: authStore.requestOtp.bind(authStore),
     verifyOtp: authStore.verifyOtp.bind(authStore),
     loginCustomer: authStore.loginCustomer.bind(authStore),
@@ -619,6 +680,13 @@ export function useAuthStore() {
   };
 }
 
-// Auto-inject JWT token into global API client
+// Auto-inject JWT token into global API client and register refresh handlers
 apiClient.setTokenGetter(() => authStore.getToken());
+apiClient.setRefreshTokenGetter(() => authStore.getRefreshToken());
+apiClient.setTokenUpdater(({ accessToken, refreshToken }) => {
+  authStore.updateTokens(accessToken, refreshToken);
+});
+apiClient.setSessionExpiredHandler(() => {
+  authStore.handleSessionExpired();
+});
 

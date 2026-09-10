@@ -76,8 +76,17 @@ export const orderService = {
 
       // 2. Fetch or save delivery address to obtain authoritative deliveryAddressId
       let addressId: string | null = null;
-      const addrRes = await usersApi.getUserAddresses();
-      const savedAddresses = addrRes.data || [];
+      let savedAddresses: any[] = [];
+      try {
+        const addrRes = await usersApi.getUserAddresses();
+        savedAddresses = addrRes.data || [];
+      } catch (addrErr: any) {
+        if (addrErr?.statusCode === 401 || addrErr?.errorCode === "INVALID_TOKEN") {
+          throw addrErr;
+        }
+        savedAddresses = [];
+      }
+
       const matching = savedAddresses.find(
         (a) =>
           a.pincode === formData.pincode &&

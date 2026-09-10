@@ -69,7 +69,7 @@ export default function LoginPage() {
         });
 
         if (res.success && res.data) {
-          authStore.loginCustomer(res.data.user, res.data.token);
+          authStore.loginCustomer(res.data.user, res.data.token, res.data.refreshToken);
           cartStore.mergeGuestCart();
           toast.success(`Welcome back, ${res.data.user.name || "Customer"}!`);
           restoreIntendedActionAfterLogin(router, { addToCart }, { toggleWishlist }, toast);

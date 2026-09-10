@@ -61,7 +61,7 @@ export const tokenService = {
     return {
       accessToken,
       refreshToken,
-      expiresIn: 15 * 60, // 900 seconds
+      expiresIn: 7 * 24 * 60 * 60, // 7 days in seconds
     };
   },
 

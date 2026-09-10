@@ -24,7 +24,7 @@ const envSchema = z
     FRONTEND_URL: z.string().default("http://localhost:3000"),
     JWT_ACCESS_SECRET: z.string().default(DEFAULT_SECRETS.JWT_ACCESS_SECRET),
     JWT_REFRESH_SECRET: z.string().default(DEFAULT_SECRETS.JWT_REFRESH_SECRET),
-    JWT_ACCESS_EXPIRY: z.string().default("15m"),
+    JWT_ACCESS_EXPIRY: z.string().default("7d"),
     JWT_REFRESH_EXPIRY: z.string().default("7d"),
     RESEND_API_KEY: z.string().optional(),
     RESEND_FROM_EMAIL: z.string().default("Genekon Pharmacy <onboarding@resend.dev>"),

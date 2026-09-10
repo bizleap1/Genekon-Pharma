@@ -58,7 +58,7 @@ export default function AdminLoginPage() {
             authStore.logout();
             return;
           }
-          authStore.loginCustomer(res.data.user, res.data.token);
+          authStore.loginCustomer(res.data.user, res.data.token, res.data.refreshToken);
           router.push("/admin/dashboard");
         } else {
           setError(res.message || "Invalid administrator credentials");
@@ -104,7 +104,7 @@ export default function AdminLoginPage() {
               authStore.logout();
               return;
             }
-            authStore.loginCustomer(res.data.user, res.data.token);
+            authStore.loginCustomer(res.data.user, res.data.token, res.data.refreshToken);
             router.push("/admin/dashboard");
           } else {
             setError(res.message || "Invalid OTP code entered.");
