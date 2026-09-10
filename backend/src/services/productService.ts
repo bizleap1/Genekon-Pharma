@@ -132,20 +132,20 @@ export const productService = {
     const whereClause = conditions.length > 0 ? and(...conditions) : undefined;
 
     // Sorting builder
-    let orderByClause;
+    let orderByClause: any[];
     switch (params.sort) {
       case "price-low":
-        orderByClause = asc(products.sellingPrice);
+        orderByClause = [asc(products.sellingPrice), desc(products.createdAt), desc(products.id)];
         break;
       case "price-high":
-        orderByClause = desc(products.sellingPrice);
+        orderByClause = [desc(products.sellingPrice), desc(products.createdAt), desc(products.id)];
         break;
       case "latest":
-        orderByClause = desc(products.createdAt);
+        orderByClause = [desc(products.createdAt), desc(products.id)];
         break;
       case "popularity":
       default:
-        orderByClause = desc(products.rating);
+        orderByClause = [desc(products.rating), desc(products.createdAt), desc(products.id)];
         break;
     }
 
@@ -168,7 +168,7 @@ export const productService = {
       .from(products)
       .leftJoin(categories, eq(products.categoryId, categories.id))
       .where(whereClause)
-      .orderBy(orderByClause)
+      .orderBy(...orderByClause)
       .limit(limit)
       .offset(offset);
 
