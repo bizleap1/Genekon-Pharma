@@ -1,4 +1,4 @@
-import { eq, and, desc, sql, or } from "drizzle-orm";
+import { eq, and, desc, sql, or, ne } from "drizzle-orm";
 import {
   db,
   orders,
@@ -26,10 +26,11 @@ export const paymentService = {
    */
   async createPaymentOrder(userId: string, orderId: string) {
     // Authoritatively fetch order from DB by either UUID id or orderNumber
+    const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(orderId);
     const [order] = await db
       .select()
       .from(orders)
-      .where(or(eq(orders.id, orderId), eq(orders.orderNumber, orderId)))
+      .where(isUuid ? eq(orders.id, orderId) : eq(orders.orderNumber, orderId))
       .limit(1);
 
     if (!order) {
@@ -120,10 +121,11 @@ export const paymentService = {
    * 2. Verify Razorpay payment signature & confirm order
    */
   async verifyPayment(userId: string, input: VerifyPaymentInput) {
+    const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(input.orderId);
     const [order] = await db
       .select()
       .from(orders)
-      .where(or(eq(orders.id, input.orderId), eq(orders.orderNumber, input.orderId)))
+      .where(isUuid ? eq(orders.id, input.orderId) : eq(orders.orderNumber, input.orderId))
       .limit(1);
 
     if (!order) {
@@ -134,6 +136,42 @@ export const paymentService = {
       throw new Error("You are not authorized to verify this payment");
     }
 
+    // Return idempotently if already verified
+    if (order.paymentStatus === "SUCCESS") {
+      const [existingPayment] = await db
+        .select()
+        .from(payments)
+        .where(
+          and(
+            eq(payments.orderId, order.id),
+            eq(payments.razorpayPaymentId, input.razorpayPaymentId)
+          )
+        )
+        .limit(1);
+      return {
+        order,
+        payment: existingPayment,
+        message: "Payment signature already verified successfully",
+      };
+    }
+
+    // Payment replay protection: check if razorpayPaymentId is already used on another order
+    const [duplicatePayment] = await db
+      .select()
+      .from(payments)
+      .where(
+        and(
+          eq(payments.razorpayPaymentId, input.razorpayPaymentId),
+          eq(payments.status, "SUCCESS"),
+          ne(payments.orderId, order.id)
+        )
+      )
+      .limit(1);
+
+    if (duplicatePayment) {
+      throw new Error("Payment replay rejected: this transaction has already been credited to another order");
+    }
+
     // 1. Cryptographic HMAC-SHA256 signature verification
     const isValid = razorpayService.verifyPaymentSignature({
       razorpayOrderId: input.razorpayOrderId,
@@ -141,14 +179,14 @@ export const paymentService = {
       razorpaySignature: input.razorpaySignature,
     });
 
-    // Find latest payment record
+    // Find latest payment record strictly bound to this order and razorpayOrderId
     const [paymentRecord] = await db
       .select()
       .from(payments)
       .where(
-        or(
-          eq(payments.razorpayOrderId, input.razorpayOrderId),
-          eq(payments.orderId, input.orderId)
+        and(
+          eq(payments.orderId, order.id),
+          eq(payments.razorpayOrderId, input.razorpayOrderId)
         )
       )
       .orderBy(desc(payments.createdAt))
@@ -459,6 +497,11 @@ export const paymentService = {
     }
 
     const refundAmount = input.amount ? input.amount : Number(payment.amount);
+    const previousRefundTotal = Number(payment.refundAmount || 0);
+    const newRefundTotal = previousRefundTotal + refundAmount;
+    const isFullRefund = newRefundTotal >= Number(payment.amount);
+    const paymentStatus = isFullRefund ? "REFUNDED" : payment.status;
+    const orderPaymentStatus = isFullRefund ? "REFUNDED" : "PAID";
     const refundAmountPaise = Math.round(refundAmount * 100);
 
     // Call Razorpay Refund API
@@ -476,9 +519,9 @@ export const paymentService = {
     const [updatedPayment] = await db
       .update(payments)
       .set({
-        status: "REFUNDED",
+        status: paymentStatus,
         refundId: rzRefund.id,
-        refundAmount: refundAmount.toFixed(2),
+        refundAmount: newRefundTotal.toFixed(2),
         updatedAt: new Date(),
       })
       .where(eq(payments.id, payment.id))
@@ -488,7 +531,7 @@ export const paymentService = {
     const [updatedOrder] = await db
       .update(orders)
       .set({
-        paymentStatus: "REFUNDED",
+        paymentStatus: orderPaymentStatus,
         updatedAt: new Date(),
       })
       .where(eq(orders.id, payment.orderId))
@@ -498,7 +541,7 @@ export const paymentService = {
     await db.insert(orderStatusHistory).values({
       orderId: payment.orderId,
       status: updatedOrder.orderStatus,
-      notes: `Payment refund of ₹${refundAmount.toFixed(2)} processed via Razorpay (Refund ID: ${rzRefund.id}). Reason: ${input.reason}`,
+      notes: `Payment refund of ₹${refundAmount.toFixed(2)} processed via Razorpay (Refund ID: ${rzRefund.id}). Total refunded: ₹${newRefundTotal.toFixed(2)}/${Number(payment.amount).toFixed(2)}. Reason: ${input.reason}`,
       updatedBy: adminId,
     });
 
@@ -516,7 +559,12 @@ export const paymentService = {
    * 6. Fetch payment details by orderId (Customer or Admin)
    */
   async getPaymentByOrderId(orderId: string, userId?: string, isAdmin = false) {
-    const [order] = await db.select().from(orders).where(eq(orders.id, orderId)).limit(1);
+    const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(orderId);
+    const [order] = await db
+      .select()
+      .from(orders)
+      .where(isUuid ? eq(orders.id, orderId) : eq(orders.orderNumber, orderId))
+      .limit(1);
     if (!order) {
       throw new Error("Order not found");
     }

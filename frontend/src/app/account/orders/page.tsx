@@ -59,45 +59,29 @@ export default function MyOrdersPage() {
         const res = await ordersApi.getUserOrders();
         let userOrders: CustomerOrder[] = [];
         if (res.success && res.data && res.data.length > 0) {
-          userOrders = res.data.map((o) => ({
-            id: o.orderId,
-            date: o.date,
-            totalAmount: o.totals.totalAmount,
-            paymentMethod: o.formData.paymentMethod === "cod" ? "Cash on Delivery" : "Online / UPI",
-            paymentStatus: (o.formData.paymentMethod === "cod" ? "Cash on Delivery" : "Paid") as any,
-            deliveryStatus: (o.status === "Delivered" ? "Delivered" : o.status === "Shipped" ? "Shipped" : "Confirmed") as any,
-            currentStep: o.status === "Delivered" ? 5 : o.status === "Shipped" ? 4 : 2,
-            estimatedDelivery: o.estimatedDelivery || "In 2-4 business days",
-            deliveryAddress: `${o.formData.addressLine}, ${o.formData.city}, ${o.formData.state} - ${o.formData.pincode}`,
-            items: o.items.map((it) => ({
-              id: it.id || it.productId || "p1",
-              name: it.name,
-              brand: it.brand || "Genekon",
-              variant: it.variant || "Standard",
-              price: it.price,
-              quantity: it.quantity,
-              image: it.image || "/images/products/cipla-paracetamol-v2.jpg",
-            })),
-            priceBreakdown: {
-              subtotal: o.totals.subtotal,
-              discount: o.totals.discount,
-              deliveryFee: o.totals.deliveryCost,
-              total: o.totals.totalAmount,
-            },
-          }));
-        } else {
-          const local = orderService.getStoredOrders();
-          if (local && local.length > 0) {
-            userOrders = local.map((o) => ({
+          userOrders = res.data.map((o) => {
+            const isCancelled =
+              (o.status || "").toLowerCase() === "cancelled" ||
+              o.cancellationRequest?.status === "APPROVED";
+            return {
               id: o.orderId,
               date: o.date,
               totalAmount: o.totals.totalAmount,
               paymentMethod: o.formData.paymentMethod === "cod" ? "Cash on Delivery" : "Online / UPI",
-              paymentStatus: (o.formData.paymentMethod === "cod" ? "Cash on Delivery" : "Paid") as any,
-              deliveryStatus: (o.status === "Delivered" ? "Delivered" : o.status === "Shipped" ? "Shipped" : "Confirmed") as any,
-              currentStep: o.status === "Delivered" ? 5 : o.status === "Shipped" ? 4 : 2,
+              paymentStatus: (isCancelled
+                ? o.formData.paymentMethod === "cod" ? "Cancelled" : "Refunded"
+                : o.formData.paymentMethod === "cod" ? "Cash on Delivery" : "Paid") as any,
+              deliveryStatus: (isCancelled
+                ? "Cancelled"
+                : o.status === "Delivered"
+                ? "Delivered"
+                : o.status === "Shipped"
+                ? "Shipped"
+                : "Confirmed") as any,
+              currentStep: isCancelled ? 0 : o.status === "Delivered" ? 5 : o.status === "Shipped" ? 4 : 2,
               estimatedDelivery: o.estimatedDelivery || "In 2-4 business days",
               deliveryAddress: `${o.formData.addressLine}, ${o.formData.city}, ${o.formData.state} - ${o.formData.pincode}`,
+              cancellationRequest: o.cancellationRequest || null,
               items: o.items.map((it) => ({
                 id: it.id || it.productId || "p1",
                 name: it.name,
@@ -113,7 +97,51 @@ export default function MyOrdersPage() {
                 deliveryFee: o.totals.deliveryCost,
                 total: o.totals.totalAmount,
               },
-            }));
+            };
+          });
+        } else {
+          const local = orderService.getStoredOrders(user?.id);
+          if (local && local.length > 0) {
+            userOrders = local.map((o) => {
+              const isCancelled =
+                (o.status || "").toLowerCase() === "cancelled" ||
+                o.cancellationRequest?.status === "APPROVED";
+              return {
+                id: o.orderId,
+                date: o.date,
+                totalAmount: o.totals.totalAmount,
+                paymentMethod: o.formData.paymentMethod === "cod" ? "Cash on Delivery" : "Online / UPI",
+                paymentStatus: (isCancelled
+                  ? o.formData.paymentMethod === "cod" ? "Cancelled" : "Refunded"
+                  : o.formData.paymentMethod === "cod" ? "Cash on Delivery" : "Paid") as any,
+                deliveryStatus: (isCancelled
+                  ? "Cancelled"
+                  : o.status === "Delivered"
+                  ? "Delivered"
+                  : o.status === "Shipped"
+                  ? "Shipped"
+                  : "Confirmed") as any,
+                currentStep: isCancelled ? 0 : o.status === "Delivered" ? 5 : o.status === "Shipped" ? 4 : 2,
+                estimatedDelivery: o.estimatedDelivery || "In 2-4 business days",
+                deliveryAddress: `${o.formData.addressLine}, ${o.formData.city}, ${o.formData.state} - ${o.formData.pincode}`,
+                cancellationRequest: o.cancellationRequest || null,
+                items: o.items.map((it) => ({
+                  id: it.id || it.productId || "p1",
+                  name: it.name,
+                  brand: it.brand || "Genekon",
+                  variant: it.variant || "Standard",
+                  price: it.price,
+                  quantity: it.quantity,
+                  image: it.image || "/images/products/cipla-paracetamol-v2.jpg",
+                })),
+                priceBreakdown: {
+                  subtotal: o.totals.subtotal,
+                  discount: o.totals.discount,
+                  deliveryFee: o.totals.deliveryCost,
+                  total: o.totals.totalAmount,
+                },
+              };
+            });
           }
         }
         setOrders(userOrders);
@@ -130,7 +158,7 @@ export default function MyOrdersPage() {
       setOrders([]);
       setLoading(false);
     }
-  }, [isLoggedIn]);
+  }, [isLoggedIn, user?.id]);
 
   const filteredOrders = orders.filter((order) => {
     if (activeFilter === "in-transit") return order.deliveryStatus === "Shipped" || order.deliveryStatus === "Confirmed";
@@ -280,6 +308,7 @@ export default function MyOrdersPage() {
                 <div className="mt-6 space-y-5">
                   {filteredOrders.map((order) => {
                     const isDelivered = order.deliveryStatus === "Delivered";
+                    const isCancelled = order.deliveryStatus === "Cancelled";
                     const isReordered = reorderedId === order.id;
 
                     return (
@@ -290,24 +319,33 @@ export default function MyOrdersPage() {
                         {/* Order Header */}
                         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-[#EAF2E8]">
                           <div>
-                            <div className="flex items-center gap-2.5">
+                            <div className="flex flex-wrap items-center gap-2.5">
                               <span className="font-mono text-sm font-extrabold text-[#14304A]">
                                 {order.id}
                               </span>
                               <span
                                 className={`inline-flex items-center gap-1 text-[11px] font-extrabold px-2.5 py-0.5 rounded-full ${
-                                  isDelivered
+                                  isCancelled
+                                    ? "bg-red-50 text-red-700 border border-red-200"
+                                    : isDelivered
                                     ? "bg-[#EDF7E9] text-[#447719]"
                                     : "bg-[#EBF3FC] text-[#1853A8]"
                                 }`}
                               >
-                                {isDelivered ? (
+                                {isCancelled ? (
+                                  <span className="w-1.5 h-1.5 rounded-full bg-red-600" />
+                                ) : isDelivered ? (
                                   <CheckCircle2 className="w-3.5 h-3.5 text-[#559620]" />
                                 ) : (
                                   <span className="w-1.5 h-1.5 rounded-full bg-[#1853A8] animate-pulse" />
                                 )}
                                 {order.deliveryStatus}
                               </span>
+                              {order.cancellationRequest?.status === "PENDING" && (
+                                <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-50 text-amber-800 border border-amber-200">
+                                  Cancel Review Pending
+                                </span>
+                              )}
                             </div>
                             <p className="text-xs text-[#6B806E] mt-1">
                               Placed on <span className="font-semibold text-[#14304A]">{order.date}</span> &bull; Payment: {order.paymentMethod}

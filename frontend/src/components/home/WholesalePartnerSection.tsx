@@ -93,10 +93,10 @@ export const WholesalePartnerSection: React.FC = () => {
                 </Link>
 
                 <a
-                  href="tel:9370102691"
+                  href="tel:7666168147"
                   className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-white/90 hover:text-white bg-white/10 hover:bg-white/15 border border-white/20 px-4 py-3 rounded-full transition-colors"
                 >
-                  <span>Speak to B2B Desk</span>
+                  <span>Speak to B2B Desk (+91 7666168147)</span>
                 </a>
               </div>
             </div>

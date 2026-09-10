@@ -47,9 +47,12 @@ export function useQuery<T>(
   const [error, setError] = useState<Error | null>(null);
   const [isSuccess, setIsSuccess] = useState<boolean>(Boolean(hasFreshCache));
 
-  // Store options in ref to avoid effect loops
+  // Store options and queryFn in refs to avoid effect loops
   const optionsRef = useRef({ onSuccess, onError });
   optionsRef.current = { onSuccess, onError };
+
+  const queryFnRef = useRef(queryFn);
+  queryFnRef.current = queryFn;
 
   const execute = useCallback(async () => {
     if (!enabled) return;
@@ -59,7 +62,7 @@ export function useQuery<T>(
     setError(null);
 
     try {
-      const result = await queryFn();
+      const result = await queryFnRef.current();
       setData(result);
       setIsSuccess(true);
       queryCache.set(serializedKey, { data: result, timestamp: Date.now() });
@@ -72,7 +75,7 @@ export function useQuery<T>(
     } finally {
       setIsLoading(false);
     }
-  }, [enabled, queryFn, serializedKey]);
+  }, [enabled, serializedKey]);
 
   useEffect(() => {
     if (enabled && !hasFreshCache) {

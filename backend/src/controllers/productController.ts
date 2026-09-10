@@ -17,6 +17,63 @@ export const productController = {
   },
 
   /**
+   * GET /api/v1/products/featured
+   * Public featured products list
+   */
+  async getFeaturedProducts(req: Request, res: Response) {
+    try {
+      const limit = req.query.limit ? parseInt(req.query.limit as string, 10) : 8;
+      const result = await productService.getProducts({
+        sort: "popularity",
+        limit,
+      });
+      return sendSuccess(res, result, "Featured products retrieved successfully");
+    } catch (error: any) {
+      return sendError(res, error.message || "Failed to retrieve featured products", 400);
+    }
+  },
+
+  /**
+   * GET /api/v1/products/search
+   * Search catalog products
+   */
+  async searchProducts(req: Request, res: Response) {
+    try {
+      const q = (req.query.q || req.query.query || req.query.search || "") as string;
+      const page = req.query.page ? parseInt(req.query.page as string, 10) : 1;
+      const limit = req.query.limit ? parseInt(req.query.limit as string, 10) : 20;
+      const result = await productService.getProducts({
+        search: q,
+        page,
+        limit,
+      });
+      return sendSuccess(res, result, "Search results retrieved successfully");
+    } catch (error: any) {
+      return sendError(res, error.message || "Failed to search products", 400);
+    }
+  },
+
+  /**
+   * GET /api/v1/products/category/:category
+   * Public products by category slug
+   */
+  async getProductsByCategory(req: Request, res: Response) {
+    try {
+      const category = (req.params.category || req.query.category || req.query.slug || "") as string;
+      const page = req.query.page ? parseInt(req.query.page as string, 10) : 1;
+      const limit = req.query.limit ? parseInt(req.query.limit as string, 10) : 20;
+      const result = await productService.getProducts({
+        categorySlug: category,
+        page,
+        limit,
+      });
+      return sendSuccess(res, result, `Products for category '${category}' retrieved successfully`);
+    } catch (error: any) {
+      return sendError(res, error.message || "Failed to retrieve products by category", 400);
+    }
+  },
+
+  /**
    * GET /api/v1/products/:idOrSlug
    * Public single product details with related items
    */

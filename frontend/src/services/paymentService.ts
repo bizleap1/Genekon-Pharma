@@ -91,17 +91,30 @@ export const paymentService = {
       },
       handler: async (response: RazorpaySuccessResponse) => {
         try {
-          await this.verifyPayment({
+          const verifyResult = await this.verifyPayment({
             orderId: options.orderId,
             paymentId: response.razorpay_payment_id,
             signature: response.razorpay_signature,
             razorpayOrderId: response.razorpay_order_id,
           });
-          options.onSuccess(response);
-        } catch (verifyErr) {
+          if (verifyResult.verified) {
+            options.onSuccess(response);
+          } else {
+            const err = new Error(verifyResult.message || "Payment verification rejected by server");
+            console.error("Signature verification error:", err);
+            if (options.onError) {
+              options.onError(err);
+            } else {
+              alert(err.message);
+            }
+          }
+        } catch (verifyErr: any) {
           console.error("Signature verification error:", verifyErr);
-          // Allow client progression if offline
-          options.onSuccess(response);
+          if (options.onError) {
+            options.onError(verifyErr);
+          } else {
+            alert(verifyErr?.message || "Payment verification failed. Please contact support.");
+          }
         }
       },
       modal: {
@@ -121,18 +134,19 @@ export const paymentService = {
   ): Promise<{ verified: boolean; message: string }> {
     try {
       const res = await apiClient.post<any>("/payments/verify", {
-        razorpay_order_id: payload.razorpayOrderId,
-        razorpay_payment_id: payload.paymentId,
-        razorpay_signature: payload.signature,
+        orderId: payload.orderId,
+        razorpayOrderId: payload.razorpayOrderId,
+        razorpayPaymentId: payload.paymentId,
+        razorpaySignature: payload.signature,
       });
       return {
-        verified: res.success,
+        verified: Boolean(res.success),
         message: res.message || "Payment verified successfully",
       };
-    } catch {
+    } catch (err: any) {
       return {
-        verified: true,
-        message: `Payment ${payload.paymentId} recorded locally.`,
+        verified: false,
+        message: err?.response?.data?.message || err?.message || "Payment signature verification failed",
       };
     }
   },

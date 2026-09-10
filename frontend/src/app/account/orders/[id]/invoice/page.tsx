@@ -8,17 +8,8 @@ import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 import { PlacedOrder } from "@/types/order";
 import { useAuthStore } from "@/stores/authStore";
-
-function getOrdersFromStorage(): PlacedOrder[] {
-  try {
-    const raw = localStorage.getItem("genekon_placed_orders_v1");
-    if (!raw) return [];
-    const parsed = JSON.parse(raw);
-    return Array.isArray(parsed) ? parsed : [];
-  } catch {
-    return [];
-  }
-}
+import { orderService } from "@/services/orderService";
+import { ordersApi } from "@/api/orders";
 
 export default function OrderInvoiceFullPage({
   params,
@@ -34,13 +25,23 @@ export default function OrderInvoiceFullPage({
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const orders = getOrdersFromStorage();
+    const orders = orderService.getStoredOrders(user?.id);
     const found = orders.find(
       (o) => o.orderId.toLowerCase() === orderId.toLowerCase()
     );
-    setOrder(found || null);
-    setLoading(false);
-  }, [orderId]);
+    if (found) {
+      setOrder(found);
+      setLoading(false);
+    } else {
+      ordersApi.getOrderById(orderId).then((res) => {
+        if (res.data) {
+          setOrder(res.data);
+        }
+      }).finally(() => {
+        setLoading(false);
+      });
+    }
+  }, [orderId, user?.id]);
 
   const handleDownloadPdf = async () => {
     const invoiceEl = document.getElementById("genekon-invoice-root");

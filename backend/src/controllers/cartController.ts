@@ -87,6 +87,19 @@ export const cartController = {
   },
 
   /**
+   * POST /api/v1/cart/sync
+   * Authoritative cart synchronization (sets exact cart contents)
+   */
+  async syncCart(req: Request, res: Response) {
+    try {
+      const syncedCart = await cartService.syncCart(req.user!.id, req.body.items || []);
+      return sendSuccess(res, syncedCart, "Cart synchronized successfully");
+    } catch (error: any) {
+      return sendError(res, error.message || "Failed to synchronize cart", 400);
+    }
+  },
+
+  /**
    * POST /api/v1/cart/apply-coupon
    * Validate and calculate discount for coupon on active cart
    */

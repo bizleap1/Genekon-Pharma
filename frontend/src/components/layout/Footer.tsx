@@ -4,6 +4,7 @@ import React from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Phone, Mail, MapPin, ShieldCheck, Lock, Truck } from "lucide-react";
+import { WhatsAppIcon } from "@/components/ui/WhatsAppIcon";
 import { Container } from "@/components/ui/Container";
 
 export const Footer: React.FC = () => {
@@ -64,6 +65,18 @@ export const Footer: React.FC = () => {
                 <svg className="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24">
                   <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" />
                 </svg>
+              </a>
+
+              {/* WhatsApp */}
+              <a
+                href="https://wa.me/917666168147?text=Hello%20Genekon%20Pharmacy,%20I%20need%20assistance"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="WhatsApp"
+                title="Chat on WhatsApp (+91 7666168147)"
+                className="w-7 h-7 rounded-full bg-white border border-[#DDE7DC] flex items-center justify-center hover:text-[#25D366] hover:border-[#25D366] transition-colors"
+              >
+                <WhatsAppIcon size={14} variant="monochrome" className="currentColor" />
               </a>
 
               {/* YouTube */}
@@ -219,8 +232,20 @@ export const Footer: React.FC = () => {
             
             <div className="flex items-center gap-2.5">
               <Phone className="w-4 h-4 text-[#1853A8] shrink-0" />
-              <a href="tel:9370102691" className="font-bold text-[#14304A] hover:text-[#1853A8] transition-colors">
-                9370102691
+              <a href="tel:7666168147" className="font-bold text-[#14304A] hover:text-[#1853A8] transition-colors">
+                +91 7666168147
+              </a>
+            </div>
+
+            <div className="flex items-center gap-2.5">
+              <WhatsAppIcon size={16} variant="monochrome" className="text-[#25D366] shrink-0" />
+              <a
+                href="https://wa.me/917666168147?text=Hello%20Genekon%20Pharmacy,%20I%20need%20assistance"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-bold text-[#14304A] hover:text-[#25D366] transition-colors"
+              >
+                +91 7666168147 (WhatsApp)
               </a>
             </div>
 
@@ -269,6 +294,9 @@ export const Footer: React.FC = () => {
         {/* Bottom Bar: Copyright & Statutory Note */}
         <div className="pt-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-[#6A7E6C]">
           <p>© 2026 Genekon Pharmaceuticals Pvt. Ltd. All rights reserved.</p>
+          <p>
+            Powered by <span className="font-semibold text-[#1853A8]">Bizleap</span>
+          </p>
           <p className="font-bold text-[#1853A8] tracking-wide">
             Trusted medicines. Stronger lives.
           </p>

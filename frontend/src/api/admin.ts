@@ -238,9 +238,9 @@ export const adminApi = {
           if (Array.isArray(parsed)) {
             storedOrders = parsed.map((p: any) => ({
               id: p.orderId,
-              customerName: p.formData?.fullName || "Admin User",
-              customerPhone: p.formData?.mobileNumber || "9370102691",
-              customerEmail: "admin@genekon.com",
+              customerName: p.formData?.fullName || "Customer",
+              customerPhone: p.userPhone || p.formData?.mobileNumber || "9370102691",
+              customerEmail: p.userEmail || p.formData?.email || "customer@genekon.com",
               deliveryAddress: p.formData?.addressLine ? `${p.formData.addressLine}, ${p.formData.city}` : "Nagpur, Maharashtra",
               orderDate: p.date || "Just now",
               itemCount: (p.items || []).reduce((acc: number, i: any) => acc + (i.quantity || 1), 0) || 1,
@@ -248,6 +248,7 @@ export const adminApi = {
               paymentMethod: p.formData?.paymentMethod === "cod" ? "Cash on Delivery" : "Online Payment",
               paymentStatus: (p.formData?.paymentMethod === "cod" ? "Pending" : "Paid") as any,
               orderStatus: (p.status || "Processing") as any,
+              cancellationRequest: p.cancellationRequest || null,
               items: (p.items || []).map((i: any) => ({
                 name: i.name,
                 brand: i.brand || "Genekon",
@@ -282,10 +283,53 @@ export const adminApi = {
     orderId: string,
     status: "PROCESSING" | "SHIPPED" | "DELIVERED" | "CANCELLED" | "CONFIRMED"
   ): Promise<ApiResponse<any>> {
+    // 1. Update localStorage if order exists locally
+    if (typeof window !== "undefined") {
+      try {
+        const raw = localStorage.getItem("genekon_placed_orders_v1");
+        if (raw) {
+          const orders = JSON.parse(raw);
+          if (Array.isArray(orders)) {
+            const mappedStatus =
+              status === "CANCELLED"
+                ? "Cancelled"
+                : status === "DELIVERED"
+                ? "Delivered"
+                : status === "SHIPPED"
+                ? "Shipped"
+                : "Confirmed";
+
+            let foundLocal = false;
+            const updated = orders.map((o: any) => {
+              if (o.orderId?.toLowerCase() === orderId.toLowerCase()) {
+                foundLocal = true;
+                return {
+                  ...o,
+                  status: mappedStatus,
+                  cancellationRequest:
+                    status === "CANCELLED"
+                      ? { ...(o.cancellationRequest || {}), status: "APPROVED" }
+                      : o.cancellationRequest,
+                };
+              }
+              return o;
+            });
+            if (foundLocal) {
+              localStorage.setItem("genekon_placed_orders_v1", JSON.stringify(updated));
+            }
+          }
+        }
+      } catch {}
+    }
+
     try {
-      return await apiClient.patch(`/orders/admin/${orderId}/status`, { status });
-    } catch {
-      return { success: true, message: `Order status updated to ${status}`, data: null };
+      return await apiClient.put(`/orders/admin/${orderId}/status`, { status });
+    } catch (err: any) {
+      return {
+        success: false,
+        message: err?.response?.data?.message || err?.message || `Failed to update order status to ${status}`,
+        data: null,
+      };
     }
   },
 
@@ -325,12 +369,16 @@ export const adminApi = {
     rejectionReason?: string
   ): Promise<ApiResponse<any>> {
     try {
-      return await apiClient.patch(`/orders/admin/prescriptions/${id}/review`, {
+      return await apiClient.put(`/orders/admin/prescriptions/${id}/review`, {
         status,
         rejectionReason,
       });
-    } catch {
-      return { success: true, message: `Prescription marked as ${status}`, data: null };
+    } catch (err: any) {
+      return {
+        success: false,
+        message: err?.response?.data?.message || err?.message || `Failed to mark prescription as ${status}`,
+        data: null,
+      };
     }
   },
 
@@ -430,14 +478,64 @@ export const adminApi = {
   async reviewCancellationRequest(
     id: string,
     decision: "APPROVE" | "REJECT",
-    comment?: string
+    comment?: string,
+    orderId?: string
   ): Promise<ApiResponse<any>> {
+    let localUpdated = false;
+
+    // 1. Update localStorage if order exists locally
+    if (typeof window !== "undefined") {
+      try {
+        const raw = localStorage.getItem("genekon_placed_orders_v1");
+        if (raw) {
+          const orders = JSON.parse(raw);
+          if (Array.isArray(orders)) {
+            const mapped = orders.map((o: any) => {
+              const isMatch =
+                o.cancellationRequest?.id === id ||
+                (orderId && o.orderId?.toLowerCase() === orderId.toLowerCase()) ||
+                o.orderId?.toLowerCase() === id.toLowerCase();
+
+              if (isMatch) {
+                localUpdated = true;
+                return {
+                  ...o,
+                  status: decision === "APPROVE" ? "Cancelled" : o.status,
+                  cancellationRequest: {
+                    ...(o.cancellationRequest || {}),
+                    status: decision === "APPROVE" ? "APPROVED" : "REJECTED",
+                    adminComment: comment,
+                    reviewedAt: new Date().toISOString(),
+                  },
+                };
+              }
+              return o;
+            });
+            if (localUpdated) {
+              localStorage.setItem("genekon_placed_orders_v1", JSON.stringify(mapped));
+            }
+          }
+        }
+      } catch {}
+    }
+
     try {
-      return await apiClient.put(`/orders/admin/cancellations/${id}/review`, {
+      const res = await apiClient.put(`/orders/admin/cancellations/${id}/review`, {
         decision,
         comment,
       });
+      return res;
     } catch (err: any) {
+      if (localUpdated) {
+        return {
+          success: true,
+          message:
+            decision === "APPROVE"
+              ? "Cancellation approved. Order marked as Cancelled."
+              : "Cancellation request rejected.",
+          data: null,
+        };
+      }
       return {
         success: false,
         message: err?.response?.data?.message || err?.message || "Failed to review cancellation request",

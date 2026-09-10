@@ -15,13 +15,13 @@ import {
   CheckCircle2,
   ShieldCheck,
   RotateCcw,
-  MessageCircle,
   Plus,
   AlertCircle,
   ArrowRight,
   MapPin,
   ShoppingBag
 } from "lucide-react";
+import { WhatsAppIcon } from "@/components/ui/WhatsAppIcon";
 import { UtilityBar } from "@/components/layout/UtilityBar";
 import { Header } from "@/components/layout/Header";
 import { CategoryNav } from "@/components/layout/CategoryNav";
@@ -975,12 +975,13 @@ export default function CheckoutPage() {
                   <span className="font-bold text-[#14304A] block">Have questions about your prescription?</span>
                   <p className="text-[#556958] text-[11px]">Pharmacists are available on call &amp; WhatsApp</p>
                   <a
-                    href="https://wa.me/919370102691"
+                    href="https://wa.me/917666168147?text=Hello%20Genekon,%20I%20have%20a%20question%20about%20my%20checkout"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-[#559620] font-bold hover:underline inline-block pt-1"
+                    className="inline-flex items-center gap-1.5 text-[#559620] font-bold hover:underline pt-1"
                   >
-                    Chat on WhatsApp: 9370102691 &rarr;
+                    <WhatsAppIcon size={15} variant="monochrome" className="text-[#25D366]" />
+                    <span>Chat on WhatsApp: +91 7666168147 &rarr;</span>
                   </a>
                 </div>
 

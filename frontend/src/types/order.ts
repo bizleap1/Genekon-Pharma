@@ -27,6 +27,9 @@ export interface OrderItem {
 
 export interface PlacedOrder {
   orderId: string;
+  userId?: string;
+  userEmail?: string;
+  userPhone?: string;
   date: string;
   items: CartItem[];
   totals: CartTotals;

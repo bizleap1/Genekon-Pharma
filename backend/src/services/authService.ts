@@ -71,14 +71,14 @@ export const authService = {
       }
       user = existingUser;
     } else {
-      // 3. Auto-provision new customer account
+      // 3. Auto-provision new customer account - always CUSTOMER role. Wholesale requires application & approval.
       const [newUser] = await db
         .insert(users)
         .values({
           name: isEmail ? cleanId.split("@")[0] : `Customer ${cleanId.slice(-4)}`,
           email: isEmail ? cleanId : null,
           phone: !isEmail ? cleanId : null,
-          role: role,
+          role: "CUSTOMER",
           isActive: true,
           profileDetails: {
             avatar: "/images/avatars/user-default.png",
@@ -87,7 +87,7 @@ export const authService = {
         .returning();
 
       user = newUser;
-      logger.info(`Auto-provisioned new ${role} account: ${user.id} (${identifier})`);
+      logger.info(`Auto-provisioned new CUSTOMER account via OTP: ${user.id} (${identifier})`);
     }
 
     // 4. Generate JWT Access and Refresh tokens
@@ -107,9 +107,13 @@ export const authService = {
     phone: string;
     email?: string;
     password?: string;
-    role?: "CUSTOMER" | "WHOLESALE_PARTNER" | "ADMIN";
+    role?: "CUSTOMER" | "WHOLESALE_PARTNER";
     profileDetails?: Record<string, unknown>;
   }): Promise<AuthSuccessResult> {
+    if ((data.role as string) === "ADMIN") {
+      throw new Error("Admin registration is not permitted via public endpoint");
+    }
+
     const cleanPhone = data.phone.trim();
     const cleanEmail = data.email?.trim().toLowerCase();
 
@@ -131,6 +135,8 @@ export const authService = {
     // 2. Hash password with bcrypt
     const passwordHash = data.password ? await bcrypt.hash(data.password, 12) : null;
 
+    const assignedRole = data.role === "WHOLESALE_PARTNER" ? "WHOLESALE_PARTNER" : "CUSTOMER";
+
     // 3. Create user
     const [newUser] = await db
       .insert(users)
@@ -139,7 +145,7 @@ export const authService = {
         phone: cleanPhone,
         email: cleanEmail || null,
         passwordHash,
-        role: data.role || "CUSTOMER",
+        role: assignedRole,
         profileDetails: data.profileDetails || {},
         isActive: true,
       })

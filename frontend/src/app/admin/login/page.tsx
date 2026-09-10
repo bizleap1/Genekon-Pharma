@@ -23,8 +23,10 @@ export default function AdminLoginPage() {
   const router = useRouter();
   const [loginMode, setLoginMode] = useState<"password" | "otp">("password");
   const [identifier, setIdentifier] = useState("admin@genekonpharma.com");
-  const [password, setPassword] = useState("Admin@123");
-  const [phone, setPhone] = useState("9822345678");
+  const [password, setPassword] = useState("");
+  const [phone, setPhone] = useState("9822110011");
+  const [otp, setOtp] = useState("");
+  const [otpSent, setOtpSent] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(true);
   const [loading, setLoading] = useState(false);
@@ -51,28 +53,68 @@ export default function AdminLoginPage() {
         });
 
         if (res.success && res.data) {
-          authStore.loginAsAdmin();
+          if (res.data.user.role !== "admin") {
+            setError("Access denied: You do not have administrator permissions.");
+            authStore.logout();
+            return;
+          }
+          authStore.loginCustomer(res.data.user, res.data.token);
           router.push("/admin/dashboard");
         } else {
-          authStore.loginAsAdmin();
-          router.push("/admin/dashboard");
+          setError(res.message || "Invalid administrator credentials");
         }
-      } catch {
-        authStore.loginAsAdmin();
-        router.push("/admin/dashboard");
+      } catch (err: any) {
+        setError(err.message || "Authentication failed. Please check your credentials.");
       } finally {
         setLoading(false);
       }
     } else {
-      if (!phone || phone.trim().length < 10) {
+      const cleanPhone = phone.replace(/\D/g, "").slice(-10);
+      if (!cleanPhone || cleanPhone.length < 10) {
         setError("Please enter a valid 10-digit mobile number");
         return;
       }
-      setLoading(true);
-      authStore.loginAsAdmin();
-      setTimeout(() => {
-        router.push("/admin/dashboard");
-      }, 500);
+
+      if (!otpSent) {
+        setLoading(true);
+        try {
+          const res = await authApi.sendOtp(cleanPhone);
+          if (res.success) {
+            setOtpSent(true);
+          } else {
+            setError(res.message || "Failed to send OTP to this number.");
+          }
+        } catch (err: any) {
+          setError(err.message || "Failed to send OTP. Please check your mobile number.");
+        } finally {
+          setLoading(false);
+        }
+      } else {
+        const cleanOtp = otp.trim();
+        if (cleanOtp.length < 6) {
+          setError("Please enter the complete 6-digit OTP code");
+          return;
+        }
+        setLoading(true);
+        try {
+          const res = await authApi.verifyOtp(cleanPhone, cleanOtp);
+          if (res.success && res.data) {
+            if (res.data.user.role !== "admin") {
+              setError("Access denied: This phone number is not registered as an administrator.");
+              authStore.logout();
+              return;
+            }
+            authStore.loginCustomer(res.data.user, res.data.token);
+            router.push("/admin/dashboard");
+          } else {
+            setError(res.message || "Invalid OTP code entered.");
+          }
+        } catch (err: any) {
+          setError(err.message || "OTP verification failed. Please try again.");
+        } finally {
+          setLoading(false);
+        }
+      }
     }
   };
 
@@ -288,26 +330,67 @@ export default function AdminLoginPage() {
                     </>
                   ) : (
                     <div>
-                      <label className="block text-xs font-bold text-[#14304A] mb-1.5">
-                        Mobile Number
-                      </label>
-                      <div className="relative flex items-center rounded-xl border border-[#CCDCCD] bg-[#FAFCFB] overflow-hidden focus-within:border-[#559620] focus-within:bg-white focus-within:ring-2 focus-within:ring-[#559620]/15 transition-all">
-                        <span className="px-3.5 py-2.5 text-xs sm:text-sm font-extrabold text-[#14304A] border-r border-[#D9E6DA] bg-[#F2F7F1]">
-                          +91
-                        </span>
-                        <input
-                          type="tel"
-                          maxLength={10}
-                          value={phone}
-                          onChange={(e) => {
-                            const val = e.target.value.replace(/\D/g, "");
-                            setPhone(val);
-                            if (error) setError("");
-                          }}
-                          placeholder="Enter 10-digit mobile number"
-                          className="w-full text-xs sm:text-sm px-3.5 py-2.5 text-[#14304A] font-semibold bg-transparent outline-none"
-                        />
-                      </div>
+                      {!otpSent ? (
+                        <div>
+                          <label className="block text-xs font-bold text-[#14304A] mb-1.5">
+                            Admin Registered Mobile Number
+                          </label>
+                          <div className="relative flex items-center rounded-xl border border-[#CCDCCD] bg-[#FAFCFB] overflow-hidden focus-within:border-[#559620] focus-within:bg-white focus-within:ring-2 focus-within:ring-[#559620]/15 transition-all">
+                            <span className="px-3.5 py-2.5 text-xs sm:text-sm font-extrabold text-[#14304A] border-r border-[#D9E6DA] bg-[#F2F7F1]">
+                              +91
+                            </span>
+                            <input
+                              type="tel"
+                              maxLength={10}
+                              value={phone}
+                              onChange={(e) => {
+                                const val = e.target.value.replace(/\D/g, "");
+                                setPhone(val);
+                                if (error) setError("");
+                              }}
+                              placeholder="Enter 10-digit mobile number"
+                              className="w-full text-xs sm:text-sm px-3.5 py-2.5 text-[#14304A] font-semibold bg-transparent outline-none"
+                            />
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="space-y-3">
+                          <div className="flex items-center justify-between text-xs">
+                            <span className="text-[#637766]">OTP sent to <strong>+91 {phone}</strong></span>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setOtpSent(false);
+                                setOtp("");
+                                setError("");
+                              }}
+                              className="font-bold text-[#559620] hover:underline"
+                            >
+                              Change
+                            </button>
+                          </div>
+                          <div>
+                            <label className="block text-xs font-bold text-[#14304A] mb-1.5">
+                              Enter 6-Digit Admin Verification Code
+                            </label>
+                            <div className="relative flex items-center rounded-xl border border-[#CCDCCD] bg-[#FAFCFB] focus-within:border-[#559620] focus-within:bg-white focus-within:ring-2 focus-within:ring-[#559620]/15 transition-all">
+                              <ShieldCheck className="w-4 h-4 text-[#8E9F90] absolute left-3.5 pointer-events-none" />
+                              <input
+                                type="text"
+                                maxLength={6}
+                                value={otp}
+                                onChange={(e) => {
+                                  const val = e.target.value.replace(/\D/g, "");
+                                  setOtp(val);
+                                  if (error) setError("");
+                                }}
+                                placeholder="Enter 6-digit OTP"
+                                className="w-full text-xs sm:text-sm pl-10 pr-3.5 py-2.5 text-[#14304A] font-bold tracking-widest bg-transparent outline-none"
+                              />
+                            </div>
+                          </div>
+                        </div>
+                      )}
                     </div>
                   )}
 
@@ -321,7 +404,13 @@ export default function AdminLoginPage() {
                       <span className="animate-pulse">Authenticating...</span>
                     ) : (
                       <>
-                        <span>Sign In</span>
+                        <span>
+                          {loginMode === "password"
+                            ? "Sign In"
+                            : !otpSent
+                            ? "Send Admin OTP"
+                            : "Verify & Enter Console"}
+                        </span>
                         <ArrowRight className="w-4 h-4" />
                       </>
                     )}
@@ -332,6 +421,8 @@ export default function AdminLoginPage() {
                     type="button"
                     onClick={() => {
                       setError("");
+                      setOtpSent(false);
+                      setOtp("");
                       setLoginMode(loginMode === "password" ? "otp" : "password");
                     }}
                     className="w-full py-2.5 sm:py-3 rounded-xl border border-[#CCDCCD] bg-white hover:bg-[#F2F7F2] text-xs sm:text-sm font-bold text-[#14304A] transition-colors flex items-center justify-center gap-2 cursor-pointer"

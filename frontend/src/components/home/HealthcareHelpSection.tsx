@@ -2,7 +2,6 @@
 
 import React from "react";
 import {
-  MessageCircle,
   Phone,
   Clock,
   ShieldCheck,
@@ -10,6 +9,7 @@ import {
   ArrowRight
 } from "lucide-react";
 import { Container } from "@/components/ui/Container";
+import { WhatsAppIcon } from "@/components/ui/WhatsAppIcon";
 
 export const HealthcareHelpSection: React.FC = () => {
   return (
@@ -44,22 +44,22 @@ export const HealthcareHelpSection: React.FC = () => {
               {/* Action Buttons */}
               <div className="mt-6 flex flex-wrap items-center gap-3">
                 <a
-                  href="https://wa.me/919370102691?text=Hi%20Genekon,%20I%20need%20help%20finding%20the%20right%20healthcare%20product."
+                  href="https://wa.me/917666168147?text=Hi%20Genekon,%20I%20need%20help%20finding%20the%20right%20healthcare%20product."
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 bg-[#25D366] hover:bg-[#20ba59] text-white text-xs sm:text-sm font-bold px-6 py-3.5 rounded-full transition-all shadow-sm hover:scale-[1.02]"
+                  className="inline-flex items-center gap-2.5 bg-[#25D366] hover:bg-[#20ba59] text-white text-xs sm:text-sm font-bold px-6 py-3.5 rounded-full transition-all shadow-sm hover:scale-[1.02]"
                 >
-                  <MessageCircle className="w-4 h-4 fill-white" />
+                  <WhatsAppIcon size={18} variant="monochrome" className="text-white" />
                   <span>Chat on WhatsApp</span>
                   <ArrowRight className="w-4 h-4" />
                 </a>
 
                 <a
-                  href="tel:9370102691"
+                  href="tel:7666168147"
                   className="inline-flex items-center gap-2 bg-white hover:bg-slate-50 text-[#14304A] border border-[#CADFC5] text-xs sm:text-sm font-bold px-5 py-3.5 rounded-full transition-colors shadow-2xs"
                 >
                   <Phone className="w-4 h-4 text-[#1853A8]" />
-                  <span>Call: 9370102691</span>
+                  <span>Call: +91 7666168147</span>
                 </a>
               </div>
 
@@ -89,11 +89,11 @@ export const HealthcareHelpSection: React.FC = () => {
                 </div>
 
                 <div className="flex items-center gap-3 pt-2 border-t border-[#EDF5EC]">
-                  <div className="w-8 h-8 rounded-xl bg-[#FAF2E8] text-[#D97706] flex items-center justify-center shrink-0">
-                    <MessageCircle className="w-4 h-4" />
+                  <div className="w-8 h-8 rounded-xl bg-[#25D366]/15 text-[#25D366] flex items-center justify-center shrink-0">
+                    <WhatsAppIcon size={16} variant="monochrome" className="text-[#25D366]" />
                   </div>
                   <div>
-                    <span className="font-bold block">Send Prescription on Chat</span>
+                    <span className="font-bold block">Send Prescription on WhatsApp</span>
                     <span className="text-[11px] text-[#637666]">Instant cart creation &amp; payment link</span>
                   </div>
                 </div>

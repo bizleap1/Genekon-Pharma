@@ -1,4 +1,4 @@
-import { eq, desc } from "drizzle-orm";
+import { eq, desc, and } from "drizzle-orm";
 import { db, prescriptions, orders, users, orderStatusHistory, products, orderItems } from "../db";
 import { Prescription } from "../db/schema/prescriptions";
 import { cloudinaryService } from "./cloudinaryService";
@@ -39,12 +39,33 @@ export const prescriptionService = {
       })
       .returning();
 
-    // If linked to an active order, attach prescription to order
+    // If linked to an active order, verify ownership and attach prescription to order
     if (metadata?.orderId) {
+      const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(metadata.orderId);
+      const [order] = await db
+        .select()
+        .from(orders)
+        .where(
+          and(
+            isUuid ? eq(orders.id, metadata.orderId) : eq(orders.orderNumber, metadata.orderId),
+            eq(orders.userId, userId)
+          )
+        )
+        .limit(1);
+
+      if (!order) {
+        throw new Error("Specified order not found or does not belong to your account");
+      }
+
       await db
         .update(orders)
         .set({ prescriptionId: created.id, updatedAt: new Date() })
-        .where(eq(orders.id, metadata.orderId));
+        .where(eq(orders.id, order.id));
+
+      await db
+        .update(prescriptions)
+        .set({ orderId: order.id, updatedAt: new Date() })
+        .where(eq(prescriptions.id, created.id));
     }
 
     return created;
@@ -116,7 +137,8 @@ export const prescriptionService = {
     const linkedOrderId = prescription.orderId;
     let targetOrder = null;
     if (linkedOrderId) {
-      const [o] = await db.select().from(orders).where(eq(orders.id, linkedOrderId)).limit(1);
+      const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(linkedOrderId);
+      const [o] = await db.select().from(orders).where(isUuid ? eq(orders.id, linkedOrderId) : eq(orders.orderNumber, linkedOrderId)).limit(1);
       targetOrder = o;
     } else {
       const [o] = await db.select().from(orders).where(eq(orders.prescriptionId, prescriptionId)).limit(1);

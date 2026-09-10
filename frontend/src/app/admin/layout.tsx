@@ -15,15 +15,64 @@ export default function AdminLayout({
 }) {
   const pathname = usePathname();
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = React.useState(false);
+  const [mounted, setMounted] = React.useState(false);
   const isLoginPage = pathname === "/admin/login";
   const { user, isAdmin, isLoggedIn } = useAuthStore();
+
+  React.useEffect(() => {
+    setMounted(true);
+  }, []);
 
   if (isLoginPage) {
     return <>{children}</>;
   }
 
+  // Prevent hydration mismatch
+  if (!mounted) {
+    return (
+      <div className="min-h-screen bg-[#FAFCFA] flex items-center justify-center">
+        <div className="w-8 h-8 rounded-full border-2 border-[#559620] border-t-transparent animate-spin" />
+      </div>
+    );
+  }
+
+  // If visitor is not logged in, require authentication
+  if (!isLoggedIn) {
+    return (
+      <div className="min-h-screen bg-[#F7FBF6] flex items-center justify-center p-4">
+        <div className="max-w-md w-full bg-white rounded-3xl border border-[#E3EDE1] p-8 text-center shadow-lg">
+          <div className="w-16 h-16 rounded-2xl bg-emerald-50 text-[#559620] flex items-center justify-center mx-auto mb-4 border border-[#D5E4D2]">
+            <Lock className="w-8 h-8" />
+          </div>
+          <h2 className="font-serif text-2xl font-bold text-[#14304A] mb-2">
+            Admin Authentication Required
+          </h2>
+          <p className="text-xs sm:text-sm text-[#5F7361] leading-relaxed mb-6">
+            Please sign in with authorized administrator credentials to access the Genekon administrative console.
+          </p>
+          <div className="space-y-2.5">
+            <Link
+              href="/admin/login"
+              className="w-full inline-flex items-center justify-center gap-2 py-3 px-4 rounded-xl bg-[#559620] hover:bg-[#467E19] text-white text-xs font-bold transition-all shadow-xs"
+            >
+              <Lock className="w-4 h-4" />
+              <span>Go to Admin Login</span>
+            </Link>
+            <Link
+              href="/"
+              className="w-full inline-flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl border border-[#CCDCCD] bg-white hover:bg-[#F2F7F2] text-xs font-bold text-[#14304A] transition-all"
+            >
+              <ArrowLeft className="w-3.5 h-3.5" />
+              <span>Return to Storefront</span>
+            </Link>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   // If user is logged in as a normal customer (not admin), block access with clear guidance
-  if (isLoggedIn && !isAdmin) {
+  if (!isAdmin) {
     return (
       <div className="min-h-screen bg-[#F7FBF6] flex items-center justify-center p-4">
         <div className="max-w-md w-full bg-white rounded-3xl border border-[#E3EDE1] p-8 text-center shadow-lg">

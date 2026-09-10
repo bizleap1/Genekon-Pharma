@@ -19,12 +19,51 @@ import { CategoryNav } from "@/components/layout/CategoryNav";
 import { Footer } from "@/components/layout/Footer";
 import { Container } from "@/components/ui/Container";
 import { AccountSidebar } from "@/components/account/AccountSidebar";
-import { MOCK_ADDRESSES, CustomerAddress } from "@/data/customer";
+import { CustomerAddress } from "@/data/customer";
 import { useAuthStore } from "@/stores/authStore";
+import { usersApi } from "@/api/users";
+import { useToast } from "@/context/ToastContext";
 
 export default function SavedAddressesPage() {
-  const { isLoggedIn, openLoginModal } = useAuthStore();
-  const [addresses, setAddresses] = useState<CustomerAddress[]>(MOCK_ADDRESSES);
+  const { user, isLoggedIn, openLoginModal } = useAuthStore();
+  const toast = useToast();
+  const [addresses, setAddresses] = useState<CustomerAddress[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+  const [editingId, setEditingId] = useState<string | null>(null);
+
+  const fetchAddresses = React.useCallback(async () => {
+    if (!isLoggedIn) {
+      setLoading(false);
+      return;
+    }
+    setLoading(true);
+    try {
+      const res = await usersApi.getUserAddresses();
+      if (res.success && Array.isArray(res.data)) {
+        const mapped: CustomerAddress[] = res.data.map((a: any) => ({
+          id: a.id,
+          type: (a.addressType
+            ? a.addressType.charAt(0).toUpperCase() + a.addressType.slice(1).toLowerCase()
+            : "Home") as "Home" | "Work" | "Clinic",
+          name: a.fullName || a.name || user?.name || "Customer",
+          phone: a.phone || user?.mobile || "",
+          addressLine: a.addressLine || "",
+          locality: a.landmark || "",
+          city: a.city || "",
+          state: a.state || "",
+          pincode: a.pincode || "",
+          isDefault: Boolean(a.isDefault),
+        }));
+        setAddresses(mapped);
+      }
+    } catch (err: any) {
+      toast.error(err.message || "Failed to load saved addresses");
+    } finally {
+      setLoading(false);
+    }
+  }, [isLoggedIn, user, toast]);
 
   useEffect(() => {
     if (!isLoggedIn) {
@@ -36,15 +75,15 @@ export default function SavedAddressesPage() {
         },
         "Login required to view and manage your saved addresses"
       );
+    } else {
+      fetchAddresses();
     }
-  }, [isLoggedIn, openLoginModal]);
-  const [showModal, setShowModal] = useState(false);
-  const [editingId, setEditingId] = useState<string | null>(null);
+  }, [isLoggedIn, openLoginModal, fetchAddresses]);
 
   const [formData, setFormData] = useState({
     type: "Home" as "Home" | "Work" | "Clinic",
-    name: "Prerna Sharma",
-    phone: "9370102691",
+    name: "Customer",
+    phone: "",
     addressLine: "",
     locality: "",
     city: "Nagpur",
@@ -53,54 +92,75 @@ export default function SavedAddressesPage() {
     isDefault: false,
   });
 
-  const handleSetDefault = (id: string) => {
-    setAddresses((prev) =>
-      prev.map((addr) => ({
-        ...addr,
-        isDefault: addr.id === id,
-      }))
-    );
-  };
-
-  const handleDelete = (id: string) => {
-    setAddresses((prev) => prev.filter((addr) => addr.id !== id));
-  };
-
-  const handleSave = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (editingId) {
+  const handleSetDefault = async (id: string) => {
+    try {
+      await usersApi.updateAddress(id, { isDefault: true });
       setAddresses((prev) =>
-        prev.map((a) => (a.id === editingId ? { ...a, ...formData } : a))
+        prev.map((addr) => ({
+          ...addr,
+          isDefault: addr.id === id,
+        }))
       );
-    } else {
-      const newAddr: CustomerAddress = {
-        id: `addr-${Date.now()}`,
-        ...formData,
-      };
-      if (formData.isDefault) {
-        setAddresses((prev) => [
-          newAddr,
-          ...prev.map((a) => ({ ...a, isDefault: false })),
-        ]);
-      } else {
-        setAddresses((prev) => [...prev, newAddr]);
-      }
+      toast.success("Default delivery address updated");
+    } catch (err: any) {
+      toast.error(err.message || "Failed to set default address");
     }
-    setShowModal(false);
-    setEditingId(null);
+  };
+
+  const handleDelete = async (id: string) => {
+    try {
+      await usersApi.deleteAddress(id);
+      setAddresses((prev) => prev.filter((addr) => addr.id !== id));
+      toast.success("Address removed successfully");
+    } catch (err: any) {
+      toast.error(err.message || "Failed to delete address");
+    }
+  };
+
+  const handleSave = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setSaving(true);
+    try {
+      const payload = {
+        fullName: formData.name.trim(),
+        phone: formData.phone.replace(/\D/g, "").slice(-10),
+        addressLine: formData.addressLine.trim(),
+        landmark: formData.locality?.trim() || undefined,
+        city: formData.city.trim(),
+        state: formData.state.trim(),
+        pincode: formData.pincode.replace(/\D/g, "").slice(-6),
+        addressType: formData.type.toUpperCase(),
+        isDefault: formData.isDefault,
+      };
+
+      if (editingId) {
+        await usersApi.updateAddress(editingId, payload as any);
+        toast.success("Address updated successfully");
+      } else {
+        await usersApi.addAddress(payload as any);
+        toast.success("Address added successfully");
+      }
+      await fetchAddresses();
+      setShowModal(false);
+      setEditingId(null);
+    } catch (err: any) {
+      toast.error(err.message || "Failed to save address");
+    } finally {
+      setSaving(false);
+    }
   };
 
   const openAdd = () => {
     setFormData({
       type: "Home",
-      name: "Prerna Sharma",
-      phone: "9370102691",
+      name: user?.name || "Customer",
+      phone: user?.mobile || "",
       addressLine: "",
       locality: "",
       city: "Nagpur",
       state: "Maharashtra",
       pincode: "440013",
-      isDefault: false,
+      isDefault: addresses.length === 0,
     });
     setEditingId(null);
     setShowModal(true);
@@ -112,7 +172,7 @@ export default function SavedAddressesPage() {
       name: addr.name,
       phone: addr.phone,
       addressLine: addr.addressLine,
-      locality: addr.locality,
+      locality: addr.locality || "",
       city: addr.city,
       state: addr.state,
       pincode: addr.pincode,
@@ -174,16 +234,40 @@ export default function SavedAddressesPage() {
                 </div>
 
                 {/* Addresses Grid */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                  {addresses.map((addr) => (
-                    <div
-                      key={addr.id}
-                      className={`rounded-2xl border p-5 sm:p-6 shadow-2xs transition-all flex flex-col justify-between ${
-                        addr.isDefault
-                          ? "border-[#559620] bg-linear-to-b from-[#F7FAF6] to-white ring-1 ring-[#559620]/20"
-                          : "border-[#E3EDE1] bg-white"
-                      }`}
+                {loading ? (
+                  <div className="py-12 flex flex-col items-center justify-center text-[#637766]">
+                    <div className="w-8 h-8 rounded-full border-2 border-[#559620] border-t-transparent animate-spin mb-3" />
+                    <p className="text-xs font-semibold">Loading saved delivery addresses...</p>
+                  </div>
+                ) : addresses.length === 0 ? (
+                  <div className="py-12 px-4 rounded-2xl border border-dashed border-[#CCDCCD] text-center bg-[#FAFCFB]">
+                    <div className="w-12 h-12 rounded-full bg-[#EBF5E7] text-[#559620] flex items-center justify-center mx-auto mb-3">
+                      <MapPin className="w-6 h-6" />
+                    </div>
+                    <h3 className="text-sm font-bold text-[#14304A]">No Saved Addresses Found</h3>
+                    <p className="text-xs text-[#637766] mt-1 max-w-sm mx-auto">
+                      You haven't added any delivery addresses yet. Add your home or clinic address for faster checkout.
+                    </p>
+                    <button
+                      type="button"
+                      onClick={openAdd}
+                      className="mt-4 inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#559620] hover:bg-[#467E19] text-white text-xs font-bold transition-all shadow-xs"
                     >
+                      <Plus className="w-3.5 h-3.5" />
+                      <span>Add First Address</span>
+                    </button>
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    {addresses.map((addr) => (
+                      <div
+                        key={addr.id}
+                        className={`rounded-2xl border p-5 sm:p-6 shadow-2xs transition-all flex flex-col justify-between ${
+                          addr.isDefault
+                            ? "border-[#559620] bg-linear-to-b from-[#F7FAF6] to-white ring-1 ring-[#559620]/20"
+                            : "border-[#E3EDE1] bg-white"
+                        }`}
+                      >
                       <div>
                         {/* Type & Default Pill */}
                         <div className="flex items-center justify-between gap-2 mb-3">
@@ -258,6 +342,7 @@ export default function SavedAddressesPage() {
                     </div>
                   ))}
                 </div>
+              )}
 
               </div>
 
@@ -406,16 +491,25 @@ export default function SavedAddressesPage() {
               <div className="pt-4 border-t border-[#E3EDE1] flex items-center justify-end gap-2">
                 <button
                   type="button"
+                  disabled={saving}
                   onClick={() => setShowModal(false)}
-                  className="px-4 py-2 rounded-xl border border-[#CCDCCD] text-xs font-bold text-[#14304A]"
+                  className="px-4 py-2 rounded-xl border border-[#CCDCCD] text-xs font-bold text-[#14304A] disabled:opacity-50 cursor-pointer"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2 rounded-xl bg-[#559620] hover:bg-[#467E19] text-white text-xs font-bold shadow-xs"
+                  disabled={saving}
+                  className="px-5 py-2 rounded-xl bg-[#559620] hover:bg-[#467E19] text-white text-xs font-bold shadow-xs disabled:opacity-50 flex items-center gap-2 cursor-pointer"
                 >
-                  Save Address
+                  {saving ? (
+                    <>
+                      <span className="w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                      <span>Saving...</span>
+                    </>
+                  ) : (
+                    <span>Save Address</span>
+                  )}
                 </button>
               </div>
             </form>

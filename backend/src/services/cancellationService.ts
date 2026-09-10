@@ -9,6 +9,7 @@ import {
   cancellationRequests,
 } from "../db";
 import { orderService } from "./orderService";
+import { paymentService } from "./paymentService";
 import { emailNotificationService } from "./emailNotificationService";
 import { logger } from "../utils/logger";
 import { CancellationRequest } from "../db/schema/cancellationRequests";
@@ -33,13 +34,14 @@ export const cancellationService = {
     orderIdOrNumber: string,
     input: SubmitCancellationInput
   ): Promise<CancellationRequest> {
-    // 1. Fetch order by UUID or order number
+    // 1. Fetch order by UUID or order number safely without Postgres type crash
+    const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(orderIdOrNumber);
     const [order] = await db
       .select()
       .from(orders)
       .where(
         and(
-          or(eq(orders.id, orderIdOrNumber), eq(orders.orderNumber, orderIdOrNumber)),
+          isUuid ? eq(orders.id, orderIdOrNumber) : eq(orders.orderNumber, orderIdOrNumber),
           eq(orders.userId, userId)
         )
       )
@@ -117,10 +119,11 @@ export const cancellationService = {
    * 2. Retrieve cancellation request for a specific order
    */
   async getRequestForOrder(orderIdOrNumber: string, userId?: string): Promise<CancellationRequest | null> {
+    const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(orderIdOrNumber);
     const [order] = await db
       .select()
       .from(orders)
-      .where(or(eq(orders.id, orderIdOrNumber), eq(orders.orderNumber, orderIdOrNumber)))
+      .where(isUuid ? eq(orders.id, orderIdOrNumber) : eq(orders.orderNumber, orderIdOrNumber))
       .limit(1);
 
     if (!order) return null;
@@ -265,7 +268,43 @@ export const cancellationService = {
       let refundText = "";
       const isPaid = order.paymentStatus === "SUCCESS" || order.paymentStatus === "PAID";
       if (isPaid) {
-        // Mark payment status as REFUNDED
+        // Find successful payment record
+        const [paymentRec] = await db
+          .select()
+          .from(payments)
+          .where(
+            and(
+              eq(payments.orderId, order.id),
+              or(eq(payments.status, "SUCCESS"), eq(payments.status, "PAID"))
+            )
+          )
+          .orderBy(desc(payments.createdAt))
+          .limit(1);
+
+        if (paymentRec && paymentRec.razorpayPaymentId) {
+          try {
+            await paymentService.initiateRefund(adminId, {
+              paymentId: paymentRec.id,
+              amount: Number(order.totalAmount),
+              reason: input.comment || "Order cancellation approved by dispensary admin",
+            });
+            refundText = `Full refund of ₹${Number(order.totalAmount).toFixed(2)} processed via Razorpay.`;
+          } catch (refundErr: any) {
+            logger.error(`Failed to process Razorpay refund for cancelled order ${order.orderNumber}:`, refundErr);
+            refundText = `Order cancelled, but automatic Razorpay refund encountered error: ${refundErr.message}. Manual refund required.`;
+          }
+        } else {
+          // Fallback if payment was recorded without Razorpay payment ID
+          await db
+            .update(payments)
+            .set({
+              status: "REFUNDED",
+              updatedAt: new Date(),
+            })
+            .where(eq(payments.orderId, order.id));
+          refundText = `Full refund of ₹${Number(order.totalAmount).toFixed(2)} recorded manually.`;
+        }
+
         await db
           .update(orders)
           .set({
@@ -275,17 +314,6 @@ export const cancellationService = {
             updatedAt: new Date(),
           })
           .where(eq(orders.id, order.id));
-
-        // Update payment table entry
-        await db
-          .update(payments)
-          .set({
-            status: "REFUNDED",
-            updatedAt: new Date(),
-          })
-          .where(eq(payments.orderId, order.id));
-
-        refundText = `Full refund of ₹${Number(order.totalAmount).toFixed(2)} initiated to original payment source. Expected within 3-5 business days.`;
       } else {
         // Unpaid or Cash on Delivery
         await db

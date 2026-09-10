@@ -1,4 +1,4 @@
-import { eq, desc, and } from "drizzle-orm";
+import { eq, desc, and, sql } from "drizzle-orm";
 import { db, coupons } from "../db";
 import { activityLogService } from "./activityLogService";
 import { logger } from "../utils/logger";
@@ -208,5 +208,19 @@ export const couponService = {
       discountAmount: discount,
       discountType: coupon.discountType,
     };
+  },
+
+  /**
+   * 7. Increment coupon usage count on successful order placement
+   */
+  async incrementCouponUsage(code: string) {
+    const cleanCode = code.trim().toUpperCase();
+    await db
+      .update(coupons)
+      .set({
+        usageCount: sql`${coupons.usageCount} + 1`,
+        updatedAt: new Date(),
+      })
+      .where(eq(coupons.code, cleanCode));
   },
 };

@@ -1,5 +1,6 @@
 import React from "react";
-import { MessageCircle, Phone, ArrowRight } from "lucide-react";
+import { Phone, ArrowRight } from "lucide-react";
+import { WhatsAppIcon } from "@/components/ui/WhatsAppIcon";
 
 interface SupportCardProps {
   title?: string;
@@ -13,7 +14,7 @@ interface SupportCardProps {
 export const SupportCard: React.FC<SupportCardProps> = ({
   title = "Need Help with Your Order?",
   subtitle = "Our licensed pharmacists are here to assist with medicine availability, dosages, and prescriptions.",
-  phoneNumber = "9370102691",
+  phoneNumber = "7666168147",
   whatsappText = "Chat on WhatsApp",
   variant = "card",
   className = "",
@@ -27,7 +28,7 @@ export const SupportCard: React.FC<SupportCardProps> = ({
       >
         <div className="flex items-center gap-3">
           <div className="w-9 h-9 rounded-xl bg-[#25D366]/15 text-[#25D366] flex items-center justify-center shrink-0">
-            <MessageCircle className="w-5 h-5 fill-current" />
+            <WhatsAppIcon size={18} variant="monochrome" className="text-[#25D366]" />
           </div>
           <div>
             <p className="text-xs font-bold text-[#14304A]">{title}</p>
@@ -41,6 +42,7 @@ export const SupportCard: React.FC<SupportCardProps> = ({
           rel="noopener noreferrer"
           className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#25D366] hover:bg-[#1EBE5D] text-white text-xs font-bold transition-all shadow-2xs shrink-0"
         >
+          <WhatsAppIcon size={14} variant="monochrome" className="text-white" />
           <span>Chat</span>
           <ArrowRight className="w-3 h-3" />
         </a>
@@ -54,7 +56,7 @@ export const SupportCard: React.FC<SupportCardProps> = ({
     >
       <div className="flex items-start gap-3.5">
         <div className="w-10 h-10 rounded-2xl bg-[#EAF7EC] text-[#25D366] flex items-center justify-center shrink-0">
-          <MessageCircle className="w-5 h-5 fill-current" />
+          <WhatsAppIcon size={22} variant="monochrome" className="text-[#25D366]" />
         </div>
         <div className="flex-1">
           <h4 className="text-sm font-bold text-[#14304A]">{title}</h4>
@@ -69,7 +71,7 @@ export const SupportCard: React.FC<SupportCardProps> = ({
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#25D366] hover:bg-[#1EBE5D] text-white text-xs font-bold transition-all shadow-xs"
             >
-              <MessageCircle className="w-3.5 h-3.5 fill-current" />
+              <WhatsAppIcon size={16} variant="monochrome" className="text-white" />
               <span>{whatsappText}</span>
               <ArrowRight className="w-3 h-3" />
             </a>
@@ -79,7 +81,7 @@ export const SupportCard: React.FC<SupportCardProps> = ({
               className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-[#F0F5F2] hover:bg-[#E2ECE4] text-[#14304A] text-xs font-bold transition-colors"
             >
               <Phone className="w-3.5 h-3.5 text-[#559620]" />
-              <span>{phoneNumber}</span>
+              <span>+91 {phoneNumber}</span>
             </a>
           </div>
         </div>

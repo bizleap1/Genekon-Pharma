@@ -7,13 +7,13 @@ import {
   Phone,
   Mail,
   Clock,
-  MessageCircle,
   Send,
   CheckCircle2,
   Building2,
   ShieldCheck,
   Headphones
 } from "lucide-react";
+import { WhatsAppIcon } from "@/components/ui/WhatsAppIcon";
 import { UtilityBar } from "@/components/layout/UtilityBar";
 import { Header } from "@/components/layout/Header";
 import { CategoryNav } from "@/components/layout/CategoryNav";
@@ -78,9 +78,9 @@ export default function ContactPage() {
               <h4 className="text-xs font-bold uppercase tracking-wider text-[#14304A]">
                 Call Pharmacy Desk
               </h4>
-              <p className="text-sm font-extrabold text-[#14304A] mt-1">
-                +91 9370102691
-              </p>
+              <a href="tel:7666168147" className="text-sm font-extrabold text-[#14304A] hover:text-[#559620] mt-1 block">
+                +91 7666168147
+              </a>
               <p className="text-[11px] text-[#697C6A] mt-1">
                 Toll-free medicine support
               </p>
@@ -89,18 +89,18 @@ export default function ContactPage() {
             {/* WhatsApp */}
             <div className="rounded-2xl border border-[#DCE8D8] bg-white p-5 shadow-2xs">
               <div className="w-10 h-10 rounded-xl bg-[#25D366]/15 text-[#25D366] flex items-center justify-center mb-3">
-                <MessageCircle className="w-5 h-5 fill-current" />
+                <WhatsAppIcon size={24} variant="monochrome" className="text-[#25D366]" />
               </div>
               <h4 className="text-xs font-bold uppercase tracking-wider text-[#14304A]">
                 Instant WhatsApp
               </h4>
               <a
-                href="https://wa.me/919370102691?text=Hello%20Genekon,%20I%20have%20an%20inquiry"
+                href="https://wa.me/917666168147?text=Hello%20Genekon,%20I%20have%20an%20inquiry"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-sm font-extrabold text-[#25D366] hover:underline mt-1 block"
               >
-                Chat on WhatsApp &rarr;
+                Chat on WhatsApp (+91 7666168147) &rarr;
               </a>
               <p className="text-[11px] text-[#697C6A] mt-1">
                 Fastest response for Rx queries
@@ -307,7 +307,7 @@ export default function ContactPage() {
               <div className="rounded-3xl border border-[#CBE5C7] bg-linear-to-br from-[#F0F9EE] to-white p-6 shadow-2xs">
                 <div className="flex items-center gap-3 mb-3">
                   <div className="w-9 h-9 rounded-xl bg-[#25D366] text-white flex items-center justify-center shrink-0">
-                    <MessageCircle className="w-5 h-5 fill-current" />
+                    <WhatsAppIcon size={20} variant="monochrome" className="text-white" />
                   </div>
                   <div>
                     <h4 className="text-sm font-bold text-[#14304A]">
@@ -319,13 +319,13 @@ export default function ContactPage() {
                   </div>
                 </div>
                 <a
-                  href="https://wa.me/919370102691?text=Hello%20Genekon,%20I%20have%20a%20prescription%20question"
+                  href="https://wa.me/917666168147?text=Hello%20Genekon,%20I%20have%20a%20prescription%20question"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center justify-center gap-2 w-full py-2.5 rounded-xl bg-[#25D366] hover:bg-[#1EBE5D] text-white text-xs font-bold transition-all shadow-xs"
                 >
-                  <MessageCircle className="w-4 h-4 fill-current" />
-                  <span>Chat on WhatsApp (9370102691)</span>
+                  <WhatsAppIcon size={16} variant="monochrome" className="text-white" />
+                  <span>Chat on WhatsApp (+91 7666168147)</span>
                 </a>
               </div>
             </div>

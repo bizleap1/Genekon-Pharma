@@ -44,6 +44,8 @@ export const otpService = {
     });
 
     // 4. Dispatch via SMS / Email
+    let dispatchSuccess = false;
+    let dispatchError: string | null = null;
     const isEmail = cleanId.includes("@");
     if (isEmail && env.RESEND_API_KEY && env.RESEND_API_KEY.startsWith("re_")) {
       try {
@@ -62,8 +64,10 @@ export const otpService = {
             </div>
           `,
         });
+        dispatchSuccess = true;
         logger.info(`Dispatched email OTP to ${cleanId} via Resend`);
-      } catch (err) {
+      } catch (err: any) {
+        dispatchError = err?.message || "Email dispatch failed";
         logger.error("Failed to send OTP via Resend email", err);
       }
     } else if (!isEmail && env.GETOTP_API_KEY) {
@@ -91,17 +95,28 @@ export const otpService = {
 
         const otpData: any = await otpRes.json();
         if (otpRes.ok && otpData?.data?.message_id) {
+          dispatchSuccess = true;
           logger.info(`Dispatched SMS OTP to ${formattedPhone} via GetOTP (Message ID: ${otpData.data.message_id})`);
         } else {
+          dispatchError = otpData?.message || "SMS delivery service rejected request";
           logger.warn(`GetOTP dispatch warning: ${JSON.stringify(otpData)}`);
         }
-      } catch (smsErr) {
+      } catch (smsErr: any) {
+        dispatchError = smsErr?.message || "SMS dispatch network error";
         logger.error("Failed to dispatch SMS via GetOTP", smsErr);
       }
     }
 
-    // For development testing & audit logging
-    logger.info(`[AUTH_OTP] OTP generated for identifier ${cleanId}: ${rawOtp} (Expires in 5m)`);
+    if (env.NODE_ENV === "production" && !dispatchSuccess) {
+      throw new Error(`Failed to deliver OTP code: ${dispatchError || "No active SMS or email delivery provider configured"}`);
+    }
+
+    // Secure logging: only log raw OTP in non-production environments
+    if (env.NODE_ENV !== "production") {
+      logger.info(`[AUTH_OTP] OTP generated for identifier ${cleanId}: ${rawOtp} (Expires in 5m)`);
+    } else {
+      logger.info(`[AUTH_OTP] OTP generated for identifier ${cleanId} (Expires in 5m)`);
+    }
 
     return {
       success: true,

@@ -1,4 +1,4 @@
-import { eq, desc, and, asc } from "drizzle-orm";
+import { eq, desc, and, asc, or, isNull, lte, gte } from "drizzle-orm";
 import { db, cmsBanners } from "../db";
 import { activityLogService } from "./activityLogService";
 import { logger } from "../utils/logger";
@@ -28,12 +28,17 @@ export interface UpdateBannerInput {
 
 export const cmsService = {
   /**
-   * 1. List banners (Admin view returns all; public view returns active ones)
+   * 1. List banners (Admin view returns all; public view returns active & currently scheduled ones)
    */
   async listBanners(isAdmin = false, section?: string) {
     const conditions: any[] = [];
     if (!isAdmin) {
-      conditions.push(eq(cmsBanners.isActive, true));
+      const now = new Date();
+      conditions.push(
+        eq(cmsBanners.isActive, true),
+        or(isNull(cmsBanners.startDate), lte(cmsBanners.startDate, now)),
+        or(isNull(cmsBanners.endDate), gte(cmsBanners.endDate, now))
+      );
     }
     if (section) {
       conditions.push(eq(cmsBanners.section, section));

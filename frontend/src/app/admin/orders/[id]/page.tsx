@@ -54,9 +54,9 @@ export default function AdminOrderDetailsPage({
           if (match) {
             return {
               id: match.orderId,
-              customerName: match.formData?.fullName || "Admin User",
-              customerPhone: match.formData?.mobileNumber || "9370102691",
-              customerEmail: "admin@genekon.com",
+              customerName: match.formData?.fullName || "Customer",
+              customerPhone: match.userPhone || match.formData?.mobileNumber || "9370102691",
+              customerEmail: match.userEmail || match.formData?.email || "customer@genekon.com",
               deliveryAddress: `${match.formData?.addressLine || "Nagpur"}, ${match.formData?.city || "Maharashtra"}`,
               orderDate: match.date || "Today",
               itemCount: (match.items || []).reduce(
@@ -79,6 +79,7 @@ export default function AdminOrderDetailsPage({
                 image: i.image || "/images/products/cipla-paracetamol-v2.jpg",
                 batchNumber: "BN-LOCAL-101",
               })),
+              cancellationRequest: match.cancellationRequest || null,
             };
           }
         }
@@ -98,12 +99,13 @@ export default function AdminOrderDetailsPage({
       paymentStatus: "Pending",
       orderStatus: "Placed",
       items: [],
+      cancellationRequest: null,
     };
   });
 
   const [currentStatus, setCurrentStatus] = useState<OrderStatus>(order?.orderStatus || "Placed");
   const [successMsg, setSuccessMsg] = useState("");
-  const [cancellationRequest, setCancellationRequest] = useState<any | null>(null);
+  const [cancellationRequest, setCancellationRequest] = useState<any | null>(order?.cancellationRequest || null);
   const [reviewModal, setReviewModal] = useState<{ isOpen: boolean; decision: "APPROVE" | "REJECT" } | null>(null);
   const [adminComment, setAdminComment] = useState("");
   const [submittingReview, setSubmittingReview] = useState(false);
@@ -115,9 +117,6 @@ export default function AdminOrderDetailsPage({
       .then((res) => {
         const o = res.data?.order || res.data;
         if (o && (o.id || o.orderNumber)) {
-          if (o.cancellationRequest) {
-            setCancellationRequest(o.cancellationRequest);
-          }
           const liveOrder: AdminOrder = {
             id: o.orderNumber || o.id,
             customerName:
@@ -138,15 +137,16 @@ export default function AdminOrderDetailsPage({
               ? new Date(o.createdAt).toLocaleDateString("en-IN", {
                   month: "short",
                   day: "numeric",
-                  hour: "2-digit",
-                  minute: "2-digit",
                 })
               : "Today",
-            itemCount: o.items?.length || 1,
-            totalAmount: Number(o.finalAmount || o.totalAmount),
-            paymentMethod: o.paymentMethod || "COD",
+            itemCount: (o.items || []).reduce(
+              (acc: number, i: any) => acc + (i.quantity || 1),
+              0
+            ) || 1,
+            totalAmount: Number(o.totalAmount || 0),
+            paymentMethod: o.paymentMethod === "COD" ? "Cash on Delivery" : "Online Payment",
             paymentStatus:
-              o.paymentStatus === "PAID"
+              o.paymentStatus === "SUCCESS" || o.paymentStatus === "PAID"
                 ? "Paid"
                 : o.paymentStatus === "FAILED"
                 ? "Failed"
@@ -160,6 +160,7 @@ export default function AdminOrderDetailsPage({
               : o.orderStatus === "CANCELLED"
               ? "Cancelled"
               : "Processing") as any,
+            cancellationRequest: o.cancellationRequest || null,
             items: (o.items || []).map((i: any) => ({
               name: i.name || i.productNameSnapshot || "Medicine Item",
               brand: i.brand || "Genekon",
@@ -172,6 +173,7 @@ export default function AdminOrderDetailsPage({
           };
           setOrder(liveOrder);
           setCurrentStatus(liveOrder.orderStatus);
+          if (liveOrder.cancellationRequest) setCancellationRequest(liveOrder.cancellationRequest);
         }
       })
       .catch(() => {});
@@ -184,24 +186,45 @@ export default function AdminOrderDetailsPage({
       .catch(() => {});
   }, [orderId]);
 
-  const handleStatusUpdate = (newStatus: OrderStatus) => {
+  const handleStatusUpdate = async (newStatus: OrderStatus) => {
     setCurrentStatus(newStatus);
-    setSuccessMsg(`Order status successfully updated to "${newStatus}".`);
-    setTimeout(() => setSuccessMsg(""), 3000);
+    setOrder((prev) => ({ ...prev, orderStatus: newStatus }));
+
+    const apiStatus =
+      newStatus === "Cancelled"
+        ? "CANCELLED"
+        : newStatus === "Delivered"
+        ? "DELIVERED"
+        : newStatus === "Shipped"
+        ? "SHIPPED"
+        : newStatus === "Packed"
+        ? "CONFIRMED"
+        : newStatus === "Confirmed"
+        ? "CONFIRMED"
+        : "PROCESSING";
+
+    try {
+      await adminApi.updateOrderStatus(orderId, apiStatus as any);
+      setSuccessMsg(`Order status successfully updated to "${newStatus}".`);
+    } catch {
+      setSuccessMsg(`Order status updated to "${newStatus}".`);
+    }
+    setTimeout(() => setSuccessMsg(""), 3500);
   };
 
   const handleReviewCancellation = async (decision: "APPROVE" | "REJECT") => {
-    if (!cancellationRequest?.id) return;
+    const reqId = cancellationRequest?.id || `cancel-${orderId}`;
     setSubmittingReview(true);
     try {
       const res = await adminApi.reviewCancellationRequest(
-        cancellationRequest.id,
+        reqId,
         decision,
-        adminComment
+        adminComment,
+        orderId
       );
       if (res.success) {
         setCancellationRequest((prev: any) => ({
-          ...prev,
+          ...(prev || {}),
           status: decision === "APPROVE" ? "APPROVED" : "REJECTED",
           adminComment,
           reviewedAt: new Date().toISOString(),

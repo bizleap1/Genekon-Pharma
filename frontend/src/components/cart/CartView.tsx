@@ -12,7 +12,6 @@ import {
   ArrowRight,
   ShieldCheck,
   Tag,
-  MessageCircle,
   ChevronRight,
   Gift,
   Info,
@@ -20,6 +19,7 @@ import {
   AlertCircle,
   AlertTriangle
 } from "lucide-react";
+import { WhatsAppIcon } from "@/components/ui/WhatsAppIcon";
 import { UtilityBar } from "@/components/layout/UtilityBar";
 import { Header } from "@/components/layout/Header";
 import { CategoryNav } from "@/components/layout/CategoryNav";
@@ -598,13 +598,13 @@ export default function CartView() {
                     Connect with our Nagpur fulfillment desk on WhatsApp.
                   </p>
                   <a
-                    href="https://wa.me/919370102691"
+                    href="https://wa.me/917666168147?text=Hello%20Genekon,%20I%20need%20help%20with%20my%20cart"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center justify-center gap-2 bg-white hover:bg-slate-50 text-[#559620] border border-[#CADFC5] text-xs font-bold px-4 py-2.5 rounded-full transition-colors w-full shadow-2xs mt-2"
+                    className="inline-flex items-center justify-center gap-2 bg-[#25D366] hover:bg-[#20ba59] text-white text-xs font-bold px-4 py-2.5 rounded-full transition-colors w-full shadow-2xs mt-2"
                   >
-                    <MessageCircle className="w-4 h-4" />
-                    <span>Chat with Pharmacist &rarr;</span>
+                    <WhatsAppIcon size={16} variant="monochrome" className="text-white" />
+                    <span>Chat on WhatsApp (+91 7666168147) &rarr;</span>
                   </a>
                 </div>
 

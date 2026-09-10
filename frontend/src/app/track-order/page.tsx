@@ -15,6 +15,7 @@ import {
   ChevronRight,
   AlertCircle
 } from "lucide-react";
+import { WhatsAppIcon } from "@/components/ui/WhatsAppIcon";
 import { UtilityBar } from "@/components/layout/UtilityBar";
 import { Header } from "@/components/layout/Header";
 import { CategoryNav } from "@/components/layout/CategoryNav";
@@ -315,12 +316,13 @@ export default function TrackOrderPage() {
 
                 <div className="flex items-center gap-2">
                   <a
-                    href={`https://wa.me/919370102691?text=Hello%20Genekon,%20I%20am%20inquiring%20about%20order%20${trackedOrder.orderId}`}
+                    href={`https://wa.me/917666168147?text=Hello%20Genekon,%20I%20am%20inquiring%20about%20order%20${trackedOrder.orderId}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="px-4 py-2 rounded-xl bg-[#25D366] hover:bg-[#1EBE5D] text-white text-xs font-bold transition-all shadow-xs"
+                    className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#25D366] hover:bg-[#1EBE5D] text-white text-xs font-bold transition-all shadow-xs"
                   >
-                    Need Help on WhatsApp
+                    <WhatsAppIcon size={16} variant="monochrome" className="text-white" />
+                    <span>Need Help on WhatsApp (+91 7666168147)</span>
                   </a>
                 </div>
               </div>

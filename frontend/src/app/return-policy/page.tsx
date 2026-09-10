@@ -82,7 +82,7 @@ export default function ReturnPolicyPage() {
                 </h2>
                 <p>
                   Simply take a clear photograph of the damaged product and outer packaging seal, and send it to our WhatsApp support desk at{" "}
-                  <strong className="text-[#559620]">+91 9370102691</strong> or email{" "}
+                  <strong className="text-[#559620]">+91 7666168147</strong> or email{" "}
                   <strong className="text-[#559620]">support@genekon.com</strong> with your Order ID. Our pharmacist will approve and arrange reverse pickup within 24 hours.
                 </p>
               </section>

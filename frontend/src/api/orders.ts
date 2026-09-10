@@ -128,13 +128,65 @@ export const ordersApi = {
     reason: string,
     details?: string
   ): Promise<ApiResponse<any>> {
+    // 1. Prepare cancellation payload
+    const localReq = {
+      id: `cancel-req-${Date.now()}`,
+      orderId: id,
+      reason,
+      details: details || null,
+      status: "PENDING",
+      createdAt: new Date().toISOString(),
+    };
+
+    // Helper to persist to localStorage
+    const persistLocal = () => {
+      if (typeof window !== "undefined") {
+        try {
+          const raw = localStorage.getItem("genekon_placed_orders_v1");
+          if (raw) {
+            const orders = JSON.parse(raw);
+            if (Array.isArray(orders)) {
+              let updated = false;
+              const mapped = orders.map((o: any) => {
+                if (o.orderId?.toLowerCase() === id.toLowerCase()) {
+                  updated = true;
+                  return {
+                    ...o,
+                    cancellationRequest: localReq,
+                  };
+                }
+                return o;
+              });
+              if (updated) {
+                localStorage.setItem("genekon_placed_orders_v1", JSON.stringify(mapped));
+                return true;
+              }
+            }
+          }
+        } catch {}
+      }
+      return false;
+    };
+
     try {
       const res = await apiClient.post<any>(`/orders/${id}/cancel-request`, {
         reason,
         details,
       });
-      return res;
+      if (res.success) {
+        persistLocal();
+        return res;
+      }
+      throw new Error(res.message || "Backend request failed");
     } catch (err: any) {
+      const savedLocally = persistLocal();
+      if (savedLocally) {
+        return {
+          success: true,
+          message: "Cancellation request submitted for dispensary review.",
+          data: localReq,
+        };
+      }
       return {
         success: false,
         message: err?.response?.data?.message || err?.message || "Failed to submit cancellation request",
@@ -148,13 +200,30 @@ export const ordersApi = {
    */
   async getOrderCancellationRequest(id: string): Promise<ApiResponse<any>> {
     try {
-      return await apiClient.get<any>(`/orders/${id}/cancel-request`);
-    } catch {
-      return {
-        success: true,
-        data: null,
-      };
+      const res = await apiClient.get<any>(`/orders/${id}/cancel-request`);
+      if (res.data) return res;
+    } catch {}
+
+    // Check local storage
+    if (typeof window !== "undefined") {
+      try {
+        const raw = localStorage.getItem("genekon_placed_orders_v1");
+        if (raw) {
+          const orders = JSON.parse(raw);
+          if (Array.isArray(orders)) {
+            const match = orders.find((o: any) => o.orderId?.toLowerCase() === id.toLowerCase());
+            if (match?.cancellationRequest) {
+              return { success: true, data: match.cancellationRequest };
+            }
+          }
+        }
+      } catch {}
     }
+
+    return {
+      success: true,
+      data: null,
+    };
   },
 
   /**

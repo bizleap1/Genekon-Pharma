@@ -13,9 +13,9 @@ import {
   Bell,
   LogOut,
   ShieldCheck,
-  MessageCircle,
   ChevronRight
 } from "lucide-react";
+import { WhatsAppIcon } from "@/components/ui/WhatsAppIcon";
 import { useAuthStore } from "@/stores/authStore";
 import { useWishlist } from "@/context/WishlistContext";
 import { orderService } from "@/services/orderService";
@@ -30,15 +30,17 @@ export const AccountSidebar: React.FC = () => {
   const [orderCount, setOrderCount] = React.useState<number | undefined>(undefined);
 
   React.useEffect(() => {
-    if (typeof window !== "undefined") {
-      const stored = orderService.getStoredOrders();
+    if (typeof window !== "undefined" && user?.id) {
+      const stored = orderService.getStoredOrders(user.id);
       if (stored && stored.length > 0) {
         setOrderCount(stored.length);
       } else {
         setOrderCount(undefined);
       }
+    } else {
+      setOrderCount(undefined);
     }
-  }, []);
+  }, [user?.id]);
 
   const handleLogout = () => {
     logout();
@@ -166,7 +168,7 @@ export const AccountSidebar: React.FC = () => {
       <div className="rounded-3xl border border-[#CDE5C8] bg-linear-to-br from-[#F2F8F0] to-white p-5 shadow-2xs">
         <div className="flex items-start gap-3">
           <div className="w-9 h-9 rounded-xl bg-[#25D366] text-white flex items-center justify-center shrink-0">
-            <MessageCircle className="w-4 h-4 fill-current" />
+            <WhatsAppIcon size={20} variant="monochrome" className="text-white" />
           </div>
           <div>
             <h4 className="text-xs font-bold text-[#14304A]">
@@ -176,12 +178,12 @@ export const AccountSidebar: React.FC = () => {
               Message your prescription or order ID to our pharmacist.
             </p>
             <a
-              href="https://wa.me/919370102691?text=Hello%20Genekon%20Pharmacy,%20I%20need%20assistance%20with%20my%20order"
+              href="https://wa.me/917666168147?text=Hello%20Genekon%20Pharmacy,%20I%20need%20assistance%20with%20my%20order"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1 text-xs font-extrabold text-[#25D366] hover:underline mt-2.5"
+              className="inline-flex items-center gap-1.5 text-xs font-extrabold text-[#25D366] hover:underline mt-2.5"
             >
-              <span>Chat on WhatsApp</span>
+              <span>Chat on WhatsApp (+91 7666168147)</span>
               <ChevronRight className="w-3 h-3" />
             </a>
           </div>

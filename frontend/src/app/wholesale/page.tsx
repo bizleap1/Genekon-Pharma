@@ -16,6 +16,7 @@ import {
   PhoneCall,
   Users
 } from "lucide-react";
+import { WhatsAppIcon } from "@/components/ui/WhatsAppIcon";
 import { UtilityBar } from "@/components/layout/UtilityBar";
 import { Header } from "@/components/layout/Header";
 import { CategoryNav } from "@/components/layout/CategoryNav";
@@ -130,13 +131,13 @@ export default function WholesaleLandingPage() {
                 </Link>
 
                 <a
-                  href="https://wa.me/919370102691?text=Hello%20Genekon,%20I%20would%20like%20to%20request%20the%20Wholesale%20Product%20Rate%20Card"
+                  href="https://wa.me/917666168147?text=Hello%20Genekon,%20I%20would%20like%20to%20request%20the%20Wholesale%20Product%20Rate%20Card"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="px-5 py-3 rounded-xl bg-white/10 hover:bg-white/20 text-white text-xs sm:text-sm font-bold transition-all flex items-center gap-2"
                 >
-                  <PhoneCall className="w-4 h-4 text-[#25D366]" />
-                  <span>Talk to Wholesale Manager</span>
+                  <WhatsAppIcon size={18} variant="monochrome" className="text-[#25D366]" />
+                  <span>Talk to Wholesale Desk (+91 7666168147)</span>
                 </a>
               </div>
             </div>

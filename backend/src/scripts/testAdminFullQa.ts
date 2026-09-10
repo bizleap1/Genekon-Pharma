@@ -150,7 +150,7 @@ async function runAdminFullQa() {
       headers: { Authorization: `Bearer ${adminToken}` },
     });
     const latency = Date.now() - t0;
-    const json = await res.json();
+    const json: any = await res.json();
 
     if (res.status === 200 && json.success) {
       const summary = json.data?.summary || json.data;
@@ -295,7 +295,6 @@ async function runAdminFullQa() {
     const newCat = await categoryService.createCategory({
       name: "Dermatological & Skin Health",
       slug,
-      description: "Topical formulations, cleansers, and therapeutic ointments",
     });
     testCatId = newCat.id;
 
@@ -519,7 +518,7 @@ async function runAdminFullQa() {
     });
 
     const [reloadedOrder] = await db.select().from(orders).where(eq(orders.id, cancelTestOrder.id)).limit(1);
-    if (approved.status === "APPROVED" && reloadedOrder.orderStatus === "CANCELLED" && reloadedOrder.stockDeducted === false) {
+    if (approved.request.status === "APPROVED" && reloadedOrder.orderStatus === "CANCELLED" && reloadedOrder.stockDeducted === false) {
       record("Cancellation", "Admin Approval & Stock Replenishment", "PASS", `Order marked CANCELLED and stock replenished (stockDeducted=false)`);
     } else {
       record("Cancellation", "Admin Approval & Stock Replenishment", "FAIL", `Order status: ${reloadedOrder?.orderStatus}, stockDeducted: ${reloadedOrder?.stockDeducted}`);

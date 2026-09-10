@@ -96,6 +96,15 @@ export const cartApi = {
   },
 
   /**
+   * Synchronize cart with exact item list
+   */
+  async syncCart(
+    items: Array<{ productId: string; quantity: number }>
+  ): Promise<ApiResponse<BackendCart>> {
+    return await apiClient.post<BackendCart>("/cart/sync", { items });
+  },
+
+  /**
    * Apply promotional coupon to server cart
    */
   async applyCoupon(code: string): Promise<ApiResponse<{

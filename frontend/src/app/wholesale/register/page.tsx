@@ -14,6 +14,7 @@ import {
   Lock,
   BadgeCheck
 } from "lucide-react";
+import { WhatsAppIcon } from "@/components/ui/WhatsAppIcon";
 import { UtilityBar } from "@/components/layout/UtilityBar";
 import { Header } from "@/components/layout/Header";
 import { CategoryNav } from "@/components/layout/CategoryNav";
@@ -138,12 +139,13 @@ export default function WholesaleRegisterPage() {
                     &larr; Back to Wholesale Info
                   </Link>
                   <a
-                    href="https://wa.me/919370102691?text=Hello%20Genekon,%20I%20just%20submitted%20my%20B2B%20registration%20application"
+                    href="https://wa.me/917666168147?text=Hello%20Genekon,%20I%20just%20submitted%20my%20B2B%20registration%20application"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="px-5 py-2.5 rounded-xl bg-[#25D366] hover:bg-[#1EBE5D] text-white text-xs font-bold transition-all"
+                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#25D366] hover:bg-[#1EBE5D] text-white text-xs font-bold transition-all shadow-xs"
                   >
-                    Speed up via WhatsApp
+                    <WhatsAppIcon size={16} variant="monochrome" className="text-white" />
+                    <span>Speed up via WhatsApp (+91 7666168147)</span>
                   </a>
                 </div>
               </div>

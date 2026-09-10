@@ -6,6 +6,7 @@ import {
   addToCartSchema,
   updateCartItemSchema,
   mergeCartSchema,
+  syncCartSchema,
 } from "../validators/cartValidation";
 
 const router = Router();
@@ -21,6 +22,7 @@ router.patch("/items/:itemId", validateRequest(updateCartItemSchema), cartContro
 router.delete("/items/:itemId", cartController.removeItem);
 router.delete("/", cartController.clearCart);
 router.post("/merge", validateRequest(mergeCartSchema), cartController.mergeCart);
+router.post("/sync", validateRequest(syncCartSchema), cartController.syncCart);
 
 // Coupon application endpoints
 router.post("/apply-coupon", cartController.applyCoupon);

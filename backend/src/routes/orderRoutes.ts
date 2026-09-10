@@ -37,12 +37,24 @@ router.put(
   validateRequest(updateOrderStatusSchema),
   orderController.updateOrderStatus
 );
+router.patch(
+  "/admin/:id/status",
+  authorizeRole("ADMIN"),
+  validateRequest(updateOrderStatusSchema),
+  orderController.updateOrderStatus
+);
 router.get(
   "/admin/prescriptions/pending",
   authorizeRole("ADMIN"),
   orderController.getPendingPrescriptions
 );
 router.put(
+  "/admin/prescriptions/:prescriptionId/review",
+  authorizeRole("ADMIN"),
+  validateRequest(reviewPrescriptionSchema),
+  orderController.reviewPrescription
+);
+router.patch(
   "/admin/prescriptions/:prescriptionId/review",
   authorizeRole("ADMIN"),
   validateRequest(reviewPrescriptionSchema),

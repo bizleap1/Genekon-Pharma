@@ -22,7 +22,7 @@ export const adminDashboardService = {
           (SELECT count(*)::int FROM users WHERE role = 'WHOLESALE_PARTNER') AS "totalWholesalePartners",
           (SELECT count(*)::int FROM products WHERE status = 'ACTIVE') AS "totalProducts",
           (SELECT count(*)::int FROM orders) AS "totalOrders",
-          (SELECT coalesce(sum(case when order_status != 'CANCELLED' or payment_status in ('SUCCESS', 'PAID') then total_amount else 0 end), 0)::text FROM orders) AS "totalRevenue",
+          (SELECT coalesce(sum(case when payment_status in ('SUCCESS', 'PAID') or (payment_method = 'COD' and order_status = 'DELIVERED') then total_amount else 0 end), 0)::text FROM orders) AS "totalRevenue",
           (SELECT count(*)::int FROM prescriptions WHERE status = 'PENDING') AS "pendingPrescriptions",
           (SELECT count(*)::int FROM products WHERE status = 'ACTIVE' AND stock_quantity <= 20) AS "lowStockProducts",
           (SELECT count(*)::int FROM wholesale_profiles WHERE status = 'PENDING_VERIFICATION') AS "pendingWholesaleApplications";

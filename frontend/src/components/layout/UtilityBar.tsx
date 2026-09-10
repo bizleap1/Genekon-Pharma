@@ -4,6 +4,7 @@ import React from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ShieldCheck, Lock, Truck, Phone, Tag } from "lucide-react";
+import { WhatsAppIcon } from "@/components/ui/WhatsAppIcon";
 import { ProtectedAction } from "@/components/auth/ProtectedAction";
 
 export const UtilityBar: React.FC = () => {
@@ -63,11 +64,22 @@ export const UtilityBar: React.FC = () => {
           </ProtectedAction>
           <span className="text-[#C8DCC0] hidden sm:inline">|</span>
           <a
-            href="tel:9370102691"
+            href="https://wa.me/917666168147?text=Hello%20Genekon%20Pharmacy,%20I%20need%20assistance"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-1.5 font-bold text-[#25D366] hover:underline"
+            title="Chat with Pharmacist on WhatsApp"
+          >
+            <WhatsAppIcon size={13} variant="monochrome" className="text-[#25D366]" />
+            <span>WhatsApp</span>
+          </a>
+          <span className="text-[#C8DCC0]">|</span>
+          <a
+            href="tel:7666168147"
             className="flex items-center gap-1.5 font-bold text-[#2E6B17] hover:underline"
           >
             <Phone className="w-3.5 h-3.5 fill-[#2E6B17]" />
-            <span>9370102691</span>
+            <span>7666168147</span>
           </a>
         </div>
       </div>

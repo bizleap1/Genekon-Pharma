@@ -116,8 +116,9 @@ export const inventoryService = {
     const manufacturingDate = input.manufacturingDate ? new Date(input.manufacturingDate) : null;
     const now = new Date();
 
+    const isExpired = expiryDate < now;
     let status = "IN_STOCK";
-    if (expiryDate < now) {
+    if (isExpired) {
       status = "EXPIRED";
     } else if (input.quantity <= 0) {
       status = "OUT_OF_STOCK";
@@ -141,17 +142,20 @@ export const inventoryService = {
       })
       .returning();
 
-    // Increment aggregate product stockQuantity
+    // Increment aggregate product stockQuantity only if not expired
     const previousQuantity = product.stockQuantity;
-    const newQuantity = previousQuantity + input.quantity;
+    const addedStock = isExpired ? 0 : input.quantity;
+    const newQuantity = previousQuantity + addedStock;
 
-    await db
-      .update(products)
-      .set({
-        stockQuantity: newQuantity,
-        updatedAt: new Date(),
-      })
-      .where(eq(products.id, product.id));
+    if (addedStock > 0) {
+      await db
+        .update(products)
+        .set({
+          stockQuantity: newQuantity,
+          updatedAt: new Date(),
+        })
+        .where(eq(products.id, product.id));
+    }
 
     // Record audit log in inventory_logs
     await db.insert(inventoryLogs).values({
@@ -159,9 +163,11 @@ export const inventoryService = {
       batchId: batch.id,
       changeType: "PURCHASE_RECEIPT",
       previousQuantity,
-      quantityChanged: input.quantity,
+      quantityChanged: addedStock,
       newQuantity,
-      reason: `New batch ${batch.batchNumber} received into physical inventory`,
+      reason: isExpired
+        ? `Expired batch ${batch.batchNumber} received into quarantine (not added to sellable stock)`
+        : `New batch ${batch.batchNumber} received into physical inventory`,
       updatedBy: adminId,
     });
 
@@ -176,6 +182,7 @@ export const inventoryService = {
         batchNumber: batch.batchNumber,
         quantity: input.quantity,
         expiryDate: batch.expiryDate,
+        isExpired,
       },
     });
 
@@ -210,36 +217,43 @@ export const inventoryService = {
       })
       .where(eq(products.id, product.id));
 
-    // If batchId provided, adjust batch quantity too
+    // If batchId provided, adjust batch quantity with strict product ownership check
     if (input.batchId) {
       const [batch] = await db
         .select()
         .from(inventoryBatches)
-        .where(eq(inventoryBatches.id, input.batchId))
+        .where(
+          and(
+            eq(inventoryBatches.id, input.batchId),
+            eq(inventoryBatches.productId, product.id)
+          )
+        )
         .limit(1);
 
-      if (batch) {
-        const newBatchQty = Math.max(0, batch.quantity + input.quantityChanged);
-        let batchStatus = batch.status;
-        if (new Date(batch.expiryDate) < new Date()) {
-          batchStatus = "EXPIRED";
-        } else if (newBatchQty === 0) {
-          batchStatus = "OUT_OF_STOCK";
-        } else if (newBatchQty <= 20) {
-          batchStatus = "LOW_STOCK";
-        } else {
-          batchStatus = "IN_STOCK";
-        }
-
-        await db
-          .update(inventoryBatches)
-          .set({
-            quantity: newBatchQty,
-            status: batchStatus,
-            updatedAt: new Date(),
-          })
-          .where(eq(inventoryBatches.id, batch.id));
+      if (!batch) {
+        throw new Error("Specified inventory batch does not belong to this product");
       }
+
+      const newBatchQty = Math.max(0, batch.quantity + input.quantityChanged);
+      let batchStatus = batch.status;
+      if (new Date(batch.expiryDate) < new Date()) {
+        batchStatus = "EXPIRED";
+      } else if (newBatchQty === 0) {
+        batchStatus = "OUT_OF_STOCK";
+      } else if (newBatchQty <= 20) {
+        batchStatus = "LOW_STOCK";
+      } else {
+        batchStatus = "IN_STOCK";
+      }
+
+      await db
+        .update(inventoryBatches)
+        .set({
+          quantity: newBatchQty,
+          status: batchStatus,
+          updatedAt: new Date(),
+        })
+        .where(eq(inventoryBatches.id, batch.id));
     }
 
     // Write audit log to inventory_logs

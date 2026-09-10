@@ -49,9 +49,7 @@ export default function AdminOrdersPage() {
 
   const tabs = [
     { id: "all", label: `All (${counts.all})` },
-    ...(counts.cancellations > 0
-      ? [{ id: "cancellations", label: `Cancel Requests (${counts.cancellations})` }]
-      : []),
+    { id: "cancellations", label: `Cancel Requests (${counts.cancellations})` },
     { id: "processing", label: `Processing (${counts.processing})` },
     { id: "shipped", label: `Shipped (${counts.shipped})` },
     { id: "delivered", label: `Delivered (${counts.delivered})` },

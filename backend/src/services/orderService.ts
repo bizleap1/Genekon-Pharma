@@ -18,6 +18,7 @@ import { Order, DeliveryAddressSnapshot } from "../db/schema/orders";
 import { OrderItem } from "../db/schema/orderItems";
 import { OrderStatusHistory } from "../db/schema/orderStatusHistory";
 import { cartService } from "./cartService";
+import { couponService } from "./couponService";
 import { emailNotificationService } from "./emailNotificationService";
 import { logger } from "../utils/logger";
 
@@ -25,6 +26,7 @@ export interface CreateOrderPayload {
   deliveryAddressId: string;
   prescriptionId?: string;
   paymentMethod?: "COD" | "ONLINE" | "UPI" | "CARD" | "NETBANKING";
+  couponCode?: string;
   notes?: string;
 }
 
@@ -117,11 +119,20 @@ export const orderService = {
       }
     }
 
-    // Authoritative Price Engine
-    const discountAmount = Math.max(0, subtotal - totalSellingPrice);
+    // Authoritative Price Engine & Coupon Validation
+    let couponDiscount = 0;
+    if (input.couponCode) {
+      const couponValidation = await couponService.validateCoupon(input.couponCode, totalSellingPrice);
+      couponDiscount = couponValidation.discountAmount;
+      await couponService.incrementCouponUsage(couponValidation.code);
+    }
+
+    const mrpDiscount = Math.max(0, subtotal - totalSellingPrice);
+    const totalDiscount = mrpDiscount + couponDiscount;
+    const finalSellingPrice = Math.max(0, totalSellingPrice - couponDiscount);
     const freeDeliveryThreshold = 500;
-    const deliveryFee = totalSellingPrice >= freeDeliveryThreshold ? 0 : 40;
-    const totalAmount = totalSellingPrice + deliveryFee;
+    const deliveryFee = finalSellingPrice >= freeDeliveryThreshold ? 0 : 40;
+    const totalAmount = finalSellingPrice + deliveryFee;
 
     // Determine initial order status
     // If prescription items are present, the order must be verified by a pharmacist first
@@ -141,7 +152,7 @@ export const orderService = {
         deliveryAddressId: address.id,
         deliveryAddressSnapshot,
         subtotal: subtotal.toFixed(2),
-        discountAmount: discountAmount.toFixed(2),
+        discountAmount: totalDiscount.toFixed(2),
         deliveryFee: deliveryFee.toFixed(2),
         totalAmount: totalAmount.toFixed(2),
         paymentStatus: "PENDING",
@@ -171,12 +182,27 @@ export const orderService = {
       });
     }
 
-    // 6. Link prescription if provided
+    // 6. Link prescription if provided (with strict user ownership verification)
     if (input.prescriptionId) {
+      const [userRx] = await db
+        .select()
+        .from(prescriptions)
+        .where(
+          and(
+            eq(prescriptions.id, input.prescriptionId),
+            eq(prescriptions.userId, userId)
+          )
+        )
+        .limit(1);
+
+      if (!userRx) {
+        throw new Error("Invalid prescription ID or prescription does not belong to your account");
+      }
+
       await db
         .update(prescriptions)
         .set({ orderId: createdOrder.id, updatedAt: new Date() })
-        .where(eq(prescriptions.id, input.prescriptionId));
+        .where(eq(prescriptions.id, userRx.id));
     }
 
     // 7. Append initial Timeline event
@@ -230,7 +256,12 @@ export const orderService = {
    * Get single order details with historical item snapshots, address, timeline, and prescription
    */
   async getOrderById(orderId: string, userId?: string, isAdmin = false): Promise<OrderDetailResponse> {
-    const [order] = await db.select().from(orders).where(eq(orders.id, orderId)).limit(1);
+    const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(orderId);
+    const [order] = await db
+      .select()
+      .from(orders)
+      .where(isUuid ? eq(orders.id, orderId) : eq(orders.orderNumber, orderId))
+      .limit(1);
 
     if (!order) {
       throw new Error("Order not found");
@@ -305,15 +336,19 @@ export const orderService = {
   /**
    * List customer orders with pagination
    */
-  async getCustomerOrders(userId: string, page = 1, limit = 10): Promise<{ orders: any[]; total: number; page: number; totalPages: number }> {
-    const offset = (page - 1) * limit;
+  async getCustomerOrders(userId: string, page: any = 1, limit: any = 10): Promise<{ orders: any[]; total: number; page: number; totalPages: number }> {
+    const parsedPage = typeof page === "number" ? page : parseInt(String(page), 10);
+    const parsedLimit = typeof limit === "number" ? limit : parseInt(String(limit), 10);
+    const safePage = !isNaN(parsedPage) && parsedPage > 0 ? parsedPage : 1;
+    const safeLimit = !isNaN(parsedLimit) && parsedLimit > 0 ? Math.min(100, parsedLimit) : 10;
+    const offset = (safePage - 1) * safeLimit;
 
     const userOrders = await db
       .select()
       .from(orders)
       .where(eq(orders.userId, userId))
       .orderBy(desc(orders.createdAt))
-      .limit(limit)
+      .limit(safeLimit)
       .offset(offset);
 
     const [countResult] = await db
@@ -356,7 +391,12 @@ export const orderService = {
    * Reorder products from a past order into active cart ("Buy Again")
    */
   async reorder(orderId: string, userId: string): Promise<{ message: string; cart: any; unavailableItems: string[] }> {
-    const [order] = await db.select().from(orders).where(eq(orders.id, orderId)).limit(1);
+    const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(orderId);
+    const [order] = await db
+      .select()
+      .from(orders)
+      .where(isUuid ? eq(orders.id, orderId) : eq(orders.orderNumber, orderId))
+      .limit(1);
 
     if (!order) {
       throw new Error("Order not found");
@@ -407,7 +447,12 @@ export const orderService = {
     adminUserId: string,
     notes?: string
   ): Promise<OrderDetailResponse> {
-    const [order] = await db.select().from(orders).where(eq(orders.id, orderId)).limit(1);
+    const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(orderId);
+    const [order] = await db
+      .select()
+      .from(orders)
+      .where(isUuid ? eq(orders.id, orderId) : eq(orders.orderNumber, orderId))
+      .limit(1);
 
     if (!order) {
       throw new Error("Order not found");

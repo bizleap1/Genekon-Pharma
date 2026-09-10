@@ -17,8 +17,11 @@ export const googleAuthService = {
    */
   async verifyGoogleToken(idToken: string): Promise<GoogleUserProfile> {
     try {
-      // In development / demo mode, allow mock token simulation if client ID is placeholder
+      // In development / demo mode, allow mock token simulation only if strictly non-production
       if (idToken.startsWith("mock_google_token_")) {
+        if (env.NODE_ENV === "production") {
+          throw new Error("Mock Google authentication tokens are strictly forbidden in production");
+        }
         return {
           googleId: `google_${Date.now()}`,
           email: "google.user@example.com",

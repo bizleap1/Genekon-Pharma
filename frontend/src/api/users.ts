@@ -45,75 +45,49 @@ export const usersApi = {
    * Fetch saved delivery addresses
    */
   async getUserAddresses(): Promise<ApiResponse<UserAddress[]>> {
-    try {
-      return await apiClient.get<UserAddress[]>("/users/addresses");
-    } catch {
-      return {
-        success: true,
-        data: [],
-      };
-    }
+    return await apiClient.get<UserAddress[]>("/users/addresses");
   },
 
   /**
    * Add new delivery address
    */
-  async addAddress(address: Omit<UserAddress, "id">): Promise<ApiResponse<UserAddress>> {
-    try {
-      return await apiClient.post<UserAddress>("/users/addresses", address);
-    } catch {
-      const newAddress: UserAddress = {
-        ...address,
-        id: `addr-${Date.now()}`,
-        name: address.name || address.fullName || "Primary Address",
-      };
-      return {
-        success: true,
-        message: "Address saved successfully",
-        data: newAddress,
-      };
-    }
+  async addAddress(address: Partial<UserAddress> & { fullName?: string; addressType?: string }): Promise<ApiResponse<UserAddress>> {
+    const payload = {
+      fullName: address.fullName || address.name || "Customer",
+      phone: (address.phone || "").replace(/\D/g, "").slice(-10),
+      addressLine: address.addressLine || "",
+      landmark: address.landmark || undefined,
+      city: address.city || "",
+      state: address.state || "",
+      pincode: address.pincode || "",
+      addressType: (address.addressType || address.type || "HOME").toUpperCase(),
+      isDefault: Boolean(address.isDefault),
+    };
+    return await apiClient.post<UserAddress>("/users/addresses", payload);
   },
 
   /**
    * Update existing address
    */
-  async updateAddress(id: string, address: Partial<UserAddress>): Promise<ApiResponse<UserAddress>> {
-    try {
-      return await apiClient.put<UserAddress>(`/users/addresses/${id}`, address);
-    } catch {
-      return {
-        success: true,
-        message: "Address updated successfully",
-        data: {
-          id,
-          type: (address.type || "home") as "home" | "work" | "clinic" | "other",
-          name: address.name || address.fullName || "",
-          fullName: address.fullName || address.name || "",
-          phone: address.phone || "",
-          addressLine: address.addressLine || "",
-          landmark: address.landmark,
-          city: address.city || "",
-          state: address.state || "",
-          pincode: address.pincode || "",
-          ...address,
-        },
-      };
-    }
+  async updateAddress(id: string, address: Partial<UserAddress> & { fullName?: string; addressType?: string }): Promise<ApiResponse<UserAddress>> {
+    const payload: Record<string, unknown> = {};
+    if (address.fullName || address.name) payload.fullName = address.fullName || address.name;
+    if (address.phone) payload.phone = address.phone.replace(/\D/g, "").slice(-10);
+    if (address.addressLine) payload.addressLine = address.addressLine;
+    if (address.landmark !== undefined) payload.landmark = address.landmark;
+    if (address.city) payload.city = address.city;
+    if (address.state) payload.state = address.state;
+    if (address.pincode) payload.pincode = address.pincode;
+    if (address.addressType || address.type) payload.addressType = (address.addressType || address.type || "HOME").toUpperCase();
+    if (address.isDefault !== undefined) payload.isDefault = Boolean(address.isDefault);
+
+    return await apiClient.put<UserAddress>(`/users/addresses/${id}`, payload);
   },
 
   /**
    * Delete saved address
    */
   async deleteAddress(id: string): Promise<ApiResponse<{ id: string }>> {
-    try {
-      return await apiClient.delete<{ id: string }>(`/users/addresses/${id}`);
-    } catch {
-      return {
-        success: true,
-        message: "Address deleted successfully",
-        data: { id },
-      };
-    }
+    return await apiClient.delete<{ id: string }>(`/users/addresses/${id}`);
   },
 };

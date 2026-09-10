@@ -47,15 +47,8 @@ export const cloudinaryService = {
         uploadStream.end(buffer);
       });
     } catch (error: any) {
-      logger.warn(`Cloudinary upload warning: ${error.message}. Using high-res fallback.`);
-      // Safe development fallback: ensure image URLs always work
-      const fallbackId = `genekon_${Date.now()}`;
-      return {
-        url: `https://res.cloudinary.com/hsufdlap/image/upload/v1/genekon/products/${fallbackId}.webp`,
-        secureUrl: `https://res.cloudinary.com/hsufdlap/image/upload/v1/genekon/products/${fallbackId}.webp`,
-        publicId: `genekon/products/${fallbackId}`,
-        format: "webp",
-      };
+      logger.error(`Cloudinary upload failed: ${error.message}`);
+      throw new Error(`Failed to upload product image: ${error.message}`);
     }
   },
 
@@ -91,15 +84,8 @@ export const cloudinaryService = {
         uploadStream.end(buffer);
       });
     } catch (error: any) {
-      logger.warn(`Cloudinary prescription upload warning: ${error.message}. Using secure fallback URL.`);
-      const fallbackId = `prescription_${Date.now()}`;
-      const ext = isPdf ? "pdf" : "jpg";
-      return {
-        url: `https://res.cloudinary.com/hsufdlap/raw/upload/v1/genekon/prescriptions/${fallbackId}.${ext}`,
-        secureUrl: `https://res.cloudinary.com/hsufdlap/raw/upload/v1/genekon/prescriptions/${fallbackId}.${ext}`,
-        publicId: `genekon/prescriptions/${fallbackId}`,
-        format: ext,
-      };
+      logger.error(`Cloudinary prescription upload failed: ${error.message}`);
+      throw new Error(`Failed to upload prescription document: ${error.message}`);
     }
   },
 

@@ -428,8 +428,8 @@ export const authStore = {
       guestUser: false,
       user,
       currentUser: user,
-      isAdmin: false,
-      isWholesale: false,
+      isAdmin: user.role === "admin",
+      isWholesale: user.role === "wholesale",
       token: token || state.token,
       sessionExpiresAt: expiresAt,
       loginModal: {

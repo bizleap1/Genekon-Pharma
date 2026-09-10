@@ -1,4 +1,4 @@
-import { eq, and } from "drizzle-orm";
+import { eq, and, inArray } from "drizzle-orm";
 import { db, carts, cartItems, products, productImages } from "../db";
 import { Cart, CartItem as DbCartItem } from "../db/schema/cart";
 import { Product } from "../db/schema/products";
@@ -281,6 +281,82 @@ export const cartService = {
             price: product.sellingPrice,
           });
         }
+      }
+    }
+
+    return this.buildCartResponse(cart);
+  },
+
+  /**
+   * Synchronize cart with exact item list, avoiding item doubling
+   */
+  async syncCart(
+    userId: string,
+    targetItems: Array<{ productId: string; quantity: number }>
+  ): Promise<CartResponse> {
+    let [cart] = await db.select().from(carts).where(eq(carts.userId, userId)).limit(1);
+    if (!cart) {
+      const [created] = await db.insert(carts).values({ userId }).returning();
+      cart = created;
+    }
+
+    // If targetItems is empty, clear cart
+    if (!targetItems || targetItems.length === 0) {
+      await db.delete(cartItems).where(eq(cartItems.cartId, cart.id));
+      return this.buildCartResponse(cart);
+    }
+
+    // Existing items in database
+    const existingItems = await db
+      .select()
+      .from(cartItems)
+      .where(eq(cartItems.cartId, cart.id));
+
+    const existingMap = new Map(existingItems.map((i) => [i.productId, i]));
+    const targetProductIds = new Set(targetItems.map((i) => i.productId));
+
+    // 1. Remove items that are not in targetItems
+    for (const existing of existingItems) {
+      if (!targetProductIds.has(existing.productId)) {
+        await db.delete(cartItems).where(eq(cartItems.id, existing.id));
+      }
+    }
+
+    // 2. Fetch live products
+    const productIds = Array.from(targetProductIds);
+    const dbProducts = await db
+      .select()
+      .from(products)
+      .where(inArray(products.id, productIds));
+    const productMap = new Map(dbProducts.map((p) => [p.id, p]));
+
+    // 3. Upsert target items with exact quantities
+    for (const target of targetItems) {
+      if (target.quantity < 1) continue;
+      const product = productMap.get(target.productId);
+      if (!product || product.status !== "ACTIVE" || product.stockQuantity <= 0) {
+        continue;
+      }
+
+      const clampedQty = Math.min(target.quantity, product.stockQuantity);
+      const existing = existingMap.get(target.productId);
+
+      if (existing) {
+        await db
+          .update(cartItems)
+          .set({
+            quantity: clampedQty,
+            price: product.sellingPrice,
+            updatedAt: new Date(),
+          })
+          .where(eq(cartItems.id, existing.id));
+      } else {
+        await db.insert(cartItems).values({
+          cartId: cart.id,
+          productId: product.id,
+          quantity: clampedQty,
+          price: product.sellingPrice,
+        });
       }
     }
 

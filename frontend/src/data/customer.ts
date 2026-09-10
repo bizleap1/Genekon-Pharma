@@ -12,14 +12,15 @@ export interface CustomerOrder {
   date: string;
   totalAmount: number;
   paymentMethod: string;
-  paymentStatus: "Paid" | "Pending" | "Cash on Delivery";
-  deliveryStatus: "Delivered" | "Shipped" | "Confirmed" | "Processing";
-  currentStep: number; // 1 to 5
+  paymentStatus: "Paid" | "Pending" | "Cash on Delivery" | "Refunded" | "Cancelled";
+  deliveryStatus: "Delivered" | "Shipped" | "Confirmed" | "Processing" | "Cancelled";
+  currentStep: number; // 0 to 5
   estimatedDelivery?: string;
   deliveredDate?: string;
   courier?: string;
   awbNumber?: string;
   deliveryAddress: string;
+  cancellationRequest?: any;
   items: {
     id: string;
     name: string;

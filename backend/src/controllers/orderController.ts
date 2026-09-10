@@ -27,7 +27,9 @@ export const orderController = {
    */
   async getCustomerOrders(req: Request, res: Response) {
     try {
-      const orders = await orderService.getCustomerOrders(req.user!.id, req.query as any);
+      const page = req.query.page ? Math.max(1, parseInt(req.query.page as string, 10)) : 1;
+      const limit = req.query.limit ? Math.min(100, Math.max(1, parseInt(req.query.limit as string, 10))) : 10;
+      const orders = await orderService.getCustomerOrders(req.user!.id, page, limit);
       return sendSuccess(res, orders, "Orders retrieved successfully");
     } catch (error: any) {
       return sendError(res, error.message || "Failed to retrieve orders", 400);

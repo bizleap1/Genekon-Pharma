@@ -20,6 +20,16 @@ export const mergeCartSchema = z.object({
     .min(1, "At least one item must be provided for merge"),
 });
 
+export const syncCartSchema = z.object({
+  items: z.array(
+    z.object({
+      productId: z.string().uuid("Invalid product ID format"),
+      quantity: z.coerce.number().int().min(1, "Quantity must be at least 1"),
+    })
+  ),
+});
+
 export type AddToCartInput = z.infer<typeof addToCartSchema>;
 export type UpdateCartItemInput = z.infer<typeof updateCartItemSchema>;
 export type MergeCartInput = z.infer<typeof mergeCartSchema>;
+export type SyncCartInput = z.infer<typeof syncCartSchema>;

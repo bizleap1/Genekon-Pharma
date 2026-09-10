@@ -1,11 +1,12 @@
 "use client";
 
-import React from "react";
+import React, { Suspense } from "react";
 import { CartProvider, useCart } from "@/context/CartContext";
 import { WishlistProvider } from "@/context/WishlistContext";
 import { ToastProvider } from "@/context/ToastContext";
 import { AuthProvider } from "@/context/AuthContext";
 import { LoginRequiredModal } from "@/components/ui/LoginRequiredModal";
+import { RouteProgressBar } from "@/components/ui/RouteProgressBar";
 import { CheckCircle2, X } from "lucide-react";
 
 function GlobalCartToast() {
@@ -36,13 +37,19 @@ function GlobalCartToast() {
   );
 }
 
+import { FloatingWhatsApp } from "@/components/ui/FloatingWhatsApp";
+
 export function Providers({ children }: { children: React.ReactNode }) {
   return (
     <ToastProvider>
       <AuthProvider>
         <CartProvider>
           <WishlistProvider>
+            <Suspense fallback={null}>
+              <RouteProgressBar />
+            </Suspense>
             {children}
+            <FloatingWhatsApp />
             <GlobalCartToast />
             <LoginRequiredModal />
           </WishlistProvider>

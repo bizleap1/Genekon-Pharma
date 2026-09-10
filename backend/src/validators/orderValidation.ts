@@ -7,6 +7,7 @@ export const createOrderSchema = z.object({
     .enum(["COD", "ONLINE", "UPI", "CARD", "NETBANKING"])
     .optional()
     .default("COD"),
+  couponCode: z.string().trim().max(50).optional(),
   notes: z.string().max(500, "Notes cannot exceed 500 characters").optional(),
 });
 

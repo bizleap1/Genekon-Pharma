@@ -32,17 +32,7 @@ import { useAuthStore } from "@/stores/authStore";
 import { InvoiceModal } from "@/components/invoice/InvoiceModal";
 import { PlacedOrder } from "@/types/order";
 import { ordersApi } from "@/api/orders";
-
-function getOrdersFromStorage(): PlacedOrder[] {
-  try {
-    const raw = localStorage.getItem("genekon_placed_orders_v1");
-    if (!raw) return [];
-    const parsed = JSON.parse(raw);
-    return Array.isArray(parsed) ? parsed : [];
-  } catch {
-    return [];
-  }
-}
+import { orderService } from "@/services/orderService";
 
 export default function OrderDetailsPage({
   params,
@@ -64,12 +54,17 @@ export default function OrderDetailsPage({
   const [submittingCancel, setSubmittingCancel] = useState(false);
 
   useEffect(() => {
-    // 1. Initial check from local storage for instant feedback
-    const localOrders = getOrdersFromStorage();
+    // 1. Initial check from local storage for instant feedback (scoped to current user)
+    const localOrders = orderService.getStoredOrders(user?.id);
     const found = localOrders.find(
       (o) => o.orderId.toLowerCase() === orderId.toLowerCase()
     );
-    if (found) setOrder(found);
+    if (found) {
+      setOrder(found);
+      if (found.cancellationRequest) {
+        setCancellationRequest(found.cancellationRequest);
+      }
+    }
 
     // 2. Fetch authoritative order & cancellation request from backend API
     ordersApi.getOrderById(orderId)
@@ -139,21 +134,28 @@ export default function OrderDetailsPage({
   }
 
   // Map PlacedOrder fields to display-friendly format
-  const displayStatus = order.status || "Placed";
+  const isCancelled =
+    (order.status || "").toLowerCase() === "cancelled" ||
+    cancellationRequest?.status === "APPROVED";
+
+  const displayStatus = isCancelled ? "Cancelled" : order.status || "Placed";
   const currentStep =
+    isCancelled ? 0 :
     displayStatus === "Delivered" ? 5 :
     displayStatus === "Shipped" ? 4 :
     displayStatus === "Packed" ? 3 :
     displayStatus === "Confirmed" ? 2 :
     displayStatus === "Placed" ? 1 : 1;
 
-  const isCancellable = ["placed", "confirmed", "pending_verification"].includes(
-    (order.status || "").toLowerCase()
-  );
+  const isCancellable =
+    !isCancelled &&
+    cancellationRequest?.status !== "PENDING" &&
+    ["placed", "confirmed", "pending_verification"].includes(
+      (order.status || "").toLowerCase()
+    );
   const isPackedOrLater = ["packed", "shipped", "delivered"].includes(
     (order.status || "").toLowerCase()
   );
-  const isCancelled = (order.status || "").toLowerCase() === "cancelled";
 
   const handleSubmitCancellation = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -165,12 +167,14 @@ export default function OrderDetailsPage({
     try {
       const res = await ordersApi.requestOrderCancellation(order.orderId, cancelReason, cancelDetails);
       if (res.success) {
-        setCancellationRequest(res.data || {
+        const newReq = res.data || {
           status: "PENDING",
           reason: cancelReason,
           details: cancelDetails,
           createdAt: new Date().toISOString(),
-        });
+        };
+        setCancellationRequest(newReq);
+        setOrder((prev) => (prev ? { ...prev, cancellationRequest: newReq } : null));
         toast.success("Cancellation request submitted. Our dispensary administration will review it.");
         setIsCancelModalOpen(false);
       } else {
