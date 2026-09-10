@@ -39,82 +39,149 @@ const CATEGORY_MAP: Record<string, CategoryMeta> = {
   medicines: {
     title: "Prescription & Everyday Medicines",
     subtitle: "GENUINE PHARMACEUTICALS",
-    description: "Browse 100% authentic medicines sourced directly from authorized manufacturers. Licensed pharmacists verify every order.",
-    heroImage: "/images/categories/cat-prescription-medicines-v2.jpg",
-    subcategories: ["All", "Pain & Fever", "Gastro & Acid", "Antibiotics", "Chronic Care", "Respiratory"],
-    productCategoryMatch: ["Medicines"],
+    description: "Browse 215+ authentic medicines manufactured under strict GMP compliance by Genekon Pharmaceuticals. Licensed pharmacists verify every order.",
+    heroImage: "/images/products/genekon-tablets-pack.jpg",
+    subcategories: [
+      "All",
+      "Pain Relief & Fever",
+      "Cold, Cough & Flu",
+      "Antibiotics",
+      "Diabetes Care",
+      "Cardiac & Blood Pressure",
+      "Gastro & Digestive",
+      "Allergy & Antihistamines",
+      "Respiratory & Asthma",
+      "Eye & Ear Care",
+      "Steroids & Anti-inflammatory",
+      "Thyroid & Hormonal",
+      "Deworming",
+      "Piles & Hemorrhoid Care",
+    ],
+    productCategoryMatch: [
+      "Pain Relief & Fever",
+      "Cold, Cough & Flu",
+      "Antibiotics",
+      "Diabetes Care",
+      "Cardiac & Blood Pressure",
+      "Gastro & Digestive",
+      "Allergy & Antihistamines",
+      "Respiratory & Asthma",
+      "Eye & Ear Care",
+      "Steroids & Anti-inflammatory",
+      "Thyroid & Hormonal",
+      "Deworming",
+      "Piles & Hemorrhoid Care",
+    ],
+  },
+  healthcare: {
+    title: "Everyday Healthcare Essentials",
+    subtitle: "FIRST AID & RECOVERY",
+    description: "Antiseptic solutions, deep muscle pain relief sprays, bone health supplements, and maternal health aids.",
+    heroImage: "/images/products/genekon-ointment-tube.jpg",
+    subcategories: [
+      "All",
+      "Antiseptics & First Aid",
+      "Muscle & Joint Pain",
+      "Bone & Joint Health",
+      "Women's Health",
+    ],
+    productCategoryMatch: [
+      "Antiseptics & First Aid",
+      "Muscle & Joint Pain",
+      "Bone & Joint Health",
+      "Women's Health",
+    ],
   },
   "personal-care": {
     title: "Personal Care & Dermatologicals",
     subtitle: "DAILY SKIN & BODY HEALTH",
-    description: "Gentle, clinically-tested cleansers, therapeutic moisturizers, and high-protection sunscreens recommended by dermatologists.",
-    heroImage: "/images/categories/cat-skin-care-v2.jpg",
-    subcategories: ["All", "Cleansers", "Moisturizers", "Sun Care", "Anti-Acne", "Hair Care"],
-    productCategoryMatch: ["Personal Care", "Skin Care"],
+    description: "Clinical antifungal creams, gentle cleansers, medicated soaps, oral health solutions, and daily hygiene products.",
+    heroImage: "/images/products/genekon-ointment-tube.jpg",
+    subcategories: [
+      "All",
+      "Skin Care & Dermatology",
+      "Personal Care & Hygiene",
+      "Oral Care",
+    ],
+    productCategoryMatch: [
+      "Skin Care & Dermatology",
+      "Personal Care & Hygiene",
+      "Oral Care",
+    ],
   },
   "skin-care": {
     title: "Dermatology & Skin Care",
-    subtitle: "HEALTHY SKIN BARRIER",
-    description: "Gentle cleansers, rich ceramide lotions, and doctor-approved skincare for sensitive, dry, and acne-prone skin.",
-    heroImage: "/images/categories/cat-skin-care-v2.jpg",
-    subcategories: ["All", "Cleansers", "Moisturizers", "Sun Care", "Serums"],
-    productCategoryMatch: ["Personal Care", "Skin Care"],
+    subtitle: "CLINICAL DERMA CARE",
+    description: "Doctor-approved antifungal creams, acne solutions, retinoid treatments, and soothing lotions.",
+    heroImage: "/images/products/genekon-ointment-tube.jpg",
+    subcategories: ["All", "Skin Care & Dermatology"],
+    productCategoryMatch: ["Skin Care & Dermatology"],
   },
   vitamins: {
     title: "Vitamins, Minerals & Supplements",
     subtitle: "DAILY VITALITY & IMMUNITY",
-    description: "Scientifically formulated multivitamins, Vitamin D3, CoQ10, and sports nutrition to support long-term active health.",
-    heroImage: "/images/categories/cat-vitamins-supplements-v2.jpg",
-    subcategories: ["All", "Multivitamins", "Proteins", "Vitamin D & Calcium", "Antioxidants", "Immunity"],
-    productCategoryMatch: ["Vitamins & Nutrition", "Vitamins"],
+    description: "High-potency multivitamins, Vitamin D3, hematinic iron supplements, zinc formulations, and dietary nutrition powders.",
+    heroImage: "/images/products/genekon-capsules-bottle.jpg",
+    subcategories: [
+      "All",
+      "Vitamins & Supplements",
+      "Nutrition & Health Drinks",
+      "Anemia & Iron Supplements",
+    ],
+    productCategoryMatch: [
+      "Vitamins & Supplements",
+      "Nutrition & Health Drinks",
+      "Anemia & Iron Supplements",
+    ],
   },
   "vitamins-nutrition": {
     title: "Vitamins, Minerals & Supplements",
     subtitle: "DAILY VITALITY & IMMUNITY",
-    description: "Scientifically formulated multivitamins, Vitamin D3, CoQ10, and sports nutrition to support long-term active health.",
-    heroImage: "/images/categories/cat-vitamins-supplements-v2.jpg",
-    subcategories: ["All", "Multivitamins", "Proteins", "Vitamin D & Calcium", "Antioxidants", "Immunity"],
-    productCategoryMatch: ["Vitamins & Nutrition", "Vitamins"],
-  },
-  ayurveda: {
-    title: "Ayurvedic & Herbal Care",
-    subtitle: "TIME-TESTED HOLISTIC WELLNESS",
-    description: "Authentic herbal formulations, classical chyawanprash, and botanical extracts for balanced digestion, vitality, and natural healing.",
-    heroImage: "/images/categories/cat-ayurveda-v2.jpg",
-    subcategories: ["All", "Immunity", "Liver Care", "Digestive Health", "Herbal Tonics", "Chyawanprash"],
-    productCategoryMatch: ["Ayurveda"],
-  },
-  "medical-devices": {
-    title: "Diagnostic & Medical Devices",
-    subtitle: "CLINICAL PRECISION AT HOME",
-    description: "Certified digital thermometers, automated blood pressure monitors, and blood glucose testing strips for reliable health tracking.",
-    heroImage: "/images/categories/cat-medical-devices-v2.jpg",
-    subcategories: ["All", "Glucose Monitors", "BP Monitors", "Thermometers", "Strips & Lancets"],
-    productCategoryMatch: ["Medical Devices"],
+    description: "High-potency multivitamins, Vitamin D3, hematinic iron supplements, zinc formulations, and dietary nutrition powders.",
+    heroImage: "/images/products/genekon-capsules-bottle.jpg",
+    subcategories: [
+      "All",
+      "Vitamins & Supplements",
+      "Nutrition & Health Drinks",
+      "Anemia & Iron Supplements",
+    ],
+    productCategoryMatch: [
+      "Vitamins & Supplements",
+      "Nutrition & Health Drinks",
+      "Anemia & Iron Supplements",
+    ],
   },
   "baby-care": {
     title: "Gentle Mother & Baby Care",
     subtitle: "HYPOALLERGENIC & PEDIATRIC TESTED",
-    description: "Ultra-mild washes, tear-free formulas, and diaper barrier creams specially formulated for delicate newborn skin.",
-    heroImage: "/images/categories/cat-baby-care-v2.jpg",
-    subcategories: ["All", "Baby Wash", "Diaper Care", "Baby Lotions", "Infant Health"],
+    description: "Ultra-mild baby lotions, colic drops, zinc rash creams, and gentle cleansers specially formulated for infants.",
+    heroImage: "/images/products/genekon-syrup-bottle.jpg",
+    subcategories: ["All", "Baby Care"],
     productCategoryMatch: ["Baby Care"],
   },
-  healthcare: {
-    title: "Everyday Healthcare Essentials",
-    subtitle: "FIRST AID & WELLNESS",
-    description: "First aid supplies, pain sprays, antiseptics, and essential medical products for your family medicine cabinet.",
-    heroImage: "/images/categories/cat-wellness-essentials-v2.jpg",
-    subcategories: ["All", "First Aid", "Pain Sprays", "Bandages & Dressings", "Antiseptics"],
-    productCategoryMatch: ["Medicines", "Medical Devices", "Healthcare"],
+  ayurveda: {
+    title: "Ayurvedic & Classical Herbal Care",
+    subtitle: "TIME-TESTED HOLISTIC WELLNESS",
+    description: "Pure Chyawanprash, Liv 52, Ashwagandha, Triphala churnas, and botanical tonics for holistic vitality and immunity.",
+    heroImage: "/images/products/genekon-health-powder.jpg",
+    subcategories: ["All", "Ayurvedic & Herbal"],
+    productCategoryMatch: ["Ayurvedic & Herbal"],
+  },
+  "medical-devices": {
+    title: "Diagnostic & Medical Devices",
+    subtitle: "CLINICAL PRECISION AT HOME",
+    description: "Certified digital thermometers, automated blood pressure monitors, blood glucose test strips, nebulizers, and pulse oximeters.",
+    heroImage: "/images/products/genekon-diagnostic-device.jpg",
+    subcategories: ["All", "Diagnostic Devices & Health Monitors"],
+    productCategoryMatch: ["Diagnostic Devices & Health Monitors"],
   },
   wellness: {
     title: "Wellness & Lifestyle",
-    subtitle: "HEALTHY LIVING",
-    description: "Health supplements, wellness drinks, organic nutrition, and personal vitality aids.",
-    heroImage: "/images/categories/cat-wellness-essentials-v2.jpg",
-    subcategories: ["All", "Supplements", "Immunity", "Energy", "Daily Health"],
-    productCategoryMatch: ["Vitamins & Nutrition", "Ayurveda", "Wellness"],
+    subtitle: "HEALTHY LIVING & PROTECTION",
+    description: "Personal wellness formulations, sexual health aids, lubricating gels, and daily vitality boosters.",
+    heroImage: "/images/products/genekon-tablets-pack.jpg",
+    subcategories: ["All", "Sexual Wellness"],
+    productCategoryMatch: ["Sexual Wellness"],
   },
 };
 
@@ -181,6 +248,17 @@ export default function CategoryPage({
   // Apply filters & sort
   const filteredProducts = useMemo(() => {
     return categoryProducts.filter((product) => {
+      // Subcategory pill match
+      if (activeSubcategory !== "All") {
+        const subLower = activeSubcategory.toLowerCase();
+        const matchesCat = product.category.toLowerCase().includes(subLower) || subLower.includes(product.category.toLowerCase());
+        const matchesSub = product.subCategory?.toLowerCase().includes(subLower);
+        const matchesForm = product.dosageForm?.toLowerCase().includes(subLower);
+        if (!matchesCat && !matchesSub && !matchesForm) {
+          return false;
+        }
+      }
+
       // Brand filter
       if (selectedBrands.length > 0 && !selectedBrands.includes(product.brand)) {
         return false;
@@ -214,7 +292,7 @@ export default function CategoryPage({
       // popular
       return (b.rating * (b.reviewCount || 100)) - (a.rating * (a.reviewCount || 100));
     });
-  }, [categoryProducts, selectedBrands, priceFilter, discountFilter, inStockOnly, rxFilter, sortBy]);
+  }, [categoryProducts, activeSubcategory, selectedBrands, priceFilter, discountFilter, inStockOnly, rxFilter, sortBy]);
 
   const toggleBrand = (brand: string) => {
     setSelectedBrands((prev) =>
