@@ -154,17 +154,22 @@ export default function CategoryPage({
     if (liveCategoryProducts && liveCategoryProducts.length > 0) {
       return liveCategoryProducts;
     }
+    const normalizeStr = (s: string) => s.toLowerCase().replace(/[^a-z0-9]/g, "");
+    const sNorm = normalizeStr(slug);
+
     return ALL_PRODUCTS.filter((p) => {
+      const pNorm = normalizeStr(p.category);
+      if (pNorm === sNorm || pNorm.includes(sNorm) || sNorm.includes(pNorm)) return true;
+
       if (meta.productCategoryMatch.length > 0) {
-        return meta.productCategoryMatch.some(
-          (m) =>
-            p.category.toLowerCase().includes(m.toLowerCase()) ||
-            m.toLowerCase().includes(p.category.toLowerCase())
-        );
+        return meta.productCategoryMatch.some((m) => {
+          const mNorm = normalizeStr(m);
+          return pNorm === mNorm || pNorm.includes(mNorm) || mNorm.includes(pNorm);
+        });
       }
       return true;
     });
-  }, [liveCategoryProducts, meta]);
+  }, [liveCategoryProducts, meta, slug]);
 
   // Extract brands for this category
   const availableBrands = useMemo(() => {

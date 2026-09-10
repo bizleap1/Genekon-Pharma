@@ -30,7 +30,7 @@ export function mapBackendProductToFrontend(p: any): Product {
     : [];
 
   const primaryImage =
-    imgList[0] || p.image || "/images/products/cipla-paracetamol-v2.jpg";
+    imgList[0] || p.image || "/images/products/genekon-tablets-pack.jpg";
 
   return {
     id: p.id,
