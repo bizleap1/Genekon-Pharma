@@ -391,7 +391,7 @@ export default function AdminProductsPage() {
             <Eye className="w-3.5 h-3.5" />
           </Link>
           <Link
-            href="/admin/products/edit"
+            href={`/admin/products/edit?id=${p.id}`}
             className="p-1.5 rounded-lg text-[#657968] hover:text-[#559620] hover:bg-[#F2F5F2] transition-colors"
             title="Edit product"
           >

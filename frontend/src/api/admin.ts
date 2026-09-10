@@ -218,6 +218,14 @@ export const adminApi = {
   /**
    * 3. Product Catalog Administration
    */
+  async getCategories(params?: { flat?: boolean }): Promise<ApiResponse<any>> {
+    return apiClient.get("/categories", { params });
+  },
+
+  async getProduct(idOrSlug: string): Promise<ApiResponse<any>> {
+    return apiClient.get(`/products/${idOrSlug}`);
+  },
+
   async createProduct(data: any): Promise<ApiResponse<any>> {
     return apiClient.post("/products", data);
   },

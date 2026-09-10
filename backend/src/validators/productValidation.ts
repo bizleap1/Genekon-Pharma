@@ -9,17 +9,17 @@ export const createProductSchema = z
       .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, "Slug must be lowercase alphanumeric with hyphens")
       .optional(),
     brand: z.string().min(1, "Brand name is required"),
-    manufacturer: z.string().min(1, "Manufacturer name is required"),
-    categoryId: z.string().uuid("Valid category ID is required"),
-    description: z.string().min(5, "Product description must be at least 5 characters"),
-    composition: z.string().min(2, "Active composition / salt is required"),
-    dosageForm: z.string().optional().default("10 Tablets"),
-    usage: z.string().min(5, "Usage instructions are required"),
-    precautions: z.string().min(5, "Safety precautions are required"),
+    manufacturer: z.string().optional(),
+    categoryId: z.string().min(1, "Category is required"),
+    description: z.string().optional(),
+    composition: z.string().optional(),
+    dosageForm: z.string().optional().default("10 Tablets / Strip"),
+    usage: z.string().optional(),
+    precautions: z.string().optional(),
     storageInstructions: z
       .string()
       .optional()
-      .default("Store below 25°C in a dry place"),
+      .default("Store below 25°C in a cool and dry place"),
     mrp: z.coerce.number().positive("MRP must be greater than 0"),
     sellingPrice: z.coerce.number().positive("Selling price must be greater than 0"),
     discount: z.coerce.number().min(0).max(100).optional().default(0),
@@ -31,19 +31,24 @@ export const createProductSchema = z
       .enum(["ACTIVE", "DRAFT", "ARCHIVED", "OUT_OF_STOCK"])
       .optional()
       .default("ACTIVE"),
+    image: z.string().optional(),
     images: z
-      .array(
-        z.object({
-          imageUrl: z.string().url().optional(),
-          url: z.string().url().optional(),
-          publicId: z.string().optional(),
-          altText: z.string().optional().default(""),
-          isPrimary: z.boolean().optional().default(false),
-          displayOrder: z.number().int().optional().default(0),
-        }).refine((data) => data.imageUrl || data.url, {
-          message: "Either imageUrl or url must be provided",
-        })
-      )
+      .union([
+        z.string(),
+        z.array(
+          z.union([
+            z.string(),
+            z.object({
+              imageUrl: z.string().optional(),
+              url: z.string().optional(),
+              publicId: z.string().optional(),
+              altText: z.string().optional().default(""),
+              isPrimary: z.boolean().optional().default(false),
+              displayOrder: z.number().int().optional().default(0),
+            })
+          ])
+        )
+      ])
       .optional(),
   })
   .refine((data) => data.sellingPrice <= data.mrp, {
@@ -60,13 +65,13 @@ export const updateProductSchema = z
       .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/)
       .optional(),
     brand: z.string().min(1).optional(),
-    manufacturer: z.string().min(1).optional(),
-    categoryId: z.string().uuid().optional(),
-    description: z.string().min(5).optional(),
-    composition: z.string().min(2).optional(),
+    manufacturer: z.string().optional(),
+    categoryId: z.string().optional(),
+    description: z.string().optional(),
+    composition: z.string().optional(),
     dosageForm: z.string().optional(),
-    usage: z.string().min(5).optional(),
-    precautions: z.string().min(5).optional(),
+    usage: z.string().optional(),
+    precautions: z.string().optional(),
     storageInstructions: z.string().optional(),
     mrp: z.coerce.number().positive().optional(),
     sellingPrice: z.coerce.number().positive().optional(),
@@ -76,6 +81,25 @@ export const updateProductSchema = z
     stockQuantity: z.coerce.number().int().min(0).optional(),
     prescriptionRequired: z.coerce.boolean().optional(),
     status: z.enum(["ACTIVE", "DRAFT", "ARCHIVED", "OUT_OF_STOCK"]).optional(),
+    image: z.string().optional(),
+    images: z
+      .union([
+        z.string(),
+        z.array(
+          z.union([
+            z.string(),
+            z.object({
+              imageUrl: z.string().optional(),
+              url: z.string().optional(),
+              publicId: z.string().optional(),
+              altText: z.string().optional().default(""),
+              isPrimary: z.boolean().optional().default(false),
+              displayOrder: z.number().int().optional().default(0),
+            })
+          ])
+        )
+      ])
+      .optional(),
   })
   .refine(
     (data) => {

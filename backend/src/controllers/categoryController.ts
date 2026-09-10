@@ -7,8 +7,12 @@ export const categoryController = {
    * GET /api/v1/categories
    * Public category tree listing
    */
-  async getCategories(_req: Request, res: Response) {
+  async getCategories(req: Request, res: Response) {
     try {
+      if (req.query.flat === "true") {
+        const flatList = await categoryService.getFlatCategories();
+        return sendSuccess(res, flatList, "Categories retrieved successfully");
+      }
       const tree = await categoryService.getCategoryTree();
       return sendSuccess(res, tree, "Categories retrieved successfully");
     } catch (error: any) {
