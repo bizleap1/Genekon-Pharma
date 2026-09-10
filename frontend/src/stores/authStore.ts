@@ -114,6 +114,8 @@ function getInitialState(): AuthState {
           user.role === "ADMIN" ||
           user.email === "admin@genekonpharma.com" ||
           user.email === "shreya.meshram@genekonpharma.com" ||
+          user.mobile === "7666168147" ||
+          user.phone === "7666168147" ||
           user.mobile === "9370102691" ||
           user.phone === "9370102691" ||
           (user.name && user.name.toLowerCase().includes("shreya")) ||
@@ -125,7 +127,7 @@ function getInitialState(): AuthState {
             name: "Dr. Shreya Meshram",
             role: "admin",
             email: user.email || "admin@genekonpharma.com",
-            mobile: "9370102691",
+            mobile: user.mobile || "7666168147",
           };
           try {
             localStorage.setItem(
@@ -482,6 +484,8 @@ export const authStore = {
       roleLower === "admin" ||
       user.email === "admin@genekonpharma.com" ||
       user.email === "shreya.meshram@genekonpharma.com" ||
+      user.mobile === "7666168147" ||
+      user.phone === "7666168147" ||
       user.mobile === "9370102691" ||
       user.phone === "9370102691";
 
@@ -587,7 +591,7 @@ export const authStore = {
     const adminUser: UserProfile = {
       id: "admin-1",
       name: "Dr. Shreya Meshram",
-      mobile: "9370102691",
+      mobile: "7666168147",
       email: "admin@genekonpharma.com",
       role: "admin",
       city: "Nagpur",

@@ -24,7 +24,7 @@ export default function AdminLoginPage() {
   const [loginMode, setLoginMode] = useState<"password" | "otp">("password");
   const [identifier, setIdentifier] = useState("admin@genekonpharma.com");
   const [password, setPassword] = useState("");
-  const [phone, setPhone] = useState("9370102691");
+  const [phone, setPhone] = useState("7666168147");
   const [otp, setOtp] = useState("");
   const [otpSent, setOtpSent] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -60,6 +60,8 @@ export default function AdminLoginPage() {
             userRole === "admin" ||
             res.data.user.email === "admin@genekonpharma.com" ||
             res.data.user.email === "shreya.meshram@genekonpharma.com" ||
+            res.data.user.mobile === "7666168147" ||
+            res.data.user.phone === "7666168147" ||
             res.data.user.mobile === "9370102691" ||
             res.data.user.phone === "9370102691";
 
@@ -119,8 +121,9 @@ export default function AdminLoginPage() {
               userRole === "admin" ||
               res.data.user.email === "admin@genekonpharma.com" ||
               res.data.user.email === "shreya.meshram@genekonpharma.com" ||
-              res.data.user.mobile === "9370102691" ||
-              res.data.user.phone === "9370102691" ||
+              res.data.user.mobile === "7666168147" ||
+              res.data.user.phone === "7666168147" ||
+              cleanPhone === "7666168147" ||
               cleanPhone === "9370102691" ||
               cleanPhone === "9822110011";
 
