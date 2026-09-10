@@ -1,5 +1,5 @@
 import { eq, and, or, ilike, gte, lte, gt, desc, asc, sql, count } from "drizzle-orm";
-import { db, products, productImages, categories, Product, ProductImage, Category } from "../db";
+import { db, products, productImages, categories, Product, ProductImage, Category, inventoryBatches } from "../db";
 import { generateSlug } from "./categoryService";
 import { cloudinaryService } from "./cloudinaryService";
 import { logger } from "../utils/logger";
@@ -485,6 +485,22 @@ export const productService = {
         .returning();
       createdImages.push(insertedImg);
     }
+
+    // 8. Insert an initial inventory batch
+    const now = new Date();
+    const oneYearFromNow = new Date();
+    oneYearFromNow.setFullYear(now.getFullYear() + 1);
+    
+    await db.insert(inventoryBatches).values({
+      productId: created.id,
+      batchNumber: `BATCH-${Date.now().toString().slice(-6)}`,
+      manufacturingDate: now,
+      expiryDate: oneYearFromNow,
+      quantity: created.stockQuantity,
+      initialQuantity: created.stockQuantity,
+      mrp: created.mrp,
+      status: created.stockQuantity > 0 ? "IN_STOCK" : "OUT_OF_STOCK",
+    });
 
     return this.formatProduct(created, createdImages, {
       id: category.id,
