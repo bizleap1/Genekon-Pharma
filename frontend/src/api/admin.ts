@@ -80,7 +80,7 @@ export const adminApi = {
         data: {
           totalCustomers: placedCount > 0 ? 1 : 0,
           totalWholesalePartners: 0,
-          totalProducts: 8,
+          totalProducts: ADMIN_PRODUCTS.length,
           totalOrders: placedCount,
           totalRevenue: placedRev,
           pendingPrescriptions: 0,
@@ -96,7 +96,7 @@ export const adminApi = {
   async getInventory(params?: QueryParams): Promise<ApiResponse<{ products: AdminProduct[]; total: number }>> {
     try {
       const res = await apiClient.get<any>("/admin/inventory", { params });
-      if (res.data?.products) {
+      if (res.data?.products && Array.isArray(res.data.products) && res.data.products.length > 0) {
         return {
           success: true,
           data: {
@@ -105,8 +105,8 @@ export const adminApi = {
               sku: p.sku || `SKU-${p.id.slice(0, 6)}`,
               name: p.name,
               brand: p.brand || "Genekon",
-              category: p.categoryName || "Medicines",
-              image: p.imageUrl || "/images/products/cipla-paracetamol-v2.jpg",
+              category: p.categoryName || p.category || "Medicines",
+              image: p.imageUrl || p.image || "/images/products/genekon-tablets-pack.jpg",
               mrp: Number(p.mrp) || 100,
               sellingPrice: Number(p.sellingPrice) || 80,
               stockQuantity: Number(p.stockQuantity) || 0,
@@ -121,10 +121,65 @@ export const adminApi = {
           },
         };
       }
-      return { success: true, data: { products: ADMIN_PRODUCTS, total: ADMIN_PRODUCTS.length } };
-    } catch {
-      return { success: true, data: { products: ADMIN_PRODUCTS, total: ADMIN_PRODUCTS.length } };
-    }
+      if (res.data?.batches && Array.isArray(res.data.batches) && res.data.batches.length > 0) {
+        return {
+          success: true,
+          data: {
+            products: res.data.batches.map((b: any) => ({
+              id: b.product?.id || b.productId,
+              sku: b.product?.sku || b.batchNumber,
+              name: b.product?.name || `Product (${b.batchNumber})`,
+              brand: b.product?.brand || "Genekon",
+              category: b.categoryName || "Medicines",
+              image: "/images/products/genekon-tablets-pack.jpg",
+              mrp: Number(b.mrp) || 100,
+              sellingPrice: Number(b.mrp) || 80,
+              stockQuantity: Number(b.quantity) || 0,
+              reservedQuantity: 0,
+              prescriptionRequired: false,
+              status: b.status === "OUT_OF_STOCK" ? "Out of Stock" : b.status === "LOW_STOCK" ? "Low Stock" : "Active",
+              composition: "",
+              gstRate: 12,
+              lastUpdated: "Recently updated",
+            })),
+            total: res.data.pagination?.total || res.data.batches.length,
+          },
+        };
+      }
+    } catch {}
+
+    // Live catalog fetch fallback (e.g. without admin auth or when checking full catalog)
+    try {
+      const pRes = await apiClient.get<any>("/products", { params: { limit: 500, includeAllStatus: true } });
+      const list = pRes.data?.products || pRes.data;
+      if (Array.isArray(list) && list.length > 0) {
+        return {
+          success: true,
+          data: {
+            products: list.map((p: any) => ({
+              id: p.id,
+              sku: p.sku || `GNK-${p.id.slice(0, 8)}`,
+              name: p.name,
+              brand: p.brand || "Genekon",
+              category: p.categoryName || p.category?.name || p.category || "Medicines",
+              image: p.images?.[0]?.imageUrl || p.image || "/images/products/genekon-tablets-pack.jpg",
+              mrp: Number(p.mrp) || 100,
+              sellingPrice: Number(p.sellingPrice) || 80,
+              stockQuantity: Number(p.stockQuantity) || 120,
+              reservedQuantity: 0,
+              prescriptionRequired: Boolean(p.prescriptionRequired),
+              status: Number(p.stockQuantity) <= 0 ? "Out of Stock" : Number(p.stockQuantity) <= 10 ? "Low Stock" : "Active",
+              composition: p.composition || "",
+              gstRate: Number(p.gst) || 12,
+              lastUpdated: "Recently updated",
+            })),
+            total: pRes.data?.total || list.length,
+          },
+        };
+      }
+    } catch {}
+
+    return { success: true, data: { products: ADMIN_PRODUCTS, total: ADMIN_PRODUCTS.length } };
   },
 
   async createBatch(payload: {

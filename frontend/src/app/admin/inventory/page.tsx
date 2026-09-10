@@ -26,9 +26,11 @@ import { adminApi } from "@/api/admin";
 export default function AdminInventoryPage() {
   const toast = useToast();
   const [products, setProducts] = useState<AdminProduct[]>(ADMIN_PRODUCTS);
+  const [page, setPage] = useState(1);
+  const pageSize = 25;
 
   useEffect(() => {
-    adminApi.getInventory().then((res) => {
+    adminApi.getInventory({ limit: 500 }).then((res) => {
       if (res.data?.products?.length) {
         setProducts(res.data.products);
       }
@@ -43,11 +45,20 @@ export default function AdminInventoryPage() {
   const lowStockCount = products.filter((p) => p.status === "Low Stock").length;
   const outOfStockCount = products.filter((p) => p.status === "Out of Stock").length;
 
+  useEffect(() => {
+    setPage(1);
+  }, [search, statusFilter]);
+
   const filtered = useMemo(() => {
     return products.filter((p) => {
       if (search.trim()) {
         const q = search.toLowerCase();
-        if (!p.name.toLowerCase().includes(q) && !p.sku.toLowerCase().includes(q)) {
+        if (
+          !p.name.toLowerCase().includes(q) &&
+          !p.sku.toLowerCase().includes(q) &&
+          !p.brand.toLowerCase().includes(q) &&
+          !p.category.toLowerCase().includes(q)
+        ) {
           return false;
         }
       }
@@ -55,6 +66,12 @@ export default function AdminInventoryPage() {
       return true;
     });
   }, [products, search, statusFilter]);
+
+  const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
+  const paginatedList = useMemo(() => {
+    const start = (page - 1) * pageSize;
+    return filtered.slice(start, start + pageSize);
+  }, [filtered, page, pageSize]);
 
   const openUpdateModal = (p: AdminProduct) => {
     setSelectedProduct(p);
@@ -217,12 +234,63 @@ export default function AdminInventoryPage() {
         onExport={() => toast.success("Inventory stock sheet CSV exported successfully.")}
       />
 
-      {/* Inventory Data Table */}
+      {/* Inventory Table with Pagination Info */}
+      <div className="flex items-center justify-between text-xs text-[#637766] px-1">
+        <span>
+          Showing {filtered.length > 0 ? (page - 1) * pageSize + 1 : 0} to{" "}
+          {Math.min(page * pageSize, filtered.length)} of {filtered.length} inventory items
+        </span>
+        <span>
+          Page {page} of {totalPages}
+        </span>
+      </div>
+
       <DataTable
         columns={columns}
-        data={filtered}
+        data={paginatedList}
         emptyMessage="No inventory items found matching your filters."
       />
+
+      {/* Pagination Controls */}
+      {totalPages > 1 && (
+        <div className="flex items-center justify-between pt-2">
+          <button
+            onClick={() => setPage((p) => Math.max(1, p - 1))}
+            disabled={page === 1}
+            className="px-3.5 py-1.5 rounded-lg border border-[#DDE7DC] bg-white text-xs font-semibold text-[#14304A] hover:bg-[#F2F7F1] disabled:opacity-40 disabled:cursor-not-allowed transition-colors cursor-pointer"
+          >
+            Previous
+          </button>
+          <div className="flex items-center gap-1.5">
+            {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+              let pageNum = i + 1;
+              if (totalPages > 5 && page > 3) {
+                pageNum = Math.min(totalPages - 4 + i, Math.max(1, page - 2 + i));
+              }
+              return (
+                <button
+                  key={pageNum}
+                  onClick={() => setPage(pageNum)}
+                  className={`w-8 h-8 rounded-lg text-xs font-bold transition-colors cursor-pointer ${
+                    page === pageNum
+                      ? "bg-[#559620] text-white"
+                      : "bg-white border border-[#DDE7DC] text-[#14304A] hover:bg-[#F2F7F1]"
+                  }`}
+                >
+                  {pageNum}
+                </button>
+              );
+            })}
+          </div>
+          <button
+            onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+            disabled={page === totalPages}
+            className="px-3.5 py-1.5 rounded-lg border border-[#DDE7DC] bg-white text-xs font-semibold text-[#14304A] hover:bg-[#F2F7F1] disabled:opacity-40 disabled:cursor-not-allowed transition-colors cursor-pointer"
+          >
+            Next
+          </button>
+        </div>
+      )}
 
       {/* Quick Stock Update Modal */}
       {selectedProduct && (

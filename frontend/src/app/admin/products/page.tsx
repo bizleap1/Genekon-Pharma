@@ -25,21 +25,42 @@ import { adminApi } from "@/api/admin";
 export default function AdminProductsPage() {
   const toast = useToast();
   const [products, setProducts] = useState<AdminProduct[]>(ADMIN_PRODUCTS);
+  const [loading, setLoading] = useState(false);
+  const [page, setPage] = useState(1);
+  const pageSize = 25;
 
   useEffect(() => {
-    adminApi.getInventory().then((res) => {
-      if (res.data?.products?.length) {
-        setProducts(res.data.products);
-      }
-    });
+    setLoading(true);
+    adminApi
+      .getInventory({ limit: 500 })
+      .then((res) => {
+        if (res.data?.products?.length) {
+          setProducts(res.data.products);
+        }
+      })
+      .finally(() => setLoading(false));
   }, []);
+
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("all");
   const [stockStatus, setStockStatus] = useState("all");
   const [deleteTarget, setDeleteTarget] = useState<{ id: string; name: string } | null>(null);
 
-  const categories = ["Medicines", "Vitamins & Nutrition", "Medical Devices", "Personal Care", "Ayurveda"];
+  // Dynamic 27 therapeutic categories extracted directly from catalog
+  const categories = useMemo(() => {
+    const set = new Set<string>();
+    products.forEach((p) => {
+      if (p.category) set.add(p.category);
+    });
+    return Array.from(set).sort();
+  }, [products]);
+
   const statuses = ["Active", "Low Stock", "Out of Stock"];
+
+  // Reset page to 1 when filters change
+  useEffect(() => {
+    setPage(1);
+  }, [search, category, stockStatus]);
 
   const filteredProducts = useMemo(() => {
     return products.filter((p) => {
@@ -48,13 +69,20 @@ export default function AdminProductsPage() {
         const matchesName = p.name.toLowerCase().includes(q);
         const matchesBrand = p.brand.toLowerCase().includes(q);
         const matchesSku = p.sku.toLowerCase().includes(q);
-        if (!matchesName && !matchesBrand && !matchesSku) return false;
+        const matchesComp = p.composition?.toLowerCase().includes(q);
+        if (!matchesName && !matchesBrand && !matchesSku && !matchesComp) return false;
       }
       if (category !== "all" && p.category !== category) return false;
       if (stockStatus !== "all" && p.status !== stockStatus) return false;
       return true;
     });
   }, [products, search, category, stockStatus]);
+
+  const totalPages = Math.max(1, Math.ceil(filteredProducts.length / pageSize));
+  const paginatedProducts = useMemo(() => {
+    const start = (page - 1) * pageSize;
+    return filteredProducts.slice(start, start + pageSize);
+  }, [filteredProducts, page, pageSize]);
 
   const handleDelete = (id: string, name: string) => {
     setDeleteTarget({ id, name });
@@ -197,12 +225,63 @@ export default function AdminProductsPage() {
         onExport={() => toast.success("Product catalog CSV exported successfully.")}
       />
 
-      {/* Products Table */}
+      {/* Products Table with Pagination Info */}
+      <div className="flex items-center justify-between text-xs text-[#637766] px-1">
+        <span>
+          Showing {filteredProducts.length > 0 ? (page - 1) * pageSize + 1 : 0} to{" "}
+          {Math.min(page * pageSize, filteredProducts.length)} of {filteredProducts.length} products
+        </span>
+        <span>
+          Page {page} of {totalPages}
+        </span>
+      </div>
+
       <DataTable
         columns={columns}
-        data={filteredProducts}
+        data={paginatedProducts}
         emptyMessage="No healthcare products found matching your search and filter criteria."
       />
+
+      {/* Pagination Controls */}
+      {totalPages > 1 && (
+        <div className="flex items-center justify-between pt-2">
+          <button
+            onClick={() => setPage((p) => Math.max(1, p - 1))}
+            disabled={page === 1}
+            className="px-3.5 py-1.5 rounded-lg border border-[#DDE7DC] bg-white text-xs font-semibold text-[#14304A] hover:bg-[#F2F7F1] disabled:opacity-40 disabled:cursor-not-allowed transition-colors cursor-pointer"
+          >
+            Previous
+          </button>
+          <div className="flex items-center gap-1.5">
+            {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+              let pageNum = i + 1;
+              if (totalPages > 5 && page > 3) {
+                pageNum = Math.min(totalPages - 4 + i, Math.max(1, page - 2 + i));
+              }
+              return (
+                <button
+                  key={pageNum}
+                  onClick={() => setPage(pageNum)}
+                  className={`w-8 h-8 rounded-lg text-xs font-bold transition-colors cursor-pointer ${
+                    page === pageNum
+                      ? "bg-[#559620] text-white"
+                      : "bg-white border border-[#DDE7DC] text-[#14304A] hover:bg-[#F2F7F1]"
+                  }`}
+                >
+                  {pageNum}
+                </button>
+              );
+            })}
+          </div>
+          <button
+            onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+            disabled={page === totalPages}
+            className="px-3.5 py-1.5 rounded-lg border border-[#DDE7DC] bg-white text-xs font-semibold text-[#14304A] hover:bg-[#F2F7F1] disabled:opacity-40 disabled:cursor-not-allowed transition-colors cursor-pointer"
+          >
+            Next
+          </button>
+        </div>
+      )}
 
       {/* Delete Confirmation Modal */}
       <ConfirmationModal

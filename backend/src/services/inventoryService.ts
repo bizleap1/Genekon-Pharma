@@ -2,6 +2,7 @@ import { eq, and, sql, desc, lte, gte } from "drizzle-orm";
 import {
   db,
   products,
+  categories,
   inventoryBatches,
   inventoryLogs,
   users,
@@ -56,13 +57,20 @@ export const inventoryService = {
           name: products.name,
           sku: products.sku,
           brand: products.brand,
+          categoryName: categories.name,
+          mrp: products.mrp,
+          sellingPrice: products.sellingPrice,
+          prescriptionRequired: products.prescriptionRequired,
+          composition: products.composition,
+          gst: products.gst,
           totalStock: products.stockQuantity,
         },
       })
       .from(inventoryBatches)
       .leftJoin(products, eq(inventoryBatches.productId, products.id))
+      .leftJoin(categories, eq(products.categoryId, categories.id))
       .where(whereClause)
-      .orderBy(inventoryBatches.expiryDate)
+      .orderBy(desc(inventoryBatches.createdAt))
       .limit(limit)
       .offset(offset);
 
@@ -89,6 +97,20 @@ export const inventoryService = {
 
     return {
       batches: enriched,
+      products: enriched.map((b) => ({
+        id: b.product?.id || b.productId,
+        sku: b.product?.sku || b.batchNumber,
+        name: b.product?.name || `Product (${b.batchNumber})`,
+        brand: b.product?.brand || "Genekon",
+        categoryName: b.product?.categoryName || "Medicines",
+        mrp: b.product?.mrp || b.mrp,
+        sellingPrice: b.product?.sellingPrice || b.mrp,
+        stockQuantity: b.product?.totalStock ?? b.quantity,
+        prescriptionRequired: b.product?.prescriptionRequired ?? false,
+        status: b.status === "OUT_OF_STOCK" ? "Out of Stock" : b.status === "LOW_STOCK" ? "Low Stock" : "Active",
+        composition: b.product?.composition || "",
+        gst: b.product?.gst || 12,
+      })),
       pagination: {
         page,
         limit,
