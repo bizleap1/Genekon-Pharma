@@ -271,13 +271,21 @@ export class ApiClient {
 
       if (!response.ok || !data.success) {
         const isAuthError = response.status === 401;
+        const isAuthEndpoint =
+          endpoint.includes("/auth/login") ||
+          endpoint.includes("/auth/verify-otp") ||
+          endpoint.includes("/auth/register") ||
+          endpoint.includes("/auth/send-otp");
+
+        const errorMessage = isAuthEndpoint
+          ? (data.message || "Invalid credentials entered. Please try again.")
+          : (data.message || (isAuthError ? "Your session has expired. Please log in to continue." : `Request failed with status ${response.status}`));
+
         throw {
           success: false,
-          message: isAuthError
-            ? "Your session has expired. Please log in to continue."
-            : data.message || `Request failed with status ${response.status}`,
+          message: errorMessage,
           statusCode: response.status,
-          errorCode: (data as unknown as ApiError).errorCode || (isAuthError ? "INVALID_TOKEN" : undefined),
+          errorCode: (data as unknown as ApiError).errorCode || (isAuthError && !isAuthEndpoint ? "INVALID_TOKEN" : undefined),
           details: (data as unknown as ApiError).details,
         } as ApiError;
       }
