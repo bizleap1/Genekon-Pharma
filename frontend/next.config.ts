@@ -6,7 +6,6 @@ import path from "path";
 
 const nextConfig: NextConfig = {
   devIndicators: {
-    appIsrStatus: false,
     buildActivity: false,
   },
   turbopack: {
