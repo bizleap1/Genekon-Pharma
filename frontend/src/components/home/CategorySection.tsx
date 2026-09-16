@@ -104,7 +104,7 @@ export const CategorySection: React.FC = () => {
         {/* Categories Row (Responsive Grid / Horizontal Scroll) */}
         <div
           ref={scrollRef}
-          className="flex lg:grid lg:grid-cols-8 gap-4 sm:gap-5 overflow-x-auto snap-x snap-mandatory no-scrollbar pb-4 -mx-4 px-4 lg:mx-0 lg:px-0"
+          className="flex lg:grid lg:grid-cols-8 gap-4 sm:gap-5 overflow-x-auto snap-x snap-mandatory [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] pb-4 -mx-4 px-4 lg:mx-0 lg:px-0"
         >
           {CATEGORIES.map((cat, index) => (
             <Link

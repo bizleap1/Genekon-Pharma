@@ -189,15 +189,15 @@ export const ComparisonProduct: React.FC<ComparisonProductProps> = ({
             >
               {isAdded ? (
                 <>
-                  <Check className="w-3.5 h-3.5" />
-                  <span>Added to Cart</span>
+                  <Check className="w-3.5 h-3.5 shrink-0" />
+                  <span className="truncate">Added to Cart</span>
                 </>
               ) : isOutOfStock ? (
-                <span>Out of Stock</span>
+                <span className="truncate">Out of Stock</span>
               ) : (
                 <>
-                  <ShoppingCart className="w-3.5 h-3.5" />
-                  <span>Add to Cart</span>
+                  <ShoppingCart className="w-3.5 h-3.5 shrink-0" />
+                  <span className="truncate">Add to Cart</span>
                 </>
               )}
             </button>

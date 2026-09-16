@@ -106,13 +106,13 @@ export const Header: React.FC = () => {
           {/* Brand Logo */}
           <div className="flex items-center gap-3 shrink-0">
             <Link href="/" className="inline-flex items-center group">
-              <div className="relative h-11 sm:h-12 w-[140px] sm:w-[160px]">
+              <div className="relative h-9 sm:h-12 w-[120px] sm:w-[160px]">
                 <Image
                   src="/images/genekon-brand-logo.png"
                   alt="GENEKON Pharmaceuticals"
                   fill
                   priority
-                  sizes="(max-width: 640px) 140px, 160px"
+                  sizes="(max-width: 640px) 120px, 160px"
                   className="object-contain object-left group-hover:opacity-95 transition-opacity"
                 />
               </div>
@@ -308,19 +308,19 @@ export const Header: React.FC = () => {
 
             {/* Account / Login */}
             {isLoggedIn && user ? (
-              <div ref={userMenuRef} className="relative hidden sm:block">
+              <div ref={userMenuRef} className="relative">
                 <button
                   type="button"
                   onClick={() => setUserMenuOpen(!userMenuOpen)}
-                  className="flex items-center gap-1.5 hover:text-[#1A52A3] transition-colors cursor-pointer"
+                  className="flex items-center gap-1.5 hover:text-[#1A52A3] transition-colors cursor-pointer p-1 sm:p-0"
                 >
-                  <div className="w-6 h-6 rounded-full bg-[#EDF7E9] text-[#559620] border border-[#D5E6D0] flex items-center justify-center text-xs font-bold">
+                  <div className="w-7 h-7 rounded-full bg-[#EDF7E9] text-[#559620] border border-[#D5E6D0] flex items-center justify-center text-xs font-bold shrink-0">
                     {user.name.charAt(0)}
                   </div>
-                  <span className="text-xs sm:text-sm font-semibold text-[#14304A]">
+                  <span className="hidden sm:block text-sm font-semibold text-[#14304A] truncate max-w-[80px]">
                     {user.name.split(" ")[0]}
                   </span>
-                  <ChevronDown className="w-3.5 h-3.5 text-[#68746F]" />
+                  <ChevronDown className="hidden sm:block w-3.5 h-3.5 text-[#68746F]" />
                 </button>
 
                 {userMenuOpen && (
@@ -389,10 +389,10 @@ export const Header: React.FC = () => {
             ) : (
               <Link
                 href="/login"
-                className="hidden sm:flex items-center gap-1.5 hover:text-[#1A52A3] transition-colors"
+                className="flex items-center gap-1.5 hover:text-[#1A52A3] transition-colors p-1 sm:p-0"
               >
-                <User className="w-4 h-4 text-[#14304A]" />
-                <span className="text-xs sm:text-sm">Sign In</span>
+                <User className="w-5 h-5 text-[#14304A]" />
+                <span className="hidden sm:block text-sm">Sign In</span>
               </Link>
             )}
 

@@ -16,9 +16,10 @@ export const UtilityBar: React.FC = () => {
         {/* Left: Promo Code */}
         <div className="flex items-center gap-1.5 font-bold text-[#2E6B17]">
           <Tag className="w-3.5 h-3.5 fill-[#2E6B17]" />
-          <span>Flat 20% OFF on first order</span>
+          <span className="hidden sm:inline">Flat 20% OFF on first order</span>
+          <span className="inline sm:hidden">20% OFF</span>
           <span className="text-[#89A880] font-normal mx-0.5">|</span>
-          <span className="font-normal text-[#526354]">Use Code:</span>
+          <span className="font-normal text-[#526354] hidden sm:inline">Use Code:</span>
           <span className="font-extrabold text-[#2E6B17] tracking-wider">GENEKON20</span>
         </div>
 

@@ -145,8 +145,8 @@ export const CategoryNav: React.FC = () => {
               href="/categories"
               className="flex items-center gap-2 font-bold text-[#14304A] group-hover/allcat:text-[#1A52A3] transition-colors"
             >
-              <Menu className="w-4 h-4 text-[#14304A] group-hover/allcat:text-[#1A52A3] transition-colors" />
-              <span>All Categories</span>
+              <Menu className="w-5 h-5 sm:w-4 sm:h-4 text-[#14304A] group-hover/allcat:text-[#1A52A3] transition-colors" />
+              <span className="hidden sm:inline">All Categories</span>
             </Link>
 
             {/* All Categories Dropdown (CSS Hover) */}
@@ -241,7 +241,7 @@ export const CategoryNav: React.FC = () => {
           </div>
 
           {/* Category Links with Hover Dropdown */}
-          <ul className="flex items-center gap-2 sm:gap-4 lg:gap-6 px-3 overflow-x-visible">
+          <ul className="flex flex-1 min-w-0 items-center gap-5 px-4 overflow-x-auto whitespace-nowrap [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
             {primaryCategories.map((cat) => {
               const isActive = pathname === cat.slug;
 
@@ -312,13 +312,13 @@ export const CategoryNav: React.FC = () => {
           </ul>
 
           {/* Right: Offers */}
-          <div className="pl-4 shrink-0">
+          <div className="pl-3 sm:pl-4 shrink-0 border-l border-[#E7ECEF] ml-auto">
             <Link
               href="/offers"
               className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#F1F7EC] text-[#2E6B17] font-bold hover:bg-[#E2F0DA] transition-colors"
             >
               <Percent className="w-3.5 h-3.5" />
-              <span>Offers</span>
+              <span className="hidden sm:inline">Offers</span>
             </Link>
           </div>
 

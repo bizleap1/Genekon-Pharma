@@ -41,7 +41,7 @@ export const ProductSection: React.FC = () => {
         {/* Products Carousel */}
         <div
           ref={scrollRef}
-          className="flex lg:grid lg:grid-cols-6 gap-4 sm:gap-5 overflow-x-auto snap-x snap-mandatory no-scrollbar pb-4 -mx-4 px-4 lg:mx-0 lg:px-0 relative z-10"
+          className="flex lg:grid lg:grid-cols-6 gap-4 sm:gap-5 overflow-x-auto snap-x snap-mandatory [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] pb-4 -mx-4 px-4 lg:mx-0 lg:px-0 relative z-10"
         >
           {displayProducts.map((product, index) => (
             <div key={product.id} className="min-w-[220px] sm:min-w-[260px] lg:min-w-0 snap-start animate-in fade-in slide-in-from-bottom-4" style={{ animationDelay: `${index * 50}ms` }}>

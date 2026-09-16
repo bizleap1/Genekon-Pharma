@@ -292,7 +292,7 @@ export const Footer: React.FC = () => {
         </div>
 
         {/* Bottom Bar: Copyright & Statutory Note */}
-        <div className="pt-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-[#6A7E6C]">
+        <div className="pt-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-[#6A7E6C] text-center sm:text-left">
           <p>© 2026 Genekon Pharmaceuticals Pvt. Ltd. All rights reserved.</p>
           <p>
             Powered by <span className="font-semibold text-[#1853A8]">Bizleap</span>

@@ -89,31 +89,31 @@ export const Hero: React.FC = () => {
 
 
             {/* CTA Buttons */}
-            <div className="mt-7 flex flex-wrap items-center gap-3.5">
+            <div className="mt-7 flex flex-col sm:flex-row items-center gap-3.5 w-full sm:w-auto">
               <Link
                 href="/category/medicines"
-                className="inline-flex items-center gap-2.5 px-6 sm:px-7 py-3 rounded-full bg-[#559620] hover:bg-[#488219] text-white font-semibold text-sm sm:text-base shadow-sm hover:shadow-md transition-all duration-200 group"
+                className="w-full sm:w-auto justify-center inline-flex items-center gap-2.5 px-6 sm:px-7 py-3 rounded-full bg-[#559620] hover:bg-[#488219] text-white font-semibold text-sm sm:text-base shadow-sm hover:shadow-md transition-all duration-200 group"
               >
                 <span>Shop Medicines</span>
                 <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
               </Link>
               <Link
                 href="/categories"
-                className="inline-flex items-center justify-center px-6 sm:px-7 py-3 rounded-full bg-white hover:bg-[#F3F8EE] text-[#14304A] font-semibold text-sm sm:text-base border border-[#D5E7D3] hover:border-[#559620]/50 transition-all duration-200 shadow-2xs"
+                className="w-full sm:w-auto inline-flex items-center justify-center px-6 sm:px-7 py-3 rounded-full bg-white hover:bg-[#F3F8EE] text-[#14304A] font-semibold text-sm sm:text-base border border-[#D5E7D3] hover:border-[#559620]/50 transition-all duration-200 shadow-2xs"
               >
                 Explore Healthcare
               </Link>
             </div>
 
             {/* Trust Badges */}
-            <div className="mt-10 pt-6 border-t border-[#DCEBD9]/80 w-full">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-6 gap-x-4 sm:gap-x-8 items-center">
+            <div className="mt-8 sm:mt-10 pt-5 sm:pt-6 border-t border-[#DCEBD9]/80 w-full">
+              <div className="grid grid-cols-2 gap-y-4 gap-x-2 sm:gap-x-8 items-center">
                 {TRUST_FEATURES.map((item, idx) => {
                   const Icon = item.icon;
                   return (
-                    <div key={idx} className="flex items-center gap-3 text-[#14304A]">
-                      <Icon className="w-6 h-6 text-[#559620] shrink-0" strokeWidth={2} />
-                      <span className="text-sm sm:text-[15px] font-semibold tracking-tight whitespace-nowrap">
+                    <div key={idx} className="flex items-center gap-2 sm:gap-3 text-[#14304A]">
+                      <Icon className="w-5 h-5 sm:w-6 sm:h-6 text-[#559620] shrink-0" strokeWidth={2} />
+                      <span className="text-xs sm:text-[15px] font-semibold tracking-tight leading-tight">
                         {item.title}
                       </span>
                     </div>
