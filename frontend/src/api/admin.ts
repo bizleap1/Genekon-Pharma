@@ -40,7 +40,7 @@ export const adminApi = {
    */
   async getDashboardStats(): Promise<ApiResponse<DashboardStatsResponse>> {
     try {
-      const res = await apiClient.get<any>("/admin/dashboard/stats");
+      const res = await apiClient.get<any>("/admin/dashboard/stats", { cache: "no-store" });
       const summary = res.data?.summary || res.data;
       if (summary) {
         return {
@@ -95,7 +95,7 @@ export const adminApi = {
    */
   async getInventory(params?: QueryParams): Promise<ApiResponse<{ products: AdminProduct[]; total: number }>> {
     try {
-      const res = await apiClient.get<any>("/admin/inventory", { params });
+      const res = await apiClient.get<any>("/admin/inventory", { params, cache: "no-store" });
       if (res.data?.products && Array.isArray(res.data.products) && res.data.products.length > 0) {
         return {
           success: true,
@@ -209,7 +209,7 @@ export const adminApi = {
 
   async getLowStockAlerts(): Promise<ApiResponse<any[]>> {
     try {
-      return await apiClient.get("/admin/inventory/low-stock");
+      return await apiClient.get("/admin/inventory/low-stock", { cache: "no-store" });
     } catch {
       return { success: true, data: [] };
     }
@@ -219,15 +219,21 @@ export const adminApi = {
    * 3. Product Catalog Administration
    */
   async getCategories(params?: { flat?: boolean }): Promise<ApiResponse<any>> {
-    return apiClient.get("/categories", { params });
+    return apiClient.get("/categories", { params, cache: "no-store" });
   },
 
   async getProduct(idOrSlug: string): Promise<ApiResponse<any>> {
-    return apiClient.get(`/products/${idOrSlug}`);
+    return apiClient.get(`/products/${idOrSlug}`, { cache: "no-store" });
   },
 
   async createProduct(data: any): Promise<ApiResponse<any>> {
     return apiClient.post("/products", data);
+  },
+
+  async uploadProductImages(productId: string, formData: FormData): Promise<ApiResponse<any>> {
+    return apiClient.post(`/products/${productId}/images`, formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
   },
 
   async updateProduct(id: string, data: any): Promise<ApiResponse<any>> {
@@ -246,7 +252,7 @@ export const adminApi = {
 
     // 1. Try to fetch from backend API
     try {
-      const res = await apiClient.get<any>("/orders/admin/all", { params });
+      const res = await apiClient.get<any>("/orders/admin/all", { params, cache: "no-store" });
       if (res.data?.orders && Array.isArray(res.data.orders)) {
         liveOrders = res.data.orders.map((o: any) => ({
           id: o.orderNumber || o.id,
@@ -401,7 +407,7 @@ export const adminApi = {
    */
   async getPendingPrescriptions(): Promise<ApiResponse<AdminPrescription[]>> {
     try {
-      const res = await apiClient.get<any>("/orders/admin/prescriptions/pending");
+      const res = await apiClient.get<any>("/orders/admin/prescriptions/pending", { cache: "no-store" });
       if (res.data?.prescriptions) {
         return {
           success: true,
@@ -450,7 +456,7 @@ export const adminApi = {
    */
   async getWholesaleApplications(params?: QueryParams): Promise<ApiResponse<AdminWholesaleApp[]>> {
     try {
-      const res = await apiClient.get<any>("/admin/wholesale/applications", { params });
+      const res = await apiClient.get<any>("/admin/wholesale/applications", { params, cache: "no-store" });
       if (res.data?.applications) {
         return {
           success: true,
@@ -481,7 +487,7 @@ export const adminApi = {
    */
   async getCustomers(params?: QueryParams): Promise<ApiResponse<AdminCustomer[]>> {
     try {
-      const res = await apiClient.get<any>("/admin/customers", { params });
+      const res = await apiClient.get<any>("/admin/customers", { params, cache: "no-store" });
       if (res.data?.customers && Array.isArray(res.data.customers)) {
         return {
           success: true,
@@ -525,7 +531,7 @@ export const adminApi = {
    */
   async getCancellationRequests(params?: QueryParams): Promise<ApiResponse<any[]>> {
     try {
-      const res = await apiClient.get<any>("/orders/admin/cancellations", { params });
+      const res = await apiClient.get<any>("/orders/admin/cancellations", { params, cache: "no-store" });
       if (res.data?.requests && Array.isArray(res.data.requests)) {
         return {
           success: true,

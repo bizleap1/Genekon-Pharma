@@ -75,7 +75,7 @@ export const productsApi = {
    */
   async getProducts(params?: QueryParams): Promise<ApiResponse<Product[]> & { pagination?: any }> {
     try {
-      const res = await apiClient.get<any>("/products", { params });
+      const res = await apiClient.get<any>("/products", { params, next: { revalidate: 60 } });
       const rawList = res.data?.products || (Array.isArray(res.data) ? res.data : []);
       const mapped = rawList.map(mapBackendProductToFrontend);
 
@@ -115,7 +115,7 @@ export const productsApi = {
    */
   async getProductById(id: string): Promise<ApiResponse<Product>> {
     try {
-      const res = await apiClient.get<any>(`/products/${id}`);
+      const res = await apiClient.get<any>(`/products/${id}`, { next: { revalidate: 60 } });
       const rawProduct = res.data?.product || res.data;
       return {
         success: true,
@@ -137,7 +137,7 @@ export const productsApi = {
    */
   async getProductsByCategory(category: string): Promise<ApiResponse<Product[]>> {
     try {
-      const res = await apiClient.get<any>(`/products/category/${category}`);
+      const res = await apiClient.get<any>(`/products/category/${category}`, { next: { revalidate: 60 } });
       const rawList = res.data?.products || (Array.isArray(res.data) ? res.data : []);
       const mapped = rawList.map(mapBackendProductToFrontend);
 
@@ -163,7 +163,7 @@ export const productsApi = {
    */
   async getFeaturedProducts(): Promise<ApiResponse<Product[]>> {
     try {
-      const res = await apiClient.get<any>("/products/featured");
+      const res = await apiClient.get<any>("/products/featured", { next: { revalidate: 60 } });
       const rawList = res.data?.products || (Array.isArray(res.data) ? res.data : []);
       const mapped = rawList.map(mapBackendProductToFrontend);
 

@@ -82,7 +82,7 @@ export const prescriptionsApi = {
    */
   async getUserPrescriptions(): Promise<ApiResponse<CustomerPrescription[]>> {
     try {
-      const res = await apiClient.get<any[]>("/orders/prescriptions/mine");
+      const res = await apiClient.get<any[]>("/orders/prescriptions/mine", { cache: "no-store" });
       const list = res.data || [];
       if (list.length > 0) {
         const mapped: CustomerPrescription[] = list.map((rx) => ({
@@ -129,7 +129,7 @@ export const prescriptionsApi = {
    */
   async getAdminPrescriptions(params?: QueryParams): Promise<ApiResponse<AdminPrescription[]>> {
     try {
-      const res = await apiClient.get<any[]>("/orders/admin/prescriptions/pending", { params });
+      const res = await apiClient.get<any[]>("/orders/admin/prescriptions/pending", { params, cache: "no-store" });
       const list = res.data || [];
       if (list.length > 0) {
         const mapped: AdminPrescription[] = list.map((rx) => ({

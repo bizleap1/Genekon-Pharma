@@ -232,7 +232,7 @@ export default function CartView() {
               <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
                 <Link
                   href="/products"
-                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-[#559620] hover:bg-[#467e19] text-white text-xs sm:text-sm font-bold px-6 py-3 rounded-full transition-colors shadow-xs"
+                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-[#347A14] hover:bg-[#1853A8] text-white text-xs sm:text-sm font-bold px-6 py-3 rounded-full transition-colors shadow-xs"
                 >
                   <span>Browse All Medicines</span>
                   <ArrowRight className="w-4 h-4" />
@@ -522,7 +522,7 @@ export default function CartView() {
                           />
                           <button
                             onClick={() => handleApplyCoupon()}
-                            className="px-4 py-2 rounded-xl bg-[#559620] hover:bg-[#467e19] text-white text-xs font-bold shrink-0 cursor-pointer"
+                            className="px-4 py-2 rounded-xl bg-[#347A14] hover:bg-[#1853A8] text-white text-xs font-bold shrink-0 cursor-pointer"
                           >
                             Apply
                           </button>
@@ -576,7 +576,7 @@ export default function CartView() {
                           "Login required to continue to checkout"
                         );
                       }}
-                      className={`w-full flex items-center justify-center gap-2 bg-[#559620] hover:bg-[#467e19] text-white font-bold text-sm py-3.5 rounded-xl shadow-xs transition-all cursor-pointer ${
+                      className={`w-full flex items-center justify-center gap-2 bg-[#347A14] hover:bg-[#1853A8] text-white font-bold text-sm py-3.5 rounded-xl shadow-xs transition-all cursor-pointer ${
                         totals.itemCount === 0 ? "opacity-50 cursor-not-allowed" : "hover:scale-[1.01]"
                       }`}
                     >
@@ -688,7 +688,7 @@ export default function CartView() {
                           inStock: true,
                         })
                       }
-                      className="px-3 py-1.5 rounded-lg bg-[#559620] hover:bg-[#467E19] text-white text-xs font-bold transition-colors cursor-pointer shadow-2xs"
+                      className="px-3 py-1.5 rounded-lg bg-[#347A14] hover:bg-[#1853A8] text-white text-xs font-bold transition-colors cursor-pointer shadow-2xs"
                     >
                       + Add
                     </button>

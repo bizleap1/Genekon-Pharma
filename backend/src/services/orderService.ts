@@ -136,7 +136,7 @@ export const orderService = {
     if (input.couponCode) {
       const couponValidation = await couponService.validateCoupon(input.couponCode, totalSellingPrice);
       couponDiscount = couponValidation.discountAmount;
-      await couponService.incrementCouponUsage(couponValidation.code);
+      // Note: usage increment moved inside the transaction
     }
 
     const mrpDiscount = Math.max(0, subtotal - totalSellingPrice);
@@ -155,93 +155,105 @@ export const orderService = {
     const randomSuffix = Math.floor(1000 + Math.random() * 9000);
     const orderNumber = `GNK-${timestamp}-${randomSuffix}`;
 
-    // 4. Create Order
-    const [createdOrder] = await db
-      .insert(orders)
-      .values({
-        userId,
-        orderNumber,
-        deliveryAddressId: address.id,
-        deliveryAddressSnapshot,
-        subtotal: subtotal.toFixed(2),
-        discountAmount: totalDiscount.toFixed(2),
-        deliveryFee: deliveryFee.toFixed(2),
-        totalAmount: totalAmount.toFixed(2),
-        paymentStatus: "PENDING",
-        paymentMethod: input.paymentMethod || "COD",
-        orderStatus: initialStatus,
-        prescriptionRequired: hasPrescriptionItem,
-        prescriptionId: input.prescriptionId || null,
-        stockDeducted: false,
-        notes: input.notes || null,
-      })
-      .returning();
+    // TRANSACTION STARTS HERE
+    const createdOrder = await db.transaction(async (tx) => {
+      let couponValidation: any = null;
+      if (input.couponCode) {
+        couponValidation = await couponService.validateCoupon(input.couponCode, totalSellingPrice);
+        await couponService.incrementCouponUsage(couponValidation.code, tx);
+      }
+      
+      // 4. Create Order
+      const [order] = await tx
+        .insert(orders)
+        .values({
+          userId,
+          orderNumber,
+          deliveryAddressId: address.id,
+          deliveryAddressSnapshot,
+          subtotal: subtotal.toFixed(2),
+          discountAmount: totalDiscount.toFixed(2),
+          deliveryFee: deliveryFee.toFixed(2),
+          totalAmount: totalAmount.toFixed(2),
+          paymentStatus: "PENDING",
+          paymentMethod: input.paymentMethod || "COD",
+          orderStatus: initialStatus,
+          prescriptionRequired: hasPrescriptionItem,
+          prescriptionId: input.prescriptionId || null,
+          stockDeducted: false,
+          notes: input.notes || null,
+        })
+        .returning();
 
-    // 5. Create Order Items with historical snapshots
-    for (const item of rawCartItems) {
-      const product = productMap.get(item.productId)!;
-      await db.insert(orderItems).values({
-        orderId: createdOrder.id,
-        productId: product.id,
-        productNameSnapshot: product.name,
-        skuSnapshot: product.sku,
-        dosageFormSnapshot: product.dosageForm,
-        quantity: item.quantity,
-        price: product.sellingPrice,
-        mrp: product.mrp,
-        gstRate: product.gst,
-        prescriptionRequired: product.prescriptionRequired,
-      });
-    }
-
-    // 6. Link prescription if provided (with strict user ownership verification)
-    if (input.prescriptionId) {
-      const [userRx] = await db
-        .select()
-        .from(prescriptions)
-        .where(
-          and(
-            eq(prescriptions.id, input.prescriptionId),
-            eq(prescriptions.userId, userId)
-          )
-        )
-        .limit(1);
-
-      if (!userRx) {
-        throw new Error("Invalid prescription ID or prescription does not belong to your account");
+      // 5. Create Order Items with historical snapshots
+      for (const item of rawCartItems) {
+        const product = productMap.get(item.productId)!;
+        await tx.insert(orderItems).values({
+          orderId: order.id,
+          productId: product.id,
+          productNameSnapshot: product.name,
+          skuSnapshot: product.sku,
+          dosageFormSnapshot: product.dosageForm,
+          quantity: item.quantity,
+          price: product.sellingPrice,
+          mrp: product.mrp,
+          gstRate: product.gst,
+          prescriptionRequired: product.prescriptionRequired,
+        });
       }
 
-      await db
-        .update(prescriptions)
-        .set({ orderId: createdOrder.id, updatedAt: new Date() })
-        .where(eq(prescriptions.id, userRx.id));
-    }
+      // 6. Link prescription if provided (with strict user ownership verification)
+      if (input.prescriptionId) {
+        const [userRx] = await tx
+          .select()
+          .from(prescriptions)
+          .where(
+            and(
+              eq(prescriptions.id, input.prescriptionId),
+              eq(prescriptions.userId, userId)
+            )
+          )
+          .limit(1);
 
-    // 7. Append initial Timeline event
-    const initialNotes = hasPrescriptionItem
-      ? "Order placed with prescription medicine. Awaiting licensed pharmacist verification."
-      : "Order placed successfully by customer.";
+        if (!userRx) {
+          throw new Error("Invalid prescription ID or prescription does not belong to your account");
+        }
 
-    await db.insert(orderStatusHistory).values({
-      orderId: createdOrder.id,
-      status: initialStatus,
-      notes: initialNotes,
-      updatedBy: userId,
-    });
+        await tx
+          .update(prescriptions)
+          .set({ orderId: order.id, updatedAt: new Date() })
+          .where(eq(prescriptions.id, userRx.id));
+      }
 
-    // 8. If COD, create payment entry with status PENDING
-    if (createdOrder.paymentMethod === "COD") {
-      await db.insert(payments).values({
-        orderId: createdOrder.id,
-        amount: createdOrder.totalAmount,
-        currency: "INR",
-        paymentMethod: "COD",
-        status: "PENDING",
+      // 7. Append initial Timeline event
+      const initialNotes = hasPrescriptionItem
+        ? "Order placed with prescription medicine. Awaiting licensed pharmacist verification."
+        : "Order placed successfully by customer.";
+
+      await tx.insert(orderStatusHistory).values({
+        orderId: order.id,
+        status: initialStatus,
+        notes: initialNotes,
+        updatedBy: userId,
       });
-    }
 
-    // 9. Clear customer cart after checkout
-    await cartService.clearCart(userId);
+      // 8. If COD, create payment entry with status PENDING
+      if (order.paymentMethod === "COD") {
+        await tx.insert(payments).values({
+          orderId: order.id,
+          amount: order.totalAmount,
+          currency: "INR",
+          paymentMethod: "COD",
+          status: "PENDING",
+        });
+      }
+
+      // 9. Clear customer cart after checkout
+      await tx.delete(cartItems).where(eq(cartItems.cartId, cart.id));
+      await tx.delete(carts).where(eq(carts.userId, userId));
+
+      return order;
+    });
 
     // 10. Dispatch order confirmation email (non-blocking)
     (async () => {
@@ -483,26 +495,28 @@ export const orderService = {
       shouldRestoreStock = true;
     }
 
-    if (shouldDeductStock) {
-      await this.deductInventoryStock(order.id);
-    } else if (shouldRestoreStock) {
-      await this.restoreInventoryStock(order.id);
-    }
+    await db.transaction(async (tx) => {
+      if (shouldDeductStock) {
+        await this.deductInventoryStock(order.id, tx);
+      } else if (shouldRestoreStock) {
+        await this.restoreInventoryStock(order.id, tx);
+      }
 
-    await db
-      .update(orders)
-      .set({
-        orderStatus: newStatus,
-        stockDeducted: shouldDeductStock ? true : shouldRestoreStock ? false : order.stockDeducted,
-        updatedAt: new Date(),
-      })
-      .where(eq(orders.id, order.id));
+      await tx
+        .update(orders)
+        .set({
+          orderStatus: newStatus,
+          stockDeducted: shouldDeductStock ? true : shouldRestoreStock ? false : order.stockDeducted,
+          updatedAt: new Date(),
+        })
+        .where(eq(orders.id, order.id));
 
-    await db.insert(orderStatusHistory).values({
-      orderId: order.id,
-      status: newStatus,
-      notes: notes || `Order status updated to ${newStatus} by dispensary admin.`,
-      updatedBy: adminUserId,
+      await tx.insert(orderStatusHistory).values({
+        orderId: order.id,
+        status: newStatus,
+        notes: notes || `Order status updated to ${newStatus} by dispensary admin.`,
+        updatedBy: adminUserId,
+      });
     });
 
     // Asynchronously dispatch status emails (SHIPPED / DELIVERED)
@@ -620,22 +634,22 @@ export const orderService = {
   /**
    * Helper: Deduct stock from products table atomically on order confirmation
    */
-  async deductInventoryStock(orderId: string): Promise<void> {
-    const items = await db.select().from(orderItems).where(eq(orderItems.orderId, orderId));
+  async deductInventoryStock(orderId: string, tx: any = db): Promise<void> {
+    const items = await tx.select().from(orderItems).where(eq(orderItems.orderId, orderId));
 
     for (const item of items) {
-      // Atomic deduction with conditional GREATEST(0, stock - qty) to prevent race condition underflows
-      const result = await db
+      // Atomic strict deduction (prevents overselling via condition)
+      const result = await tx
         .update(products)
         .set({
-          stockQuantity: sql`GREATEST(0, ${products.stockQuantity} - ${item.quantity})`,
+          stockQuantity: sql`${products.stockQuantity} - ${item.quantity}`,
           updatedAt: new Date(),
         })
-        .where(eq(products.id, item.productId))
+        .where(and(eq(products.id, item.productId), sql`${products.stockQuantity} >= ${item.quantity}`))
         .returning({ updatedStock: products.stockQuantity });
 
       if (result.length === 0) {
-        logger.warn(`Product ${item.productId} not found during stock deduction for order ${orderId}`);
+        throw new Error(`Insufficient stock for product ${item.productId} during deduction for order ${orderId}`);
       } else {
         logger.info(`Atomic stock deduction for product ${item.productId}: -${item.quantity} (Stock remaining: ${result[0].updatedStock})`);
       }
@@ -645,12 +659,12 @@ export const orderService = {
   /**
    * Helper: Replenish stock to products table atomically upon order cancellation
    */
-  async restoreInventoryStock(orderId: string): Promise<void> {
-    const items = await db.select().from(orderItems).where(eq(orderItems.orderId, orderId));
+  async restoreInventoryStock(orderId: string, tx: any = db): Promise<void> {
+    const items = await tx.select().from(orderItems).where(eq(orderItems.orderId, orderId));
 
     for (const item of items) {
       // Atomic replenishment
-      await db
+      await tx
         .update(products)
         .set({
           stockQuantity: sql`${products.stockQuantity} + ${item.quantity}`,

@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Star, Heart, AlertTriangle } from "lucide-react";
+import { Star, Heart, AlertTriangle, ShoppingCart, Check } from "lucide-react";
 import { Product } from "@/types/product";
 import { useCart } from "@/context/CartContext";
 import { useWishlist } from "@/context/WishlistContext";
@@ -71,7 +71,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, className }) 
 
   return (
     <div
-      className={`group relative flex flex-col justify-between rounded-2xl border border-[#E3EDE5] bg-white p-3.5 transition-all duration-200 hover:shadow-md hover:border-[#559620]/40 ${
+      className={`group relative flex flex-col justify-between rounded-[20px] border border-[#E8F0EA] bg-white p-3.5 transition-all duration-300 hover:shadow-[0_8px_30px_rgba(24,83,168,0.06)] hover:border-[#C3DDF7] hover:-translate-y-1 ${
         className || ""
       }`}
     >
@@ -80,7 +80,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, className }) 
         <div className="flex items-center justify-between mb-2 gap-1">
           <div className="flex items-center gap-1.5 flex-wrap">
             {product.discountPercent || product.discount ? (
-              <span className="inline-block px-1.5 py-0.5 rounded-md text-[10px] sm:text-[11px] font-bold bg-[#559620] text-white">
+              <span className="inline-block px-2 py-0.5 rounded-full text-[10px] sm:text-[11px] font-bold bg-[#00994B] text-white">
                 {product.discount || product.discountPercent}% OFF
               </span>
             ) : null}
@@ -113,7 +113,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, className }) 
         {/* Product Image */}
         <Link
           href={`/product/${product.id}`}
-          className="block w-full aspect-square relative mb-2.5 rounded-xl overflow-hidden bg-[#FAFCFB] flex items-center justify-center p-2"
+          className="block w-full aspect-[4/3] sm:aspect-square relative mb-3 rounded-[14px] overflow-hidden bg-white flex items-center justify-center p-4 sm:p-6"
         >
           {product.images?.[0] || product.image ? (
             <div className="relative w-full h-full">
@@ -122,8 +122,8 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, className }) 
                 alt={product.name}
                 fill
                 sizes="(max-width: 768px) 50vw, (max-width: 1200px) 25vw, 16vw"
-                className={`object-contain group-hover:scale-105 transition-transform duration-300 ${
-                  isOutOfStock ? "opacity-60 grayscale-[40%]" : ""
+                className={`object-contain group-hover:scale-[1.03] transition-transform duration-300 ${
+                  isOutOfStock ? "opacity-50 grayscale" : ""
                 }`}
               />
             </div>
@@ -186,20 +186,28 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, className }) 
         {isOutOfStock ? (
           <button
             disabled
-            className="w-full py-1.5 px-3 rounded-lg border border-[#D5DFE6] bg-[#F1F4F6] text-[#8C9BA5] text-xs sm:text-[13px] font-bold cursor-not-allowed select-none"
+            className="w-full py-2 px-3 rounded-xl border border-[#D5DFE6] bg-[#F1F4F6] text-[#8C9BA5] text-[13px] font-bold cursor-not-allowed select-none flex items-center justify-center gap-2"
           >
             Out of Stock
           </button>
         ) : (
           <button
             onClick={handleAddToCart}
-            className={`w-full py-1.5 px-3 rounded-lg border text-xs sm:text-[13px] font-bold transition-all duration-150 cursor-pointer shadow-2xs select-none ${
+            className={`w-full py-2 px-3 rounded-xl text-[13px] font-bold transition-all duration-300 cursor-pointer select-none flex items-center justify-center gap-2 group/btn ${
               added
-                ? "bg-[#559620] border-[#559620] text-white"
-                : "border-[#687C6A] bg-white text-[#14304A] hover:border-[#559620] hover:text-[#559620] hover:bg-[#F4F9F2]"
+                ? "bg-[#00994B] text-white shadow-sm"
+                : "bg-[#347A14] text-white hover:bg-[#1853A8] shadow-sm hover:shadow-md"
             }`}
           >
-            {added ? "Added ✓" : "Add to Cart"}
+            {added ? (
+              <>
+                <Check className="w-4 h-4" /> Added
+              </>
+            ) : (
+              <>
+                <ShoppingCart className="w-4 h-4 transition-transform group-hover/btn:scale-110" /> Add to Cart
+              </>
+            )}
           </button>
         )}
       </div>

@@ -81,7 +81,7 @@ export const ordersApi = {
    */
   async getOrderById(id: string): Promise<ApiResponse<PlacedOrder>> {
     try {
-      const res = await apiClient.get<any>(`/orders/${id}`);
+      const res = await apiClient.get<any>(`/orders/${id}`, { cache: "no-store" });
       return {
         success: true,
         data: mapBackendOrderToPlaced(res.data?.order || res.data),
@@ -100,7 +100,7 @@ export const ordersApi = {
    */
   async getUserOrders(): Promise<ApiResponse<PlacedOrder[]>> {
     try {
-      const res = await apiClient.get<any>("/orders");
+      const res = await apiClient.get<any>("/orders", { cache: "no-store" });
       const list = res.data?.orders || (Array.isArray(res.data) ? res.data : []);
       if (list.length > 0) {
         return {
@@ -200,7 +200,7 @@ export const ordersApi = {
    */
   async getOrderCancellationRequest(id: string): Promise<ApiResponse<any>> {
     try {
-      const res = await apiClient.get<any>(`/orders/${id}/cancel-request`);
+      const res = await apiClient.get<any>(`/orders/${id}/cancel-request`, { cache: "no-store" });
       if (res.data) return res;
     } catch {}
 
@@ -238,7 +238,7 @@ export const ordersApi = {
    */
   async trackOrder(orderIdOrAwb: string): Promise<ApiResponse<TrackedOrder>> {
     try {
-      const res = await apiClient.get<any>(`/orders/${orderIdOrAwb}`);
+      const res = await apiClient.get<any>(`/orders/${orderIdOrAwb}`, { cache: "no-store" });
       const order = res.data?.order || res.data;
       if (order) {
         const milestones = [
@@ -305,7 +305,7 @@ export const ordersApi = {
    */
   async getAdminOrders(params?: QueryParams): Promise<ApiResponse<AdminOrder[]>> {
     try {
-      const res = await apiClient.get<any>("/orders/admin/all", { params });
+      const res = await apiClient.get<any>("/orders/admin/all", { params, cache: "no-store" });
       const list = res.data?.orders || (Array.isArray(res.data) ? res.data : []);
       if (list.length > 0) {
         const mapped: AdminOrder[] = list.map((o: any) => ({

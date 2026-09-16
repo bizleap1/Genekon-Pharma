@@ -2,7 +2,7 @@
 
 import React, { useRef } from "react";
 import Link from "next/link";
-import { ChevronLeft, ChevronRight, ArrowRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, ArrowRight, ShieldCheck, Truck, Tag, HeartHandshake } from "lucide-react";
 import { Container } from "@/components/ui/Container";
 import { ProductCard } from "@/components/ui/ProductCard";
 import { useProductsQuery } from "@/hooks/api/useProductsQuery";
@@ -21,56 +21,107 @@ export const ProductSection: React.FC = () => {
   };
 
   return (
-    <section className="py-6 sm:py-8 bg-white">
+    <section className="py-10 sm:py-12 bg-gradient-to-b from-white to-[#F0F7F4] relative overflow-hidden">
       <Container>
         {/* Section Header */}
-        <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-5 gap-3">
-          <div>
-            <h2 className="text-xl sm:text-2xl lg:text-[26px] font-extrabold text-[#14304A] tracking-tight">
-              Bestselling Products
+        <div className="flex flex-col items-center text-center mb-8 sm:mb-10 relative z-10">
+          <div className="animate-in fade-in slide-in-from-bottom-2 duration-500">
+            <span className="text-[10px] sm:text-xs font-bold tracking-widest text-[#1853A8] uppercase mb-1.5 block">
+              TRUSTED BRANDS. REAL CARE.
+            </span>
+            <h2 className="text-2xl sm:text-3xl font-extrabold text-[#14304A] tracking-tight">
+              Bestselling <span className="text-[#00994B]">Products</span>
             </h2>
-            <p className="text-xs sm:text-sm text-[#5B6D5E] mt-1">
-              Trusted brands. Real care.
+            <p className="text-sm sm:text-base text-[#5B6D5E] mt-1.5 max-w-xl mx-auto">
+              Most loved by our customers. Quality you can trust.
             </p>
-          </div>
-
-          {/* Right Action & Arrows */}
-          <div className="flex items-center gap-3 self-end sm:self-auto">
-            <Link
-              href="/products"
-              className="inline-flex items-center gap-1 text-xs sm:text-sm font-bold text-[#1853A8] hover:text-[#123e7f] transition-colors"
-            >
-              <span>View All Products</span>
-              <ArrowRight className="w-4 h-4" />
-            </Link>
-
-            <div className="flex items-center gap-1.5 ml-2">
-              <button
-                onClick={() => scroll("left")}
-                aria-label="Previous products"
-                className="w-7 h-7 rounded-full border border-[#D5DFD7] hover:border-[#1853A8] text-[#556958] hover:text-[#1853A8] flex items-center justify-center transition-colors cursor-pointer"
-              >
-                <ChevronLeft className="w-4 h-4" />
-              </button>
-              <button
-                onClick={() => scroll("right")}
-                aria-label="Next products"
-                className="w-7 h-7 rounded-full border border-[#D5DFD7] hover:border-[#1853A8] text-[#556958] hover:text-[#1853A8] flex items-center justify-center transition-colors cursor-pointer"
-              >
-                <ChevronRight className="w-4 h-4" />
-              </button>
-            </div>
           </div>
         </div>
 
-        {/* 6 Products Grid */}
+        {/* Products Carousel */}
         <div
           ref={scrollRef}
-          className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4"
+          className="flex lg:grid lg:grid-cols-6 gap-4 sm:gap-5 overflow-x-auto snap-x snap-mandatory no-scrollbar pb-4 -mx-4 px-4 lg:mx-0 lg:px-0 relative z-10"
         >
-          {displayProducts.map((product) => (
-            <ProductCard key={product.id} product={product} />
+          {displayProducts.map((product, index) => (
+            <div key={product.id} className="min-w-[220px] sm:min-w-[260px] lg:min-w-0 snap-start animate-in fade-in slide-in-from-bottom-4" style={{ animationDelay: `${index * 50}ms` }}>
+              <ProductCard product={product} className="h-full" />
+            </div>
           ))}
+        </div>
+
+        {/* Bottom Navigation & Arrows */}
+        <div className="flex items-center justify-center gap-4 mt-6 relative z-10">
+          <button
+            onClick={() => scroll("left")}
+            aria-label="Previous products"
+            className="hidden lg:flex w-9 h-9 rounded-full border border-[#D5DFD7] hover:border-[#1853A8] hover:bg-[#F4F9F2] text-[#556958] hover:text-[#1853A8] items-center justify-center transition-all cursor-pointer"
+          >
+            <ChevronLeft className="w-5 h-5" />
+          </button>
+          
+          <Link
+            href="/products"
+            className="inline-flex items-center justify-center gap-1.5 text-xs sm:text-sm font-bold text-white bg-[#347A14] hover:bg-[#1853A8] px-6 py-2.5 rounded-full transition-colors shadow-xs"
+          >
+            <span>View All Products</span>
+            <ArrowRight className="w-4 h-4" />
+          </Link>
+
+          <button
+            onClick={() => scroll("right")}
+            aria-label="Next products"
+            className="hidden lg:flex w-9 h-9 rounded-full border border-[#D5DFD7] hover:border-[#1853A8] hover:bg-[#F4F9F2] text-[#556958] hover:text-[#1853A8] items-center justify-center transition-all cursor-pointer"
+          >
+            <ChevronRight className="w-5 h-5" />
+          </button>
+        </div>
+
+        {/* Bottom Trust Strip */}
+        <div className="mt-4 sm:mt-8 bg-white rounded-[20px] border border-[#E8F0EA] p-6 lg:p-8 shadow-[0_8px_30px_rgba(24,83,168,0.04)] relative z-10 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-300">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-0 lg:divide-x divide-[#E8F0EA]">
+            
+            <div className="flex items-center gap-4 lg:px-6 first:pl-0 last:pr-0">
+              <div className="w-12 h-12 rounded-full bg-[#F0F7F4] flex items-center justify-center shrink-0">
+                <ShieldCheck className="w-[22px] h-[22px] text-[#1853A8]" />
+              </div>
+              <div>
+                <h4 className="text-[13px] sm:text-sm font-bold text-[#14304A]">100% Genuine Products</h4>
+                <p className="text-[11px] sm:text-xs text-[#5B6D5E] mt-0.5">Sourced from trusted suppliers</p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-4 lg:px-6 first:pl-0 last:pr-0">
+              <div className="w-12 h-12 rounded-full bg-[#F0F7F4] flex items-center justify-center shrink-0">
+                <Truck className="w-[22px] h-[22px] text-[#1853A8]" />
+              </div>
+              <div>
+                <h4 className="text-[13px] sm:text-sm font-bold text-[#14304A]">Fast & Reliable Delivery</h4>
+                <p className="text-[11px] sm:text-xs text-[#5B6D5E] mt-0.5">At your doorstep</p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-4 lg:px-6 first:pl-0 last:pr-0">
+              <div className="w-12 h-12 rounded-full bg-[#F0F7F4] flex items-center justify-center shrink-0">
+                <Tag className="w-[22px] h-[22px] text-[#1853A8]" />
+              </div>
+              <div>
+                <h4 className="text-[13px] sm:text-sm font-bold text-[#14304A]">Best Prices Everyday</h4>
+                <p className="text-[11px] sm:text-xs text-[#5B6D5E] mt-0.5">More savings, better health</p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-4 lg:px-6 first:pl-0 last:pr-0">
+              <div className="w-12 h-12 rounded-full bg-[#F0F7F4] flex items-center justify-center shrink-0">
+                <HeartHandshake className="w-[22px] h-[22px] text-[#1853A8]" />
+              </div>
+              <div>
+                <h4 className="text-[13px] sm:text-sm font-bold text-[#14304A]">Care You Can Trust</h4>
+                <p className="text-[11px] sm:text-xs text-[#5B6D5E] mt-0.5">For a healthier tomorrow</p>
+              </div>
+            </div>
+
+          </div>
         </div>
       </Container>
     </section>

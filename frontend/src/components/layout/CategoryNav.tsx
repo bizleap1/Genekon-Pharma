@@ -1,9 +1,10 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Menu, Percent, ChevronDown } from "lucide-react";
+import { Menu, Percent, ChevronDown, ChevronRight } from "lucide-react";
 
 interface SubcategoryItem {
   name: string;
@@ -15,19 +16,20 @@ interface PrimaryCategory {
   id: string;
   name: string;
   slug: string;
+  image: string;
   totalCount: number;
   subcategories: SubcategoryItem[];
 }
 
 export const CategoryNav: React.FC = () => {
   const pathname = usePathname();
-  const [hoveredCat, setHoveredCat] = useState<string | null>(null);
 
   const primaryCategories: PrimaryCategory[] = [
     {
       id: "medicines",
       name: "Medicines",
       slug: "/category/medicines",
+      image: "/images/categories/prescription-medicines.jpg",
       totalCount: 215,
       subcategories: [
         { name: "Pain Relief & Fever", slug: "/category/pain-relief-fever", count: 36 },
@@ -49,6 +51,7 @@ export const CategoryNav: React.FC = () => {
       id: "healthcare",
       name: "Healthcare",
       slug: "/category/healthcare",
+      image: "/images/categories/wellness-essentials.jpg",
       totalCount: 38,
       subcategories: [
         { name: "Antiseptics & First Aid", slug: "/category/antiseptics-first-aid", count: 12 },
@@ -61,6 +64,7 @@ export const CategoryNav: React.FC = () => {
       id: "personal-care",
       name: "Personal Care",
       slug: "/category/personal-care",
+      image: "/images/categories/personal-care.jpg",
       totalCount: 38,
       subcategories: [
         { name: "Skin Care & Dermatology", slug: "/category/skin-care-dermatology", count: 23 },
@@ -72,6 +76,7 @@ export const CategoryNav: React.FC = () => {
       id: "vitamins",
       name: "Vitamins & Nutrition",
       slug: "/category/vitamins-nutrition",
+      image: "/images/categories/vitamins-supplements.jpg",
       totalCount: 33,
       subcategories: [
         { name: "Vitamins & Supplements", slug: "/category/vitamins-supplements", count: 20 },
@@ -83,6 +88,7 @@ export const CategoryNav: React.FC = () => {
       id: "baby-care",
       name: "Baby Care",
       slug: "/category/baby-care",
+      image: "/images/categories/baby-care.jpg",
       totalCount: 6,
       subcategories: [
         { name: "Baby Talc & Body Oils", slug: "/category/baby-care", count: 2 },
@@ -94,6 +100,7 @@ export const CategoryNav: React.FC = () => {
       id: "ayurveda",
       name: "Ayurveda",
       slug: "/category/ayurveda",
+      image: "/images/categories/ayurveda.jpg",
       totalCount: 12,
       subcategories: [
         { name: "Chyawanprash & Immunity", slug: "/category/ayurvedic-herbal", count: 4 },
@@ -105,6 +112,7 @@ export const CategoryNav: React.FC = () => {
       id: "medical-devices",
       name: "Medical Devices",
       slug: "/category/medical-devices",
+      image: "/images/categories/medical-devices.jpg",
       totalCount: 16,
       subcategories: [
         { name: "Blood Glucose Monitors & Strips", slug: "/category/diagnostic-devices-health-monitors", count: 4 },
@@ -118,6 +126,7 @@ export const CategoryNav: React.FC = () => {
       id: "wellness",
       name: "Wellness",
       slug: "/category/wellness",
+      image: "/images/categories/wellness-essentials.jpg",
       totalCount: 5,
       subcategories: [
         { name: "Sexual Wellness & Protection", slug: "/category/sexual-wellness", count: 5 },
@@ -131,69 +140,167 @@ export const CategoryNav: React.FC = () => {
         <div className="flex items-center justify-between py-2 text-xs sm:text-sm font-semibold text-[#14304A]">
           
           {/* All Categories Trigger */}
-          <Link
-            href="/categories"
-            className="flex items-center gap-2 pr-4 border-r border-[#E7ECEF] font-bold text-[#14304A] hover:text-[#1A52A3] transition-colors shrink-0"
-          >
-            <Menu className="w-4 h-4 text-[#14304A]" />
-            <span>All Categories</span>
-          </Link>
+          <div className="relative group/allcat pr-4 border-r border-[#E7ECEF] shrink-0 py-3 flex items-center">
+            <Link
+              href="/categories"
+              className="flex items-center gap-2 font-bold text-[#14304A] group-hover/allcat:text-[#1A52A3] transition-colors"
+            >
+              <Menu className="w-4 h-4 text-[#14304A] group-hover/allcat:text-[#1A52A3] transition-colors" />
+              <span>All Categories</span>
+            </Link>
+
+            {/* All Categories Dropdown (CSS Hover) */}
+            <div className="absolute left-0 top-full mt-0 opacity-0 invisible group-hover/allcat:opacity-100 group-hover/allcat:visible translate-y-3 group-hover/allcat:translate-y-0 transition-all duration-300 ease-out w-[290px] z-[60]">
+              <div className="rounded-2xl border border-[#E2EAE0] bg-white p-3 shadow-[0_20px_40px_-15px_rgba(0,0,0,0.1)] ring-1 ring-black/5">
+                <div className="flex flex-col gap-1">
+                  {primaryCategories.map((cat) => (
+                    <div key={cat.id} className="relative group/subcat">
+                      <Link
+                        href={cat.slug}
+                        className="flex items-center gap-3 p-2 rounded-xl text-sm font-semibold text-[#14304A] hover:bg-[#F4F9F2] hover:text-[#1A52A3] transition-all"
+                      >
+                        <div className="relative w-8 h-8 rounded-lg overflow-hidden shrink-0 bg-[#F0F4EF] border border-[#E2EAE0]">
+                          <Image
+                            src={cat.image}
+                            alt={cat.name}
+                            fill
+                            sizes="32px"
+                            className="object-cover group-hover/subcat:scale-110 transition-transform duration-500 ease-out"
+                          />
+                        </div>
+                        <div className="flex-1 flex justify-between items-center">
+                          <span>{cat.name}</span>
+                          <ChevronRight className="w-4 h-4 opacity-40 group-hover/subcat:translate-x-1 transition-transform" />
+                        </div>
+                      </Link>
+
+                      {/* Sub-menu Flyout (Opens to the right) */}
+                      {cat.subcategories.length > 0 && (
+                        <div className="absolute left-full top-0 ml-1 opacity-0 invisible group-hover/subcat:opacity-100 group-hover/subcat:visible translate-x-3 group-hover/subcat:translate-x-0 transition-all duration-300 ease-out w-[460px] z-[70]">
+                          <div className="rounded-2xl border border-[#E2EAE0] bg-white p-5 shadow-[20px_20px_40px_-15px_rgba(0,0,0,0.1)] ring-1 ring-black/5 before:content-[''] before:absolute before:-left-3 before:top-0 before:w-5 before:h-full">
+                            <div className="flex items-center justify-between pb-3 mb-3 border-b border-[#EEF4ED] text-[11px] font-bold text-[#657967] uppercase tracking-wider">
+                              <span>{cat.name} Categories</span>
+                              <span className="bg-[#F0F7EA] text-[#347A14] px-2 py-0.5 rounded-full text-[10px] font-extrabold">
+                                {cat.totalCount} items
+                              </span>
+                            </div>
+
+                            <div className="grid grid-cols-2 gap-x-4 gap-y-2">
+                              {cat.subcategories.map((sub, idx) => (
+                                <Link
+                                  key={idx}
+                                  href={sub.slug}
+                                  className="flex items-center gap-2.5 p-2 rounded-xl text-xs text-[#14304A] hover:bg-[#F4F9F2] hover:text-[#1A52A3] transition-all group/subitem"
+                                >
+                                  <div className="relative w-8 h-8 rounded-lg overflow-hidden shrink-0 bg-[#F0F4EF] border border-[#E2EAE0] shadow-sm">
+                                    <Image
+                                      src={cat.image}
+                                      alt={sub.name}
+                                      fill
+                                      sizes="32px"
+                                      className="object-cover group-hover/subitem:scale-110 transition-transform duration-500 ease-out"
+                                    />
+                                  </div>
+                                  <div className="flex-1">
+                                    <span className="font-semibold block mb-0.5 line-clamp-2 leading-tight">{sub.name}</span>
+                                    <span className="text-[9px] text-[#718573] group-hover/subitem:text-[#347A14] transition-colors">
+                                      {sub.count} Products
+                                    </span>
+                                  </div>
+                                </Link>
+                              ))}
+                            </div>
+                            
+                            <div className="pt-3 mt-3 border-t border-[#EEF4ED]">
+                              <Link
+                                href={cat.slug}
+                                className="flex items-center justify-center gap-1.5 w-full rounded-xl bg-[#F8FAF7] hover:bg-[#EEF4ED] text-xs font-bold text-[#1A52A3] transition-colors py-2.5 group/btn"
+                              >
+                                <span>Explore All {cat.name}</span>
+                                <span className="transition-transform group-hover/btn:translate-x-1">→</span>
+                              </Link>
+                            </div>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+                
+                <div className="pt-3 mt-3 border-t border-[#EEF4ED]">
+                  <Link
+                    href="/categories"
+                    className="flex items-center justify-center gap-1.5 w-full rounded-xl bg-[#F8FAF7] hover:bg-[#EEF4ED] text-xs font-bold text-[#1A52A3] transition-colors py-2.5 group/btn"
+                  >
+                    <span>View All Categories</span>
+                    <span className="transition-transform group-hover/btn:translate-x-1">→</span>
+                  </Link>
+                </div>
+              </div>
+            </div>
+          </div>
 
           {/* Category Links with Hover Dropdown */}
           <ul className="flex items-center gap-2 sm:gap-4 lg:gap-6 px-3 overflow-x-visible">
             {primaryCategories.map((cat) => {
               const isActive = pathname === cat.slug;
-              const isHovered = hoveredCat === cat.id;
 
               return (
-                <li
-                  key={cat.id}
-                  className="relative group py-1"
-                  onMouseEnter={() => setHoveredCat(cat.id)}
-                  onMouseLeave={() => setHoveredCat(null)}
-                >
+                <li key={cat.id} className="relative group/navitem py-3">
                   <Link
                     href={cat.slug}
-                    className={`inline-flex items-center gap-1 py-1 transition-colors hover:text-[#1A52A3] ${
+                    className={`inline-flex items-center gap-1 transition-colors group-hover/navitem:text-[#1A52A3] ${
                       isActive ? "text-[#1A52A3] font-bold" : "text-[#14304A]/90"
                     }`}
                   >
                     <span>{cat.name}</span>
-                    <ChevronDown className="w-3 h-3 opacity-60 group-hover:rotate-180 transition-transform duration-200" />
+                    <ChevronDown className="w-3 h-3 opacity-60 group-hover/navitem:rotate-180 transition-transform duration-300" />
                   </Link>
 
-                  {/* Mega Dropdown Menu */}
-                  {isHovered && cat.subcategories.length > 0 && (
-                    <div className="absolute left-0 top-full pt-1.5 w-64 sm:w-72 z-50 animate-in fade-in slide-in-from-top-1 duration-150">
-                      <div className="rounded-2xl border border-[#DDE7DC] bg-white p-3 shadow-xl backdrop-blur-md">
-                        <div className="flex items-center justify-between px-2 pb-2 mb-2 border-b border-[#EEF4ED] text-[11px] font-bold text-[#657967] uppercase tracking-wider">
-                          <span>{cat.name} Subcategories</span>
-                          <span className="bg-[#EBF3FC] text-[#1853A8] px-1.5 py-0.5 rounded-full text-[10px] font-extrabold">
+                  {/* Premium Mega Dropdown Menu (CSS Hover) */}
+                  {cat.subcategories.length > 0 && (
+                    <div className="absolute left-0 top-full mt-0 opacity-0 invisible group-hover/navitem:opacity-100 group-hover/navitem:visible translate-y-3 group-hover/navitem:translate-y-0 transition-all duration-300 ease-out w-[320px] sm:w-[500px] z-[60]">
+                      <div className="rounded-2xl border border-[#E2EAE0] bg-white p-5 shadow-[0_20px_40px_-15px_rgba(0,0,0,0.1)] ring-1 ring-black/5">
+                        <div className="flex items-center justify-between pb-3 mb-3 border-b border-[#EEF4ED] text-[11px] font-bold text-[#657967] uppercase tracking-wider">
+                          <span>{cat.name} Categories</span>
+                          <span className="bg-[#F0F7EA] text-[#347A14] px-2 py-0.5 rounded-full text-[10px] font-extrabold">
                             {cat.totalCount} items
                           </span>
                         </div>
 
-                        <div className="space-y-1 max-h-72 overflow-y-auto pr-1">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-2 max-h-[60vh] overflow-y-auto pr-2">
                           {cat.subcategories.map((sub, idx) => (
                             <Link
                               key={idx}
                               href={sub.slug}
-                              className="flex items-center justify-between px-2.5 py-1.5 rounded-xl text-xs text-[#14304A] hover:bg-[#F2F7F0] hover:text-[#1853A8] transition-colors group/item"
+                              className="flex items-center gap-3 p-2.5 rounded-xl text-xs text-[#14304A] hover:bg-[#F4F9F2] hover:text-[#1A52A3] transition-all group/sub"
                             >
-                              <span className="font-medium truncate">{sub.name}</span>
-                              <span className="text-[10px] text-[#718573] group-hover/item:text-[#1853A8] font-mono shrink-0 ml-2">
-                                {sub.count}
-                              </span>
+                              <div className="relative w-9 h-9 rounded-lg overflow-hidden shrink-0 bg-[#F0F4EF] border border-[#E2EAE0] shadow-sm">
+                                <Image
+                                  src={cat.image}
+                                  alt={sub.name}
+                                  fill
+                                  sizes="36px"
+                                  className="object-cover group-hover/sub:scale-110 transition-transform duration-500 ease-out"
+                                />
+                              </div>
+                              <div className="flex-1">
+                                <span className="font-semibold block mb-0.5">{sub.name}</span>
+                                <span className="text-[10px] text-[#718573] group-hover/sub:text-[#347A14] transition-colors">
+                                  {sub.count} Products
+                               </span>
+                              </div>
                             </Link>
                           ))}
                         </div>
 
-                        <div className="pt-2 mt-2 border-t border-[#EEF4ED]">
+                        <div className="pt-3 mt-3 border-t border-[#EEF4ED]">
                           <Link
                             href={cat.slug}
-                            className="block text-center text-xs font-bold text-[#1853A8] hover:underline py-1"
+                            className="flex items-center justify-center gap-1.5 w-full rounded-xl bg-[#F8FAF7] hover:bg-[#EEF4ED] text-xs font-bold text-[#1A52A3] transition-colors py-2.5 group/btn"
                           >
-                            View All {cat.name} ({cat.totalCount}) →
+                            <span>Explore All {cat.name}</span>
+                            <span className="transition-transform group-hover/btn:translate-x-1">→</span>
                           </Link>
                         </div>
                       </div>

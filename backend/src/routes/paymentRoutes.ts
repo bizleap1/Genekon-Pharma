@@ -41,7 +41,6 @@ router.post(
 );
 
 // 4. Fetch payment details for a specific order
-router.get("/order/:orderId", paymentController.getPaymentByOrderId);
 
 // ================= ADMIN PAYMENT ROUTES =================
 // 5. Admin: Full or partial refund
@@ -59,5 +58,7 @@ router.get(
   validateRequest(adminPaymentQuerySchema, "query"),
   paymentController.listAdminPayments
 );
+
+router.get("/order/:orderId", paymentController.getPaymentByOrderId);
 
 export default router;

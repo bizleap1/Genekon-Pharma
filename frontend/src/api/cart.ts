@@ -41,7 +41,7 @@ export const cartApi = {
    * Fetch active server cart
    */
   async getCart(): Promise<ApiResponse<BackendCart>> {
-    return await apiClient.get<BackendCart>("/cart");
+    return await apiClient.get<BackendCart>("/cart", { cache: "no-store" });
   },
 
   /**

@@ -11,6 +11,7 @@ import {
 import { Payment } from "../db/schema/payments";
 import { Order } from "../db/schema/orders";
 import { razorpayService } from "./razorpayService";
+import { orderService } from "./orderService";
 import { emailNotificationService } from "./emailNotificationService";
 import {
   VerifyPaymentInput,
@@ -122,207 +123,203 @@ export const paymentService = {
    */
   async verifyPayment(userId: string, input: VerifyPaymentInput) {
     const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(input.orderId);
-    const [order] = await db
-      .select()
-      .from(orders)
-      .where(isUuid ? eq(orders.id, input.orderId) : eq(orders.orderNumber, input.orderId))
-      .limit(1);
+    
+    const result = await db.transaction(async (tx) => {
+      const [order] = await tx
+        .select()
+        .from(orders)
+        .where(isUuid ? eq(orders.id, input.orderId) : eq(orders.orderNumber, input.orderId))
+        .limit(1);
 
-    if (!order) {
-      throw new Error("Order not found");
-    }
+      if (!order) {
+        throw new Error("Order not found");
+      }
 
-    if (order.userId !== userId) {
-      throw new Error("You are not authorized to verify this payment");
-    }
+      if (order.userId !== userId) {
+        throw new Error("You are not authorized to verify this payment");
+      }
 
-    // Return idempotently if already verified
-    if (order.paymentStatus === "SUCCESS") {
-      const [existingPayment] = await db
+      // Return idempotently if already verified
+      if (order.paymentStatus === "SUCCESS") {
+        const [existingPayment] = await tx
+          .select()
+          .from(payments)
+          .where(
+            and(
+              eq(payments.orderId, order.id),
+              eq(payments.razorpayPaymentId, input.razorpayPaymentId)
+            )
+          )
+          .limit(1);
+        return {
+          order,
+          payment: existingPayment,
+          message: "Payment signature already verified successfully",
+        };
+      }
+
+      // Payment replay protection: check if razorpayPaymentId is already used on another order
+      const [duplicatePayment] = await tx
+        .select()
+        .from(payments)
+        .where(
+          and(
+            eq(payments.razorpayPaymentId, input.razorpayPaymentId),
+            eq(payments.status, "SUCCESS"),
+            ne(payments.orderId, order.id)
+          )
+        )
+        .limit(1);
+
+      if (duplicatePayment) {
+        throw new Error("Payment replay rejected: this transaction has already been credited to another order");
+      }
+
+      // 1. Cryptographic HMAC-SHA256 signature verification
+      const isValid = razorpayService.verifyPaymentSignature({
+        razorpayOrderId: input.razorpayOrderId,
+        razorpayPaymentId: input.razorpayPaymentId,
+        razorpaySignature: input.razorpaySignature,
+      });
+
+      // Find latest payment record strictly bound to this order and razorpayOrderId
+      const [paymentRecord] = await tx
         .select()
         .from(payments)
         .where(
           and(
             eq(payments.orderId, order.id),
-            eq(payments.razorpayPaymentId, input.razorpayPaymentId)
+            eq(payments.razorpayOrderId, input.razorpayOrderId)
           )
         )
+        .orderBy(desc(payments.createdAt))
         .limit(1);
-      return {
-        order,
-        payment: existingPayment,
-        message: "Payment signature already verified successfully",
-      };
-    }
 
-    // Payment replay protection: check if razorpayPaymentId is already used on another order
-    const [duplicatePayment] = await db
-      .select()
-      .from(payments)
-      .where(
-        and(
-          eq(payments.razorpayPaymentId, input.razorpayPaymentId),
-          eq(payments.status, "SUCCESS"),
-          ne(payments.orderId, order.id)
-        )
-      )
-      .limit(1);
+      if (!isValid) {
+        logger.warn(`Invalid Razorpay signature for order ${order.orderNumber} (Payment: ${input.razorpayPaymentId})`);
+        if (paymentRecord) {
+          await tx
+            .update(payments)
+            .set({
+              status: "FAILED",
+              failureReason: "Invalid cryptographic payment signature",
+              razorpayPaymentId: input.razorpayPaymentId,
+              razorpaySignature: input.razorpaySignature,
+              updatedAt: new Date(),
+            })
+            .where(eq(payments.id, paymentRecord.id));
+        }
 
-    if (duplicatePayment) {
-      throw new Error("Payment replay rejected: this transaction has already been credited to another order");
-    }
+        // Fetch user info to send payment failed alert
+        const [user] = await tx.select().from(users).where(eq(users.id, order.userId)).limit(1);
+        if (user && user.email) {
+          emailNotificationService.sendPaymentFailedEmail(order, {
+            name: user.name,
+            email: user.email,
+          }).catch((e) => logger.error("Failed to send payment failed email", e));
+        }
 
-    // 1. Cryptographic HMAC-SHA256 signature verification
-    const isValid = razorpayService.verifyPaymentSignature({
-      razorpayOrderId: input.razorpayOrderId,
-      razorpayPaymentId: input.razorpayPaymentId,
-      razorpaySignature: input.razorpaySignature,
-    });
+        throw new Error("Payment signature verification failed. Transaction flagged as invalid.");
+      }
 
-    // Find latest payment record strictly bound to this order and razorpayOrderId
-    const [paymentRecord] = await db
-      .select()
-      .from(payments)
-      .where(
-        and(
-          eq(payments.orderId, order.id),
-          eq(payments.razorpayOrderId, input.razorpayOrderId)
-        )
-      )
-      .orderBy(desc(payments.createdAt))
-      .limit(1);
-
-    if (!isValid) {
-      logger.warn(`Invalid Razorpay signature for order ${order.orderNumber} (Payment: ${input.razorpayPaymentId})`);
+      // 2. Mark Payment as SUCCESS
+      let updatedPayment: Payment;
       if (paymentRecord) {
-        await db
+        const [updated] = await tx
           .update(payments)
           .set({
-            status: "FAILED",
-            failureReason: "Invalid cryptographic payment signature",
+            status: "SUCCESS",
+            razorpayOrderId: input.razorpayOrderId,
             razorpayPaymentId: input.razorpayPaymentId,
             razorpaySignature: input.razorpaySignature,
+            failureReason: null,
             updatedAt: new Date(),
           })
-          .where(eq(payments.id, paymentRecord.id));
+          .where(eq(payments.id, paymentRecord.id))
+          .returning();
+        updatedPayment = updated;
+      } else {
+        const [created] = await tx
+          .insert(payments)
+          .values({
+            orderId: order.id,
+            razorpayOrderId: input.razorpayOrderId,
+            razorpayPaymentId: input.razorpayPaymentId,
+            razorpaySignature: input.razorpaySignature,
+            amount: order.totalAmount,
+            currency: "INR",
+            paymentMethod: "ONLINE",
+            status: "SUCCESS",
+          })
+          .returning();
+        updatedPayment = created;
       }
 
-      // Fetch user info to send payment failed alert
-      const [user] = await db.select().from(users).where(eq(users.id, order.userId)).limit(1);
-      if (user && user.email) {
-        emailNotificationService.sendPaymentFailedEmail(order, {
-          name: user.name,
-          email: user.email,
-        }).catch((e) => logger.error("Failed to send payment failed email", e));
+      // 3. Update Order Status
+      // If order was PLACED, advance to CONFIRMED.
+      // If PENDING_VERIFICATION (prescription medicines), keep status until pharmacist clinical review.
+      const shouldConfirm = order.orderStatus === "PLACED";
+      const nextOrderStatus = shouldConfirm ? "CONFIRMED" : order.orderStatus;
+
+      // Deduct stock if transitioning to CONFIRMED and not yet deducted
+      let stockDeducted = order.stockDeducted;
+      if (shouldConfirm && !order.stockDeducted) {
+        await orderService.deductInventoryStock(order.id, tx);
+        stockDeducted = true;
       }
 
-      throw new Error("Payment signature verification failed. Transaction flagged as invalid.");
-    }
-
-    // 2. Mark Payment as SUCCESS
-    let updatedPayment: Payment;
-    if (paymentRecord) {
-      const [updated] = await db
-        .update(payments)
+      const [updatedOrder] = await tx
+        .update(orders)
         .set({
-          status: "SUCCESS",
-          razorpayOrderId: input.razorpayOrderId,
-          razorpayPaymentId: input.razorpayPaymentId,
-          razorpaySignature: input.razorpaySignature,
-          failureReason: null,
+          paymentStatus: "SUCCESS",
+          orderStatus: nextOrderStatus,
+          stockDeducted,
           updatedAt: new Date(),
         })
-        .where(eq(payments.id, paymentRecord.id))
+        .where(eq(orders.id, order.id))
         .returning();
-      updatedPayment = updated;
-    } else {
-      const [created] = await db
-        .insert(payments)
-        .values({
-          orderId: order.id,
-          razorpayOrderId: input.razorpayOrderId,
-          razorpayPaymentId: input.razorpayPaymentId,
-          razorpaySignature: input.razorpaySignature,
-          amount: order.totalAmount,
-          currency: "INR",
-          paymentMethod: "ONLINE",
-          status: "SUCCESS",
-        })
-        .returning();
-      updatedPayment = created;
-    }
 
-    // 3. Update Order Status
-    // If order was PLACED, advance to CONFIRMED.
-    // If PENDING_VERIFICATION (prescription medicines), keep status until pharmacist clinical review.
-    const shouldConfirm = order.orderStatus === "PLACED";
-    const nextOrderStatus = shouldConfirm ? "CONFIRMED" : order.orderStatus;
+      // 4. Append History Timeline
+      await tx.insert(orderStatusHistory).values({
+        orderId: order.id,
+        status: nextOrderStatus,
+        notes: `Payment of ₹${order.totalAmount} verified via Razorpay (Payment ID: ${input.razorpayPaymentId}). ${
+          shouldConfirm ? "Order confirmed and inventory committed." : "Prescription verification pending."
+        }`,
+        updatedBy: userId,
+      });
 
-    // Deduct stock if transitioning to CONFIRMED and not yet deducted
-    let stockDeducted = order.stockDeducted;
-    if (shouldConfirm && !order.stockDeducted) {
-      const items = await db
-        .select()
-        .from(orderItems)
-        .where(eq(orderItems.orderId, order.id));
-
-      for (const item of items) {
-        await db
-          .update(products)
-          .set({
-            stockQuantity: sql`GREATEST(0, ${products.stockQuantity} - ${item.quantity})`,
-            updatedAt: new Date(),
-          })
-          .where(eq(products.id, item.productId));
-      }
-      stockDeducted = true;
-    }
-
-    const [updatedOrder] = await db
-      .update(orders)
-      .set({
-        paymentStatus: "SUCCESS",
-        orderStatus: nextOrderStatus,
-        stockDeducted,
-        updatedAt: new Date(),
-      })
-      .where(eq(orders.id, order.id))
-      .returning();
-
-    // 4. Append History Timeline
-    await db.insert(orderStatusHistory).values({
-      orderId: order.id,
-      status: nextOrderStatus,
-      notes: `Payment of ₹${order.totalAmount} verified via Razorpay (Payment ID: ${input.razorpayPaymentId}). ${
-        shouldConfirm ? "Order confirmed and inventory committed." : "Prescription verification pending."
-      }`,
-      updatedBy: userId,
+      return {
+        order: updatedOrder,
+        payment: updatedPayment,
+        message: "Payment signature verified successfully",
+      };
     });
 
     // 5. Send Transactional Confirmation & Receipt Emails via Resend
     try {
-      const [user] = await db.select().from(users).where(eq(users.id, order.userId)).limit(1);
-      const items = await db.select().from(orderItems).where(eq(orderItems.orderId, order.id));
+      const [user] = await db.select().from(users).where(eq(users.id, result.order.userId)).limit(1);
+      const items = await db.select().from(orderItems).where(eq(orderItems.orderId, result.order.id));
 
       if (user && user.email) {
         const customerInfo = { name: user.name, email: user.email };
         // Dispatch receipt and confirmation
         await Promise.allSettled([
-          emailNotificationService.sendPaymentReceiptEmail(updatedOrder, updatedPayment, customerInfo),
-          emailNotificationService.sendOrderPlacedConfirmation(updatedOrder, items, customerInfo),
+          emailNotificationService.sendPaymentReceiptEmail(result.order, result.payment, customerInfo),
+          emailNotificationService.sendOrderPlacedConfirmation(result.order, items, customerInfo),
         ]);
       }
     } catch (emailErr) {
       logger.error("Failed to send payment receipt email:", emailErr);
     }
 
-    logger.info(`Successfully verified payment ${input.razorpayPaymentId} for order ${order.orderNumber}`);
+    logger.info(`Successfully verified payment ${input.razorpayPaymentId} for order ${result.order.orderNumber}`);
 
     return {
       success: true,
       message: "Payment verified and order confirmed successfully",
-      payment: updatedPayment,
-      order: updatedOrder,
+      payment: result.payment,
+      order: result.order,
     };
   },
 

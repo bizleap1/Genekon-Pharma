@@ -23,6 +23,7 @@ import {
 } from "lucide-react";
 import { adminApi } from "@/api/admin";
 import { ConfirmationModal } from "@/components/ui/ConfirmationModal";
+import { ProductImageUploader } from "@/components/admin/ProductImageUploader";
 
 // Packaging Presets
 const IMAGE_PRESETS = [
@@ -730,54 +731,25 @@ function EditProductForm() {
 
           {/* Section 4: Packaging Imagery */}
           <div className="rounded-3xl border border-[#E0EBE0] bg-white p-6 shadow-2xs space-y-4">
-            <h3 className="font-serif text-base font-bold text-[#14304A] pb-3 border-b border-[#EDF3EC]">
-              4. Product Packaging Image
-            </h3>
-
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-              {IMAGE_PRESETS.map((preset) => {
-                const isChosen = formData.image === preset.url && !formData.customImageUrl;
-                return (
-                  <div
-                    key={preset.id}
-                    onClick={() =>
-                      setFormData({ ...formData, image: preset.url, customImageUrl: "" })
-                    }
-                    className={`group rounded-2xl border p-2.5 transition-all cursor-pointer flex flex-col items-center text-center ${
-                      isChosen
-                        ? "bg-[#F3F9F1] border-[#559620] ring-2 ring-[#559620]/20 shadow-xs"
-                        : "bg-white border-[#E0EBE0] hover:border-[#559620]"
-                    }`}
-                  >
-                    <div className="w-16 h-16 rounded-xl overflow-hidden bg-[#F2F5F2] relative mb-2 group-hover:scale-105 transition-transform">
-                      <Image
-                        src={preset.url}
-                        alt={preset.name}
-                        fill
-                        className="object-contain p-1"
-                      />
-                    </div>
-                    <span className="text-xs font-bold text-[#14304A] leading-tight">
-                      {preset.name}
-                    </span>
-                    <span className="text-[10px] text-[#718573] mt-0.5">{preset.badge}</span>
-                  </div>
-                );
-              })}
+            <div className="flex items-center justify-between pb-3 border-b border-[#EDF3EC]">
+              <h3 className="font-serif text-base font-bold text-[#14304A]">
+                4. Product Packaging Image
+              </h3>
+              <span className="text-[11px] text-[#718573]">Upload, paste URL, or pick a preset</span>
             </div>
 
-            <div className="pt-2 border-t border-[#EDF3EC]">
-              <label className="block text-xs font-bold text-[#14304A] mb-1">
-                Custom Image URL:
-              </label>
-              <input
-                type="url"
-                placeholder="https://example.com/images/product.jpg"
-                value={formData.customImageUrl}
-                onChange={(e) => setFormData({ ...formData, customImageUrl: e.target.value })}
-                className="w-full text-xs px-3.5 py-2.5 rounded-xl border border-[#CCDCCD] bg-[#FAFCFB] text-[#14304A] outline-none focus:border-[#559620] focus:bg-white"
-              />
-            </div>
+            <ProductImageUploader
+              value={formData.customImageUrl.trim() || formData.image}
+              onChange={(url) =>
+                setFormData({
+                  ...formData,
+                  image: url,
+                  customImageUrl: url.startsWith("/images/") ? "" : url,
+                })
+              }
+              productId={productId || undefined}
+              label=""
+            />
           </div>
 
         </div>

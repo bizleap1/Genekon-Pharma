@@ -75,7 +75,6 @@ router.put(
 );
 
 // Single Order Operations
-router.get("/:id", orderController.getOrderById);
 router.post(
   "/:id/cancel-request",
   validateRequest(requestCancellationSchema),
@@ -84,5 +83,6 @@ router.post(
 router.get("/:id/cancel-request", orderController.getCancellationRequest);
 router.post("/:id/cancel", orderController.cancelOrder);
 router.post("/:id/reorder", orderController.reorder);
+router.get("/:id", orderController.getOrderById);
 
 export default router;

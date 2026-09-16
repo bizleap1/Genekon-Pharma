@@ -205,7 +205,7 @@ export const authApi = {
    * Get authenticated user profile
    */
   async getCurrentUser(): Promise<ApiResponse<UserProfile>> {
-    const res = await apiClient.get<any>("/auth/me");
+    const res = await apiClient.get<any>("/auth/me", { cache: "no-store" });
     const userProfile = mapBackendUserToProfile(res.data.user || res.data);
     return {
       success: true,

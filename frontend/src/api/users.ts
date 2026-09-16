@@ -13,7 +13,7 @@ export const usersApi = {
    */
   async getUserProfile(): Promise<ApiResponse<UserProfile>> {
     try {
-      return await apiClient.get<UserProfile>("/users/profile");
+      return await apiClient.get<UserProfile>("/users/profile", { cache: "no-store" });
     } catch {
       return {
         success: false,
@@ -46,7 +46,7 @@ export const usersApi = {
    */
   async getUserAddresses(): Promise<ApiResponse<UserAddress[]>> {
     try {
-      return await apiClient.get<UserAddress[]>("/users/addresses");
+      return await apiClient.get<UserAddress[]>("/users/addresses", { cache: "no-store" });
     } catch (err: any) {
       if (err?.statusCode === 401 || err?.errorCode === "INVALID_TOKEN") {
         throw err;

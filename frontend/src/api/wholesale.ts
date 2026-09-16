@@ -75,7 +75,7 @@ export const wholesaleApi = {
    */
   async getMyStatus(): Promise<ApiResponse<{ hasApplied: boolean; profile: any; role: string }>> {
     try {
-      return await apiClient.get<{ hasApplied: boolean; profile: any; role: string }>("/wholesale/status");
+      return await apiClient.get<{ hasApplied: boolean; profile: any; role: string }>("/wholesale/status", { cache: "no-store" });
     } catch {
       return {
         success: true,
@@ -89,7 +89,7 @@ export const wholesaleApi = {
    */
   async getWholesaleProfile(): Promise<ApiResponse<{ businessName: string; creditLimit: number; tier: string; discountRate: number }>> {
     try {
-      return await apiClient.get<{ businessName: string; creditLimit: number; tier: string; discountRate: number }>("/wholesale/status");
+      return await apiClient.get<{ businessName: string; creditLimit: number; tier: string; discountRate: number }>("/wholesale/status", { cache: "no-store" });
     } catch {
       return {
         success: true,
@@ -108,7 +108,7 @@ export const wholesaleApi = {
    */
   async getWholesaleCatalog(params?: QueryParams): Promise<ApiResponse<any>> {
     try {
-      return await apiClient.get("/wholesale/catalog", { params });
+      return await apiClient.get("/wholesale/catalog", { params, cache: "no-store" });
     } catch {
       return {
         success: true,
@@ -143,7 +143,7 @@ export const wholesaleApi = {
    */
   async getWholesaleApplications(params?: QueryParams): Promise<ApiResponse<AdminWholesaleApp[]>> {
     try {
-      return await apiClient.get<AdminWholesaleApp[]>("/admin/wholesale/applications", { params });
+      return await apiClient.get<AdminWholesaleApp[]>("/admin/wholesale/applications", { params, cache: "no-store" });
     } catch {
       return {
         success: true,

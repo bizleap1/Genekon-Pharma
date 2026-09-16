@@ -32,13 +32,6 @@ router.put(
   productController.updateProduct
 );
 
-router.delete(
-  "/:id",
-  authenticateUser,
-  authorizeRole("ADMIN"),
-  productController.deleteProduct
-);
-
 // Admin Image Upload & Deletion Endpoints
 router.post(
   "/:id/images",
@@ -54,5 +47,13 @@ router.delete(
   authorizeRole("ADMIN"),
   productController.deleteImage
 );
+
+router.delete(
+  "/:id",
+  authenticateUser,
+  authorizeRole("ADMIN"),
+  productController.deleteProduct
+);
+
 
 export default router;

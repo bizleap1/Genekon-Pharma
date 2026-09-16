@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import {
@@ -31,18 +31,40 @@ const TRUST_FEATURES = [
   },
 ];
 
+const HERO_SLIDES = [
+  "/hero-section-bg.svg",
+  "/hero-slider-2.png",
+  "/hero-slider-3.png",
+  "/hero-slider-4.png",
+  "/hero-slider-5.png"
+];
+
 export const Hero: React.FC = () => {
+  const [currentSlide, setCurrentSlide] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % HERO_SLIDES.length);
+    }, 2500);
+    return () => clearInterval(interval);
+  }, []);
+
   return (
     <section className="relative w-full overflow-hidden border-b border-[#E2EDE0] min-h-[500px] sm:min-h-[560px] lg:min-h-[620px] flex items-start">
-      {/* Full-width Hero SVG Background anchored strictly to the BOTTOM */}
-      <div className="absolute inset-0 w-full h-full pointer-events-none">
-        <Image
-          src="/hero-section-bg.svg"
-          alt="Genekon Healthcare Hero Background"
-          fill
-          priority
-          className="object-cover object-bottom"
-        />
+      {/* Full-width Hero Background Slider anchored strictly to the BOTTOM */}
+      <div className="absolute inset-0 w-full h-full pointer-events-none bg-white">
+        {HERO_SLIDES.map((slide, idx) => (
+          <Image
+            key={slide}
+            src={slide}
+            alt={`Genekon Healthcare Hero Background ${idx + 1}`}
+            fill
+            priority={idx === 0}
+            className={`object-cover object-bottom transition-opacity duration-1000 ${
+              currentSlide === idx ? "opacity-100" : "opacity-0"
+            }`}
+          />
+        ))}
         {/* Subtle gradient for left-side text readability */}
         <div className="absolute inset-0 bg-gradient-to-r from-white/95 via-white/80 to-transparent lg:from-white/85 lg:via-white/30 lg:to-transparent" />
       </div>
@@ -64,10 +86,7 @@ export const Hero: React.FC = () => {
               <span className="text-[#559620]">for a Healthier You.</span>
             </h1>
 
-            {/* Subheading */}
-            <p className="mt-3.5 text-sm sm:text-base md:text-lg text-[#4A5D4C] leading-relaxed max-w-lg">
-              Wide range of genuine medicines, healthcare products and wellness essentials — delivered with care.
-            </p>
+
 
             {/* CTA Buttons */}
             <div className="mt-7 flex flex-wrap items-center gap-3.5">
@@ -87,14 +106,14 @@ export const Hero: React.FC = () => {
             </div>
 
             {/* Trust Badges */}
-            <div className="mt-8 pt-5 border-t border-[#DCEBD9]/80">
-              <div className="grid grid-cols-2 sm:flex sm:flex-wrap items-center gap-4 sm:gap-6">
+            <div className="mt-10 pt-6 border-t border-[#DCEBD9]/80 w-full">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-6 gap-x-4 sm:gap-x-8 items-center">
                 {TRUST_FEATURES.map((item, idx) => {
                   const Icon = item.icon;
                   return (
-                    <div key={idx} className="flex items-center gap-2 text-[#14304A]">
-                      <Icon className="w-5 h-5 text-[#14304A] shrink-0" strokeWidth={1.75} />
-                      <span className="text-xs sm:text-[13px] font-semibold tracking-tight whitespace-nowrap">
+                    <div key={idx} className="flex items-center gap-3 text-[#14304A]">
+                      <Icon className="w-6 h-6 text-[#559620] shrink-0" strokeWidth={2} />
+                      <span className="text-sm sm:text-[15px] font-semibold tracking-tight whitespace-nowrap">
                         {item.title}
                       </span>
                     </div>

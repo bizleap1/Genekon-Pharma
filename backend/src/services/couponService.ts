@@ -211,16 +211,21 @@ export const couponService = {
   },
 
   /**
-   * 7. Increment coupon usage count on successful order placement
+   * 7. Increment coupon usage count atomically on successful order placement
    */
-  async incrementCouponUsage(code: string) {
+  async incrementCouponUsage(code: string, tx: any = db) {
     const cleanCode = code.trim().toUpperCase();
-    await db
+    const result = await tx
       .update(coupons)
       .set({
         usageCount: sql`${coupons.usageCount} + 1`,
         updatedAt: new Date(),
       })
-      .where(eq(coupons.code, cleanCode));
+      .where(and(eq(coupons.code, cleanCode), sql`(${coupons.usageLimit} IS NULL OR ${coupons.usageCount} < ${coupons.usageLimit})`))
+      .returning({ id: coupons.id });
+
+    if (result.length === 0) {
+      throw new Error(`Coupon usage limit has been reached for code: ${cleanCode}`);
+    }
   },
 };

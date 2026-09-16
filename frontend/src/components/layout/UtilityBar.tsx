@@ -42,9 +42,14 @@ export const UtilityBar: React.FC = () => {
 
         {/* Right: Help, Track Order, Phone Number */}
         <div className="flex items-center gap-3 sm:gap-4 font-medium">
-          <Link href="/help" className="hover:text-[#2E6B17] transition-colors hidden sm:inline">
+          <a 
+            href="https://wa.me/917666168147?text=Hello%20Genekon%20Pharmacy,%20I%20need%20assistance"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hover:text-[#2E6B17] transition-colors hidden sm:inline"
+          >
             Need Help?
-          </Link>
+          </a>
           <span className="text-[#C8DCC0] hidden sm:inline">|</span>
           <ProtectedAction
             action={{

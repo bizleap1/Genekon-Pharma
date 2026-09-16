@@ -13,8 +13,8 @@ router.use(authenticateUser);
 router.get("/", wishlistController.getWishlist);
 router.post("/", validateRequest(addToWishlistSchema), wishlistController.addItem);
 router.post("/add", validateRequest(addToWishlistSchema), wishlistController.addItem);
+router.post("/sync", validateRequest(syncWishlistSchema), wishlistController.syncWishlist);
 router.delete("/:productId", wishlistController.removeItem);
 router.post("/:productId/move-to-cart", wishlistController.moveToCart);
-router.post("/sync", validateRequest(syncWishlistSchema), wishlistController.syncWishlist);
 
 export default router;

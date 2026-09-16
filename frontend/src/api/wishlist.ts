@@ -14,7 +14,7 @@ export const wishlistApi = {
    */
   async getWishlist(): Promise<ApiResponse<Product[]>> {
     try {
-      return await apiClient.get<Product[]>("/wishlist");
+      return await apiClient.get<Product[]>("/wishlist", { cache: "no-store" });
     } catch {
       return {
         success: true,
