@@ -241,7 +241,7 @@ export const CategoryNav: React.FC = () => {
           </div>
 
           {/* Category Links with Hover Dropdown */}
-          <ul className="flex flex-1 min-w-0 items-center gap-5 px-4 overflow-x-auto whitespace-nowrap [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+          <ul className="flex flex-1 min-w-0 items-center gap-5 px-4 overflow-x-auto md:overflow-visible whitespace-nowrap [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
             {primaryCategories.map((cat) => {
               const isActive = pathname === cat.slug;
 

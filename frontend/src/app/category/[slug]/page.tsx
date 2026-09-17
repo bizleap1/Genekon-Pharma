@@ -516,10 +516,10 @@ export default function CategoryPage({
           </div>
 
           {/* Grid Layout: Sidebar + Product Grid */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
             
             {/* Desktop Filters Sidebar (Span 3) */}
-            <aside className="hidden lg:block lg:col-span-3 rounded-2xl border border-[#DCE8D8] bg-white p-5 shadow-2xs sticky top-24">
+            <aside className="hidden lg:block lg:col-span-3 rounded-2xl border border-[#DCE8D8] bg-white p-5 shadow-2xs sticky top-24 self-start max-h-[calc(100vh-8rem)] overflow-y-auto [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-[#DCE8D8] hover:[&::-webkit-scrollbar-thumb]:bg-[#C5D6C7]">
               <div className="flex items-center justify-between pb-3.5 mb-4 border-b border-[#E3EDE1]">
                 <div className="flex items-center gap-2 text-[#14304A] font-bold text-sm">
                   <SlidersHorizontal className="w-4 h-4 text-[#559620]" />

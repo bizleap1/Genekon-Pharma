@@ -9,13 +9,13 @@ import { Container } from "@/components/ui/Container";
 
 export const Footer: React.FC = () => {
   return (
-    <footer className="border-t border-[#E5EFE3] bg-[#FAFCFA] text-[#14304A] pt-12 pb-8">
+    <footer className="border-t border-[#E5EFE3] bg-[#FAFCFA] text-[#14304A] pt-8 md:pt-12 pb-6 md:pb-8">
       <Container>
         {/* Main 5-Column Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-8 lg:gap-6 pb-12 border-b border-[#E5EFE3]">
+        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-12 gap-y-8 gap-x-4 lg:gap-6 pb-8 md:pb-12 border-b border-[#E5EFE3]">
           
           {/* Col 1: Brand & Socials (Span 3) */}
-          <div className="lg:col-span-3 space-y-4">
+          <div className="col-span-2 md:col-span-4 lg:col-span-3 space-y-3 md:space-y-4">
             <Link href="/" className="inline-block">
               <div className="relative h-12 w-[170px]">
                 <Image
@@ -93,7 +93,7 @@ export const Footer: React.FC = () => {
           </div>
 
           {/* Col 2: Shop (Span 2) */}
-          <div className="lg:col-span-2 space-y-3">
+          <div className="col-span-1 md:col-span-1 lg:col-span-2 space-y-2 md:space-y-3">
             <h4 className="text-xs font-bold uppercase tracking-wider text-[#14304A]">
               Shop
             </h4>
@@ -147,7 +147,7 @@ export const Footer: React.FC = () => {
           </div>
 
           {/* Col 3: Help (Span 2) */}
-          <div className="lg:col-span-2 space-y-3">
+          <div className="col-span-1 md:col-span-1 lg:col-span-2 space-y-2 md:space-y-3">
             <h4 className="text-xs font-bold uppercase tracking-wider text-[#14304A]">
               Help
             </h4>
@@ -186,7 +186,7 @@ export const Footer: React.FC = () => {
           </div>
 
           {/* Col 4: Company (Span 2) */}
-          <div className="lg:col-span-2 space-y-3">
+          <div className="col-span-1 md:col-span-1 lg:col-span-2 space-y-2 md:space-y-3">
             <h4 className="text-xs font-bold uppercase tracking-wider text-[#14304A]">
               Company
             </h4>
@@ -225,7 +225,7 @@ export const Footer: React.FC = () => {
           </div>
 
           {/* Col 5: Contact Details (Span 3) */}
-          <div className="lg:col-span-3 space-y-3 text-xs text-[#596E5C]">
+          <div className="col-span-1 md:col-span-1 lg:col-span-3 space-y-2 md:space-y-3 text-xs text-[#596E5C]">
             <h4 className="text-xs font-bold uppercase tracking-wider text-[#14304A]">
               Contact Us
             </h4>
@@ -267,32 +267,10 @@ export const Footer: React.FC = () => {
 
         </div>
 
-        {/* Middle Trust & Security Strip */}
-        <div className="py-6 border-b border-[#E5EFE3] grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs text-[#596E5C]">
-          <div className="flex items-center gap-2.5">
-            <div className="w-7 h-7 rounded-lg bg-[#EDF7E9] text-[#559620] flex items-center justify-center shrink-0">
-              <ShieldCheck className="w-4 h-4 stroke-[2.2]" />
-            </div>
-            <span>100% Genuine Certified Medicines</span>
-          </div>
 
-          <div className="flex items-center gap-2.5 sm:justify-center">
-            <div className="w-7 h-7 rounded-lg bg-[#EBF3FC] text-[#1853A8] flex items-center justify-center shrink-0">
-              <Lock className="w-4 h-4 stroke-[2.2]" />
-            </div>
-            <span>256-Bit SSL Encrypted Checkout</span>
-          </div>
-
-          <div className="flex items-center gap-2.5 sm:justify-end">
-            <div className="w-7 h-7 rounded-lg bg-[#EDF7E9] text-[#559620] flex items-center justify-center shrink-0">
-              <Truck className="w-4 h-4 stroke-[2.2]" />
-            </div>
-            <span>Temperature-Monitored Dispatch</span>
-          </div>
-        </div>
 
         {/* Bottom Bar: Copyright & Statutory Note */}
-        <div className="pt-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-[#6A7E6C] text-center sm:text-left">
+        <div className="pt-4 md:pt-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-[10px] md:text-xs text-[#6A7E6C] text-center sm:text-left">
           <p>© 2026 Genekon Pharmaceuticals Pvt. Ltd. All rights reserved.</p>
           <p>
             Powered by <span className="font-semibold text-[#1853A8]">Bizleap</span>
