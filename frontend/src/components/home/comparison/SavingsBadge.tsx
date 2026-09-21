@@ -15,7 +15,7 @@ export const SavingsBadge: React.FC<SavingsBadgeProps> = ({
 
   return (
     <span
-      className={`inline-flex items-center justify-center px-2 py-0.5 rounded-full text-[10px] sm:text-[11px] font-extrabold uppercase tracking-wide bg-[#559620] text-white shadow-xs animate-in fade-in duration-200 ${className}`}
+      className={`inline-flex items-center justify-center px-2 py-0.5 rounded-full text-[10px] sm:text-[11px] font-extrabold uppercase tracking-wide bg-gradient-to-r from-brand-primary to-brand-secondary text-white shadow-xs animate-in fade-in duration-200 ${className}`}
       aria-label={`${savingsPercent}% savings`}
     >
       {savingsPercent}% SAVINGS

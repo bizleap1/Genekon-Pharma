@@ -10,7 +10,7 @@ import {
   index,
 } from "drizzle-orm/pg-core";
 import { categories } from "./categories";
-import { productStatusEnum } from "./enums";
+import { productStatusEnum, productTypeEnum } from "./enums";
 
 export const products = pgTable(
   "products",
@@ -18,14 +18,17 @@ export const products = pgTable(
     id: uuid("id").defaultRandom().primaryKey(),
     name: varchar("name", { length: 255 }).notNull(),
     slug: varchar("slug", { length: 280 }).unique().notNull(),
+    productType: productTypeEnum("product_type").default("OTHER").notNull(),
     brand: varchar("brand", { length: 150 }).notNull(),
     manufacturer: varchar("manufacturer", { length: 200 }).notNull(),
     categoryId: uuid("category_id")
       .references(() => categories.id, { onDelete: "restrict" })
       .notNull(),
     description: text("description").notNull(),
-    composition: text("composition").notNull(), // Active molecules (e.g. Paracetamol 500mg)
+    composition: text("composition").notNull(), // Active molecules (e.g. Paracetamol)
+    strength: varchar("strength", { length: 100 }), // e.g. "500 mg", "650 mg"
     dosageForm: varchar("dosage_form", { length: 100 }).default("10 Tablets").notNull(),
+    route: varchar("route", { length: 100 }), // e.g. "Oral", "Topical"
     usage: text("usage").notNull(), // Directions for use
     precautions: text("precautions").notNull(), // Safety warnings
     storageInstructions: varchar("storage_instructions", { length: 255 })

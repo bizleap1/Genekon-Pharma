@@ -122,7 +122,7 @@ export default function SignUpPage() {
           <Link href="/" className="inline-block">
             <div className="relative h-10 w-36 sm:w-44">
               <Image
-                src="/images/genekon-brand-logo.png"
+                src="/images/genekon-logo-v2.png"
                 alt="Genekon Pharmaceuticals"
                 fill
                 sizes="(max-width: 640px) 144px, 176px"
@@ -175,7 +175,7 @@ export default function SignUpPage() {
                 </div>
 
                 <div className="rounded-2xl border border-[#E0EBE0] bg-white/85 p-3.5 shadow-2xs">
-                  <div className="w-9 h-9 rounded-full bg-[#EBF3FC] text-[#1853A8] flex items-center justify-center mb-2.5">
+                  <div className="w-9 h-9 rounded-full bg-[#EBF3FC] text-brand-primary flex items-center justify-center mb-2.5">
                     <Package className="w-4 h-4" />
                   </div>
                   <h2 className="text-xs font-bold text-[#14304A]">Fast Delivery</h2>
@@ -222,7 +222,7 @@ export default function SignUpPage() {
                 <div className="text-center mb-6">
                   <div className="relative h-9 w-36 mx-auto mb-2.5">
                     <Image
-                      src="/images/genekon-brand-logo.png"
+                      src="/images/genekon-logo-v2.png"
                       alt="Genekon Pharmaceuticals"
                       fill
                       sizes="144px"
@@ -433,7 +433,7 @@ export default function SignUpPage() {
                   <span>Already have a Genekon account? </span>
                   <Link
                     href="/login"
-                    className="text-[#1853A8] font-bold hover:underline"
+                    className="text-brand-primary font-bold hover:underline"
                   >
                     Sign In &rarr;
                   </Link>
@@ -466,3 +466,4 @@ export default function SignUpPage() {
     </div>
   );
 }
+

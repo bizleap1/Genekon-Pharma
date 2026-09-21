@@ -71,7 +71,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, className }) 
 
   return (
     <div
-      className={`group relative flex flex-col justify-between rounded-[20px] border border-[#E8F0EA] bg-white p-3.5 transition-all duration-300 hover:shadow-[0_8px_30px_rgba(24,83,168,0.06)] hover:border-[#C3DDF7] hover:-translate-y-1 ${
+      className={`group relative flex flex-col justify-between rounded-[20px] border border-[#E8F0EA] bg-brand-soft-blue/50 p-3.5 transition-all duration-300 hover:shadow-[0_8px_30px_rgba(24,83,168,0.06)] hover:border-[#C3DDF7] hover:-translate-y-1 ${
         className || ""
       }`}
     >
@@ -79,8 +79,19 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, className }) 
         {/* Top Bar: Discount Badge / Stock Badge & Wishlist Heart */}
         <div className="flex items-center justify-between mb-2 gap-1">
           <div className="flex items-center gap-1.5 flex-wrap">
+            {product.productType === "GENERIC" && (
+              <span className="inline-flex items-center gap-0.5 px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#EDF7E9] text-[#559620] border border-[#CDE5C8]">
+                GENERIC
+              </span>
+            )}
+            {product.productType === "BRANDED" && (
+              <span className="inline-flex items-center gap-0.5 px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#F0F5F9] text-[#14304A] border border-[#D5E4F0]">
+                BRANDED
+              </span>
+            )}
+            
             {product.discountPercent || product.discount ? (
-              <span className="inline-block px-2 py-0.5 rounded-full text-[10px] sm:text-[11px] font-bold bg-[#00994B] text-white">
+              <span className="inline-block px-2 py-0.5 rounded-full text-[10px] sm:text-[11px] font-bold bg-gradient-to-r from-brand-primary to-brand-secondary text-white shadow-sm">
                 {product.discount || product.discountPercent}% OFF
               </span>
             ) : null}
@@ -140,15 +151,23 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, className }) 
         </p>
 
         {/* Product Name */}
-        <Link href={`/product/${product.id}`} className="block group-hover:text-[#1853A8] transition-colors">
+        <Link href={`/product/${product.id}`} className="block group-hover:text-brand-primary transition-colors">
           <h3 className="text-xs sm:text-[13px] font-bold text-[#14304A] line-clamp-1 mt-0.5">
             {product.name}
           </h3>
         </Link>
 
+        {/* Composition & Strength (For Medicines) */}
+        {(product.composition || product.strength) && (
+          <p className="text-[10px] text-[#5D735F] mt-1 font-medium leading-snug line-clamp-2">
+            <span className="font-bold text-[#14304A]">{product.composition}</span>
+            {product.strength && <span className="ml-1 text-[#559620]">{product.strength}</span>}
+          </p>
+        )}
+
         {/* Subtitle / Packaging */}
         {(product.dosageForm || product.packSize) && (
-          <p className="text-[11px] text-[#7B8B7E] mt-0.5">
+          <p className="text-[11px] text-[#7B8B7E] mt-1">
             {product.dosageForm || product.packSize}
           </p>
         )}
@@ -196,7 +215,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, className }) 
             className={`w-full py-2 px-3 rounded-xl text-[13px] font-bold transition-all duration-300 cursor-pointer select-none flex items-center justify-center gap-2 group/btn ${
               added
                 ? "bg-[#00994B] text-white shadow-sm"
-                : "bg-[#347A14] text-white hover:bg-[#1853A8] shadow-sm hover:shadow-md"
+                : "bg-brand-primary text-white hover:bg-[#347A14] shadow-sm hover:shadow-md"
             }`}
           >
             {added ? (

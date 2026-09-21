@@ -21,9 +21,6 @@ import {
   X,
   HelpCircle,
 } from "lucide-react";
-import { UtilityBar } from "@/components/layout/UtilityBar";
-import { Header } from "@/components/layout/Header";
-import { CategoryNav } from "@/components/layout/CategoryNav";
 import { Footer } from "@/components/layout/Footer";
 import { Container } from "@/components/ui/Container";
 import { AccountSidebar } from "@/components/account/AccountSidebar";
@@ -90,9 +87,6 @@ export default function OrderDetailsPage({
   if (loading) {
     return (
       <div className="min-h-screen flex flex-col bg-[#FAFCFA]">
-        <UtilityBar />
-        <Header />
-        <CategoryNav />
         <main className="flex-1 flex items-center justify-center">
           <div className="animate-pulse text-[#559620] text-sm font-medium">Loading order details...</div>
         </main>
@@ -104,9 +98,6 @@ export default function OrderDetailsPage({
   if (!order) {
     return (
       <div className="min-h-screen flex flex-col bg-[#FAFCFA]">
-        <UtilityBar />
-        <Header />
-        <CategoryNav />
         <main className="flex-1 py-8 sm:py-12">
           <Container>
             <div className="flex flex-col lg:flex-row gap-8 items-start">
@@ -201,9 +192,6 @@ export default function OrderDetailsPage({
 
   return (
     <div className="min-h-screen flex flex-col bg-[#FAFCFA]">
-      <UtilityBar />
-      <Header />
-      <CategoryNav />
 
       <main className="flex-1 py-8 sm:py-12">
         <Container>
@@ -689,3 +677,4 @@ export default function OrderDetailsPage({
     </div>
   );
 }
+

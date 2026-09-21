@@ -14,9 +14,6 @@ import {
   ChevronRight,
   FileText
 } from "lucide-react";
-import { UtilityBar } from "@/components/layout/UtilityBar";
-import { Header } from "@/components/layout/Header";
-import { CategoryNav } from "@/components/layout/CategoryNav";
 import { Footer } from "@/components/layout/Footer";
 import { Container } from "@/components/ui/Container";
 import { AccountSidebar } from "@/components/account/AccountSidebar";
@@ -216,9 +213,6 @@ export default function MyOrdersPage() {
 
   return (
     <div className="min-h-screen flex flex-col bg-[#FAFCFA]">
-      <UtilityBar />
-      <Header />
-      <CategoryNav />
 
       <main className="flex-1 py-8 sm:py-12">
         <Container>
@@ -329,7 +323,7 @@ export default function MyOrdersPage() {
                                     ? "bg-red-50 text-red-700 border border-red-200"
                                     : isDelivered
                                     ? "bg-[#EDF7E9] text-[#447719]"
-                                    : "bg-[#EBF3FC] text-[#1853A8]"
+                                    : "bg-[#EBF3FC] text-brand-primary"
                                 }`}
                               >
                                 {isCancelled ? (
@@ -337,7 +331,7 @@ export default function MyOrdersPage() {
                                 ) : isDelivered ? (
                                   <CheckCircle2 className="w-3.5 h-3.5 text-[#559620]" />
                                 ) : (
-                                  <span className="w-1.5 h-1.5 rounded-full bg-[#1853A8] animate-pulse" />
+                                  <span className="w-1.5 h-1.5 rounded-full bg-brand-primary animate-pulse" />
                                 )}
                                 {order.deliveryStatus}
                               </span>
@@ -380,7 +374,7 @@ export default function MyOrdersPage() {
                                 <div>
                                   <Link
                                     href={`/product/${item.id}`}
-                                    className="font-bold text-[#14304A] hover:text-[#1853A8] transition-colors line-clamp-1"
+                                    className="font-bold text-[#14304A] hover:text-brand-primary transition-colors line-clamp-1"
                                   >
                                     {item.name}
                                   </Link>
@@ -403,7 +397,7 @@ export default function MyOrdersPage() {
                             {isDelivered ? (
                               <span>Delivered on {order.deliveredDate}</span>
                             ) : (
-                              <span className="font-semibold text-[#1853A8]">
+                              <span className="font-semibold text-brand-primary">
                                 Expected: {order.estimatedDelivery}
                               </span>
                             )}
@@ -507,3 +501,4 @@ export default function MyOrdersPage() {
     </div>
   );
 }
+

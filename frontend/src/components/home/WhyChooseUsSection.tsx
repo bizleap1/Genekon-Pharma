@@ -22,8 +22,8 @@ const TRUST_CARDS = [
     icon: CreditCard,
     title: "Secure Payments",
     desc: "Bank-grade 256-bit SSL encrypted checkout supporting UPI, cards, net banking, and reliable Cash on Delivery.",
-    badgeColor: "bg-[#EBF3FC] text-[#1853A8]",
-    borderColor: "hover:border-[#1853A8]/40",
+    badgeColor: "bg-[#EBF3FC] text-brand-primary",
+    borderColor: "hover:border-brand-primary/40",
   },
   {
     icon: Truck,
@@ -36,8 +36,8 @@ const TRUST_CARDS = [
     icon: BadgeCheck,
     title: "Verified Supply",
     desc: "Strict adherence to Indian Drugs & Cosmetics regulations, tamper-evident seals, and certified pharmacist reviews.",
-    badgeColor: "bg-[#EBF3FC] text-[#1853A8]",
-    borderColor: "hover:border-[#1853A8]/40",
+    badgeColor: "bg-[#EBF3FC] text-brand-primary",
+    borderColor: "hover:border-brand-primary/40",
   },
   {
     icon: RotateCcw,

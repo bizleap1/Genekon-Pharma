@@ -109,6 +109,16 @@ export const CategoryNav: React.FC = () => {
       ],
     },
     {
+      id: "wellness",
+      name: "Wellness",
+      slug: "/category/wellness",
+      image: "/images/categories/wellness-essentials.jpg",
+      totalCount: 5,
+      subcategories: [
+        { name: "Sexual Wellness & Protection", slug: "/category/sexual-wellness", count: 5 },
+      ],
+    },
+    {
       id: "medical-devices",
       name: "Medical Devices",
       slug: "/category/medical-devices",
@@ -122,16 +132,6 @@ export const CategoryNav: React.FC = () => {
         { name: "Masks, Syringes & Rapid Test Kits", slug: "/category/diagnostic-devices-health-monitors", count: 6 },
       ],
     },
-    {
-      id: "wellness",
-      name: "Wellness",
-      slug: "/category/wellness",
-      image: "/images/categories/wellness-essentials.jpg",
-      totalCount: 5,
-      subcategories: [
-        { name: "Sexual Wellness & Protection", slug: "/category/sexual-wellness", count: 5 },
-      ],
-    },
   ];
 
   return (
@@ -143,9 +143,9 @@ export const CategoryNav: React.FC = () => {
           <div className="relative group/allcat pr-4 border-r border-[#E7ECEF] shrink-0 py-3 flex items-center">
             <Link
               href="/categories"
-              className="flex items-center gap-2 font-bold text-[#14304A] group-hover/allcat:text-[#1A52A3] transition-colors"
+              className="flex items-center gap-2 font-bold text-[#14304A] group-hover/allcat:text-brand-primary transition-colors"
             >
-              <Menu className="w-5 h-5 sm:w-4 sm:h-4 text-[#14304A] group-hover/allcat:text-[#1A52A3] transition-colors" />
+              <Menu className="w-5 h-5 sm:w-4 sm:h-4 text-[#14304A] group-hover/allcat:text-brand-primary transition-colors" />
               <span className="hidden sm:inline">All Categories</span>
             </Link>
 
@@ -157,7 +157,7 @@ export const CategoryNav: React.FC = () => {
                     <div key={cat.id} className="relative group/subcat">
                       <Link
                         href={cat.slug}
-                        className="flex items-center gap-3 p-2 rounded-xl text-sm font-semibold text-[#14304A] hover:bg-[#F4F9F2] hover:text-[#1A52A3] transition-all"
+                        className="flex items-center gap-3 p-2 rounded-xl text-sm font-semibold text-[#14304A] hover:bg-[#F4F9F2] hover:text-brand-primary transition-all"
                       >
                         <div className="relative w-8 h-8 rounded-lg overflow-hidden shrink-0 bg-[#F0F4EF] border border-[#E2EAE0]">
                           <Image
@@ -190,7 +190,7 @@ export const CategoryNav: React.FC = () => {
                                 <Link
                                   key={idx}
                                   href={sub.slug}
-                                  className="flex items-center gap-2.5 p-2 rounded-xl text-xs text-[#14304A] hover:bg-[#F4F9F2] hover:text-[#1A52A3] transition-all group/subitem"
+                                  className="flex items-center gap-2.5 p-2 rounded-xl text-xs text-[#14304A] hover:bg-[#F4F9F2] hover:text-brand-primary transition-all group/subitem"
                                 >
                                   <div className="relative w-8 h-8 rounded-lg overflow-hidden shrink-0 bg-[#F0F4EF] border border-[#E2EAE0] shadow-sm">
                                     <Image
@@ -214,7 +214,7 @@ export const CategoryNav: React.FC = () => {
                             <div className="pt-3 mt-3 border-t border-[#EEF4ED]">
                               <Link
                                 href={cat.slug}
-                                className="flex items-center justify-center gap-1.5 w-full rounded-xl bg-[#F8FAF7] hover:bg-[#EEF4ED] text-xs font-bold text-[#1A52A3] transition-colors py-2.5 group/btn"
+                                className="flex items-center justify-center gap-1.5 w-full rounded-xl bg-[#F8FAF7] hover:bg-[#EEF4ED] text-xs font-bold text-brand-primary transition-colors py-2.5 group/btn"
                               >
                                 <span>Explore All {cat.name}</span>
                                 <span className="transition-transform group-hover/btn:translate-x-1">→</span>
@@ -230,7 +230,7 @@ export const CategoryNav: React.FC = () => {
                 <div className="pt-3 mt-3 border-t border-[#EEF4ED]">
                   <Link
                     href="/categories"
-                    className="flex items-center justify-center gap-1.5 w-full rounded-xl bg-[#F8FAF7] hover:bg-[#EEF4ED] text-xs font-bold text-[#1A52A3] transition-colors py-2.5 group/btn"
+                    className="flex items-center justify-center gap-1.5 w-full rounded-xl bg-[#F8FAF7] hover:bg-[#EEF4ED] text-xs font-bold text-brand-primary transition-colors py-2.5 group/btn"
                   >
                     <span>View All Categories</span>
                     <span className="transition-transform group-hover/btn:translate-x-1">→</span>
@@ -249,8 +249,8 @@ export const CategoryNav: React.FC = () => {
                 <li key={cat.id} className="relative group/navitem py-3">
                   <Link
                     href={cat.slug}
-                    className={`inline-flex items-center gap-1 transition-colors group-hover/navitem:text-[#1A52A3] ${
-                      isActive ? "text-[#1A52A3] font-bold" : "text-[#14304A]/90"
+                    className={`inline-flex items-center gap-1 transition-colors group-hover/navitem:text-brand-primary ${
+                      isActive ? "text-brand-primary font-bold" : "text-[#14304A]/90"
                     }`}
                   >
                     <span>{cat.name}</span>
@@ -273,7 +273,7 @@ export const CategoryNav: React.FC = () => {
                             <Link
                               key={idx}
                               href={sub.slug}
-                              className="flex items-center gap-3 p-2.5 rounded-xl text-xs text-[#14304A] hover:bg-[#F4F9F2] hover:text-[#1A52A3] transition-all group/sub"
+                              className="flex items-center gap-3 p-2.5 rounded-xl text-xs text-[#14304A] hover:bg-[#F4F9F2] hover:text-brand-primary transition-all group/sub"
                             >
                               <div className="relative w-9 h-9 rounded-lg overflow-hidden shrink-0 bg-[#F0F4EF] border border-[#E2EAE0] shadow-sm">
                                 <Image
@@ -297,7 +297,7 @@ export const CategoryNav: React.FC = () => {
                         <div className="pt-3 mt-3 border-t border-[#EEF4ED]">
                           <Link
                             href={cat.slug}
-                            className="flex items-center justify-center gap-1.5 w-full rounded-xl bg-[#F8FAF7] hover:bg-[#EEF4ED] text-xs font-bold text-[#1A52A3] transition-colors py-2.5 group/btn"
+                            className="flex items-center justify-center gap-1.5 w-full rounded-xl bg-[#F8FAF7] hover:bg-[#EEF4ED] text-xs font-bold text-brand-primary transition-colors py-2.5 group/btn"
                           >
                             <span>Explore All {cat.name}</span>
                             <span className="transition-transform group-hover/btn:translate-x-1">→</span>
@@ -315,7 +315,7 @@ export const CategoryNav: React.FC = () => {
           <div className="pl-3 sm:pl-4 shrink-0 border-l border-[#E7ECEF] ml-auto">
             <Link
               href="/offers"
-              className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#F1F7EC] text-[#2E6B17] font-bold hover:bg-[#E2F0DA] transition-colors"
+              className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-gradient-to-r from-brand-primary to-brand-secondary text-white font-bold hover:opacity-90 transition-opacity"
             >
               <Percent className="w-3.5 h-3.5" />
               <span className="hidden sm:inline">Offers</span>

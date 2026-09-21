@@ -323,7 +323,7 @@ export default function AdminProductsPage() {
             <div className="flex items-center gap-2 text-[11px] text-[#697D6B] mt-0.5">
               <span className="font-mono text-[10px] bg-[#F2F5F2] px-1 py-0.5 rounded border border-[#E0E8DF]">{p.sku}</span>
               {p.prescriptionRequired && (
-                <span className="text-[10px] font-extrabold px-1.5 py-0.2 rounded-sm bg-[#EBF3FC] text-[#1853A8]">
+                <span className="text-[10px] font-extrabold px-1.5 py-0.2 rounded-sm bg-[#EBF3FC] text-brand-primary">
                   Rx Required
                 </span>
               )}
@@ -337,7 +337,7 @@ export default function AdminProductsPage() {
       render: (p: AdminProduct) => (
         <button
           onClick={() => handleOpenCategory(p.category)}
-          className="text-xs font-semibold text-[#1853A8] hover:underline cursor-pointer text-left"
+          className="text-xs font-semibold text-brand-primary hover:underline cursor-pointer text-left"
         >
           {p.category}
         </button>
@@ -469,12 +469,12 @@ export default function AdminProductsPage() {
         <div className="rounded-2xl border border-[#E0EBE0] bg-white p-3.5 shadow-2xs">
           <div className="flex items-center justify-between">
             <span className="text-[11px] font-bold text-[#697D6B] uppercase tracking-wider">Categories</span>
-            <div className="w-7 h-7 rounded-lg bg-[#EBF3FC] text-[#1853A8] flex items-center justify-center">
+            <div className="w-7 h-7 rounded-lg bg-[#EBF3FC] text-brand-primary flex items-center justify-center">
               <Layers className="w-3.5 h-3.5" />
             </div>
           </div>
           <div className="text-xl sm:text-2xl font-bold text-[#14304A] mt-1.5">{categoryGroups.length}</div>
-          <span className="text-[11px] text-[#1853A8] font-semibold mt-0.5 block">Therapeutic Segments</span>
+          <span className="text-[11px] text-brand-primary font-semibold mt-0.5 block">Therapeutic Segments</span>
         </div>
 
         <div className="rounded-2xl border border-[#E0EBE0] bg-white p-3.5 shadow-2xs">
@@ -534,7 +534,7 @@ export default function AdminProductsPage() {
                 : "text-[#637766] hover:text-[#14304A]"
             }`}
           >
-            <List className="w-3.5 h-3.5 text-[#1853A8]" />
+            <List className="w-3.5 h-3.5 text-brand-primary" />
             <span>Accordion List</span>
           </button>
 
@@ -680,7 +680,7 @@ export default function AdminProductsPage() {
                 </div>
                 <div className="text-center px-3 border-r border-[#E0EBE0]">
                   <span className="text-[10px] uppercase tracking-wider font-bold text-[#718573]">Rx Required</span>
-                  <div className="text-base font-bold text-[#1853A8]">
+                  <div className="text-base font-bold text-brand-primary">
                     {currentCategoryInfo?.prescriptionCount || 0}
                   </div>
                 </div>
@@ -848,7 +848,7 @@ export default function AdminProductsPage() {
                         </span>
                       )}
                       {group.prescriptionCount > 0 && (
-                        <span className="font-semibold text-[#1853A8] bg-[#EBF3FC] px-1.5 py-0.5 rounded-md">
+                        <span className="font-semibold text-brand-primary bg-[#EBF3FC] px-1.5 py-0.5 rounded-md">
                           Rx
                         </span>
                       )}
@@ -1087,3 +1087,4 @@ export default function AdminProductsPage() {
     </div>
   );
 }
+

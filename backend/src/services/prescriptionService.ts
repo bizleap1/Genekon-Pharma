@@ -15,6 +15,8 @@ export const prescriptionService = {
       doctorName?: string;
       patientName?: string;
       orderId?: string;
+      addressId?: string;
+      customerNote?: string;
     }
   ): Promise<Prescription> {
     const uploadResult = await cloudinaryService.uploadPrescriptionDocument(
@@ -35,6 +37,8 @@ export const prescriptionService = {
         mimeType: file.mimetype,
         doctorName: metadata?.doctorName || null,
         patientName: metadata?.patientName || null,
+        addressId: metadata?.addressId || null,
+        customerNote: metadata?.customerNote || null,
         status: "PENDING",
       })
       .returning();
@@ -103,12 +107,30 @@ export const prescriptionService = {
   },
 
   /**
+   * Get all prescriptions (Admin only)
+   */
+  async getAllAdminPrescriptions(): Promise<any[]> {
+    const all = await db
+      .select()
+      .from(prescriptions)
+      .orderBy(desc(prescriptions.createdAt));
+
+    const dbUsers = await db.select().from(users);
+    const userMap = new Map(dbUsers.map((u) => [u.id, u]));
+
+    return all.map((p) => ({
+      ...p,
+      user: userMap.get(p.userId) || null,
+    }));
+  },
+
+  /**
    * Pharmacist review: Approve or Reject a prescription
    */
   async reviewPrescription(
     prescriptionId: string,
     adminUserId: string,
-    status: "APPROVED" | "REJECTED",
+    status: "APPROVED" | "REJECTED" | "NEEDS_REUPLOAD",
     rejectionReason?: string
   ): Promise<Prescription> {
     const [prescription] = await db
@@ -125,7 +147,7 @@ export const prescriptionService = {
       .update(prescriptions)
       .set({
         status,
-        rejectionReason: status === "REJECTED" ? rejectionReason || "Ineligible prescription" : null,
+        rejectionReason: status === "REJECTED" || status === "NEEDS_REUPLOAD" ? rejectionReason || "Action required" : null,
         reviewedBy: adminUserId,
         reviewedAt: new Date(),
         updatedAt: new Date(),
@@ -188,12 +210,12 @@ export const prescriptionService = {
 
           logger.info(`Order ${targetOrder.orderNumber} confirmed after prescription approval`);
         }
-      } else if (status === "REJECTED") {
+      } else if (status === "REJECTED" || status === "NEEDS_REUPLOAD") {
         // Log rejection into order history
         await db.insert(orderStatusHistory).values({
           orderId: targetOrder.id,
           status: targetOrder.orderStatus,
-          notes: `Prescription review rejected: ${rejectionReason || "Invalid or unreadable document"}. Customer action required.`,
+          notes: `Prescription review ${status}: ${rejectionReason || "Invalid or unreadable document"}. Customer action required.`,
           updatedBy: adminUserId,
         });
       }

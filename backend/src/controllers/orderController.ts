@@ -127,11 +127,13 @@ export const orderController = {
         return sendError(res, "No prescription document was provided for upload", 400);
       }
 
-      const { doctorName, patientName, orderId } = req.body;
+      const { doctorName, patientName, orderId, addressId, customerNote } = req.body;
       const prescription = await prescriptionService.uploadPrescription(req.user!.id, file, {
         doctorName,
         patientName,
         orderId,
+        addressId,
+        customerNote,
       });
 
       return sendSuccess(res, prescription, "Prescription uploaded successfully", 201);
@@ -193,6 +195,19 @@ export const orderController = {
       return sendSuccess(res, list, "Pending prescriptions retrieved successfully");
     } catch (error: any) {
       return sendError(res, error.message || "Failed to retrieve pending prescriptions", 400);
+    }
+  },
+
+  /**
+   * GET /api/v1/orders/admin/prescriptions
+   * Admin: List all prescriptions
+   */
+  async getAllAdminPrescriptions(_req: Request, res: Response) {
+    try {
+      const list = await prescriptionService.getAllAdminPrescriptions();
+      return sendSuccess(res, list, "All prescriptions retrieved successfully");
+    } catch (error: any) {
+      return sendError(res, error.message || "Failed to retrieve all prescriptions", 400);
     }
   },
 

@@ -173,8 +173,9 @@ export const orderService = {
       this.saveToLocalStorage(placed);
       return placed;
     } catch (err: any) {
-      console.error("Order placement failed:", err);
-      throw new Error(err?.response?.data?.message || err?.message || "Failed to place order on server. Please try again.");
+      const errorMessage = err instanceof Error ? err.message : err?.message || "Unknown error";
+      console.error("Order placement failed:", errorMessage);
+      throw new Error(err?.response?.data?.message || errorMessage || "Failed to place order on server. Please try again.");
     }
   },
 

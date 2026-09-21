@@ -56,7 +56,7 @@ export const ComparisonCard: React.FC<ComparisonCardProps> = ({
 
   // Render clinical category icon
   const renderIcon = () => {
-    const iconClass = "w-4 h-4 text-[#1853A8]";
+    const iconClass = "w-4 h-4 text-brand-primary";
     switch (comparison.iconName) {
       case "heart":
         return <Heart className={iconClass} />;
@@ -76,7 +76,7 @@ export const ComparisonCard: React.FC<ComparisonCardProps> = ({
 
   return (
     <div
-      className={`flex flex-col rounded-3xl bg-white border border-[#DCE7F0] shadow-[0_4px_16px_rgba(20,48,74,0.05)] overflow-hidden transition-all duration-200 hover:shadow-[0_8px_24px_rgba(20,48,74,0.08)] hover:border-[#1853A8]/30 ${className}`}
+      className={`flex flex-col rounded-3xl bg-brand-soft-blue/50 border border-[#DCE7F0] shadow-[0_4px_16px_rgba(20,48,74,0.05)] overflow-hidden transition-all duration-200 hover:shadow-[0_8px_24px_rgba(20,48,74,0.08)] hover:border-brand-primary/30 ${className}`}
     >
       {/* 1. Clinical Header */}
       <div className="bg-[#F0F6FB] px-4 py-3 border-b border-[#E2EEF7] flex items-center justify-between gap-2">
@@ -97,7 +97,7 @@ export const ComparisonCard: React.FC<ComparisonCardProps> = ({
         </div>
 
         {comparison.category && (
-          <span className="hidden sm:inline-block text-[10px] font-semibold text-[#1853A8] bg-white border border-[#D0E2F0] px-2 py-0.5 rounded-full shrink-0">
+          <span className="hidden sm:inline-block text-[10px] font-semibold text-brand-primary bg-white border border-[#D0E2F0] px-2 py-0.5 rounded-full shrink-0">
             {comparison.category}
           </span>
         )}
@@ -114,7 +114,7 @@ export const ComparisonCard: React.FC<ComparisonCardProps> = ({
         />
 
         {/* Center: Floating VS Badge positioned right between the product images */}
-        <div className="absolute left-1/2 top-[102px] -translate-x-1/2 -translate-y-1/2 pointer-events-none">
+        <div className="absolute left-1/2 top-[102px] -translate-x-1/2 -translate-y-1/2 pointer-events-none z-20">
           <VSBadge />
         </div>
 

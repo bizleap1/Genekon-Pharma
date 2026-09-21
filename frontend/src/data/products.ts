@@ -17839,7 +17839,7 @@ export const ALL_PRODUCTS: Product[] = [
   }
 ];
 
-export const REFERENCE_PRODUCTS: Product[] = ALL_PRODUCTS.slice(0, 8);
+export const REFERENCE_PRODUCTS: Product[] = ALL_PRODUCTS.slice(0, 16);
 export const SAMPLE_PRODUCTS: Product[] = ALL_PRODUCTS;
 export const POPULAR_PRODUCTS: Product[] = ALL_PRODUCTS.slice(0, 12);
 export const WELLNESS_PRODUCTS: Product[] = ALL_PRODUCTS.filter(

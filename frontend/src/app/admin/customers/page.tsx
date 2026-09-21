@@ -59,7 +59,7 @@ export default function AdminCustomersPage() {
             <span>+91 {c.phone}</span>
           </p>
           <p className="flex items-center gap-1">
-            <Mail className="w-3 h-3 text-[#1853A8]" />
+            <Mail className="w-3 h-3 text-brand-primary" />
             <span>{c.email}</span>
           </p>
         </div>
@@ -154,3 +154,4 @@ export default function AdminCustomersPage() {
     </div>
   );
 }
+

@@ -203,6 +203,10 @@ export const orderService = {
       }
 
       // 6. Link prescription if provided (with strict user ownership verification)
+      if (hasPrescriptionItem && !input.prescriptionId) {
+        throw new Error("An approved prescription is required for one or more items in your cart.");
+      }
+
       if (input.prescriptionId) {
         const [userRx] = await tx
           .select()
@@ -217,6 +221,10 @@ export const orderService = {
 
         if (!userRx) {
           throw new Error("Invalid prescription ID or prescription does not belong to your account");
+        }
+        
+        if (userRx.status !== "APPROVED") {
+          throw new Error("The selected prescription has not been approved yet. Please select an approved prescription.");
         }
 
         await tx

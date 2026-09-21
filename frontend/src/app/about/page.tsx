@@ -15,9 +15,6 @@ import {
   Sparkles,
   Calendar
 } from "lucide-react";
-import { UtilityBar } from "@/components/layout/UtilityBar";
-import { Header } from "@/components/layout/Header";
-import { CategoryNav } from "@/components/layout/CategoryNav";
 import { Footer } from "@/components/layout/Footer";
 import { Container } from "@/components/ui/Container";
 
@@ -77,9 +74,6 @@ const TIMELINE = [
 export default function AboutPage() {
   return (
     <div className="min-h-screen flex flex-col bg-[#FAFCFA]">
-      <UtilityBar />
-      <Header />
-      <CategoryNav />
 
       <main className="flex-1 py-8 sm:py-12">
         <Container>
@@ -159,7 +153,7 @@ export default function AboutPage() {
             </div>
 
             <div className="rounded-3xl border border-[#DCE8D8] bg-white p-8 shadow-2xs">
-              <div className="w-12 h-12 rounded-2xl bg-[#EBF3FC] text-[#1853A8] flex items-center justify-center mb-5">
+              <div className="w-12 h-12 rounded-2xl bg-[#EBF3FC] text-brand-primary flex items-center justify-center mb-5">
                 <Building2 className="w-6 h-6" />
               </div>
               <h3 className="font-serif text-2xl text-[#14304A] font-bold">
@@ -170,15 +164,15 @@ export default function AboutPage() {
               </p>
               <ul className="mt-4 space-y-2 text-xs text-[#14304A] font-semibold">
                 <li className="flex items-center gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-[#1853A8]" />
+                  <CheckCircle2 className="w-4 h-4 text-brand-primary" />
                   Reliable inventory for medical stores and clinics
                 </li>
                 <li className="flex items-center gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-[#1853A8]" />
+                  <CheckCircle2 className="w-4 h-4 text-brand-primary" />
                   Compliant cold-chain storage infrastructure
                 </li>
                 <li className="flex items-center gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-[#1853A8]" />
+                  <CheckCircle2 className="w-4 h-4 text-brand-primary" />
                   Zero compromise on ethical pharmaceutical dispensing
                 </li>
               </ul>
@@ -287,3 +281,4 @@ export default function AboutPage() {
     </div>
   );
 }
+

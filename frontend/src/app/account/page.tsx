@@ -17,9 +17,6 @@ import {
   ExternalLink,
   Plus
 } from "lucide-react";
-import { UtilityBar } from "@/components/layout/UtilityBar";
-import { Header } from "@/components/layout/Header";
-import { CategoryNav } from "@/components/layout/CategoryNav";
 import { Footer } from "@/components/layout/Footer";
 import { Container } from "@/components/ui/Container";
 import { AccountSidebar } from "@/components/account/AccountSidebar";
@@ -214,9 +211,6 @@ export default function AccountDashboardPage() {
 
   return (
     <div className="min-h-screen flex flex-col bg-[#FAFCFA]">
-      <UtilityBar />
-      <Header />
-      <CategoryNav />
 
       <main className="flex-1 py-8 sm:py-12">
         <Container>
@@ -297,7 +291,7 @@ export default function AccountDashboardPage() {
                   </div>
 
                   <div className="rounded-2xl bg-white border border-[#E3EDE1] p-3.5 text-center shadow-2xs">
-                    <p className="font-serif text-2xl font-bold text-[#1853A8]">
+                    <p className="font-serif text-2xl font-bold text-brand-primary">
                       {addresses.length}
                     </p>
                     <p className="text-[11px] text-[#697D6B] font-semibold mt-0.5">
@@ -632,3 +626,4 @@ export default function AccountDashboardPage() {
     </div>
   );
 }
+

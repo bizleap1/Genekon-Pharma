@@ -10,8 +10,8 @@ import { REFERENCE_PRODUCTS } from "@/data/products";
 
 export const ProductSection: React.FC = () => {
   const scrollRef = useRef<HTMLDivElement>(null);
-  const { data: liveProducts } = useProductsQuery({ limit: 6 });
-  const displayProducts = liveProducts && liveProducts.length > 0 ? liveProducts.slice(0, 6) : REFERENCE_PRODUCTS;
+  const { data: liveProducts } = useProductsQuery({ limit: 16 });
+  const displayProducts = liveProducts && liveProducts.length > 0 ? liveProducts.slice(0, 16) : REFERENCE_PRODUCTS;
 
   const scroll = (direction: "left" | "right") => {
     if (scrollRef.current) {
@@ -26,7 +26,7 @@ export const ProductSection: React.FC = () => {
         {/* Section Header */}
         <div className="flex flex-col items-center text-center mb-8 sm:mb-10 relative z-10">
           <div className="animate-in fade-in slide-in-from-bottom-2 duration-500">
-            <span className="text-[10px] sm:text-xs font-bold tracking-widest text-[#1853A8] uppercase mb-1.5 block">
+            <span className="text-[10px] sm:text-xs font-bold tracking-widest text-brand-primary uppercase mb-1.5 block">
               TRUSTED BRANDS. REAL CARE.
             </span>
             <h2 className="text-2xl sm:text-3xl font-extrabold text-[#14304A] tracking-tight">
@@ -41,10 +41,10 @@ export const ProductSection: React.FC = () => {
         {/* Products Carousel */}
         <div
           ref={scrollRef}
-          className="flex lg:grid lg:grid-cols-6 gap-4 sm:gap-5 overflow-x-auto snap-x snap-mandatory [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] pb-4 -mx-4 px-4 lg:mx-0 lg:px-0 relative z-10"
+          className="flex gap-4 sm:gap-5 overflow-x-auto snap-x snap-mandatory [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] pb-4 -mx-4 px-4 lg:mx-0 lg:px-0 relative z-10"
         >
           {displayProducts.map((product, index) => (
-            <div key={product.id} className="min-w-[220px] sm:min-w-[260px] lg:min-w-0 snap-start animate-in fade-in slide-in-from-bottom-4" style={{ animationDelay: `${index * 50}ms` }}>
+            <div key={product.id} className="min-w-[220px] sm:min-w-[260px] snap-start animate-in fade-in slide-in-from-bottom-4" style={{ animationDelay: `${index * 50}ms` }}>
               <ProductCard product={product} className="h-full" />
             </div>
           ))}
@@ -55,14 +55,14 @@ export const ProductSection: React.FC = () => {
           <button
             onClick={() => scroll("left")}
             aria-label="Previous products"
-            className="hidden lg:flex w-9 h-9 rounded-full border border-[#D5DFD7] hover:border-[#1853A8] hover:bg-[#F4F9F2] text-[#556958] hover:text-[#1853A8] items-center justify-center transition-all cursor-pointer"
+            className="hidden lg:flex w-9 h-9 rounded-full border border-[#D5DFD7] hover:border-brand-primary hover:bg-[#F4F9F2] text-[#556958] hover:text-brand-primary items-center justify-center transition-all cursor-pointer"
           >
             <ChevronLeft className="w-5 h-5" />
           </button>
           
           <Link
             href="/products"
-            className="inline-flex items-center justify-center gap-1.5 text-xs sm:text-sm font-bold text-white bg-[#347A14] hover:bg-[#1853A8] px-6 py-2.5 rounded-full transition-colors shadow-xs"
+            className="inline-flex items-center justify-center gap-1.5 text-xs sm:text-sm font-bold text-white bg-brand-primary hover:bg-brand-secondary px-6 py-2.5 rounded-full transition-colors shadow-xs"
           >
             <span>View All Products</span>
             <ArrowRight className="w-4 h-4" />
@@ -71,7 +71,7 @@ export const ProductSection: React.FC = () => {
           <button
             onClick={() => scroll("right")}
             aria-label="Next products"
-            className="hidden lg:flex w-9 h-9 rounded-full border border-[#D5DFD7] hover:border-[#1853A8] hover:bg-[#F4F9F2] text-[#556958] hover:text-[#1853A8] items-center justify-center transition-all cursor-pointer"
+            className="hidden lg:flex w-9 h-9 rounded-full border border-[#D5DFD7] hover:border-brand-primary hover:bg-[#F4F9F2] text-[#556958] hover:text-brand-primary items-center justify-center transition-all cursor-pointer"
           >
             <ChevronRight className="w-5 h-5" />
           </button>
@@ -83,7 +83,7 @@ export const ProductSection: React.FC = () => {
             
             <div className="flex items-center gap-4 lg:px-6 first:pl-0 last:pr-0">
               <div className="w-12 h-12 rounded-full bg-[#F0F7F4] flex items-center justify-center shrink-0">
-                <ShieldCheck className="w-[22px] h-[22px] text-[#1853A8]" />
+                <ShieldCheck className="w-[22px] h-[22px] text-brand-primary" />
               </div>
               <div>
                 <h4 className="text-[13px] sm:text-sm font-bold text-[#14304A]">100% Genuine Products</h4>
@@ -93,7 +93,7 @@ export const ProductSection: React.FC = () => {
 
             <div className="flex items-center gap-4 lg:px-6 first:pl-0 last:pr-0">
               <div className="w-12 h-12 rounded-full bg-[#F0F7F4] flex items-center justify-center shrink-0">
-                <Truck className="w-[22px] h-[22px] text-[#1853A8]" />
+                <Truck className="w-[22px] h-[22px] text-brand-primary" />
               </div>
               <div>
                 <h4 className="text-[13px] sm:text-sm font-bold text-[#14304A]">Fast & Reliable Delivery</h4>
@@ -103,7 +103,7 @@ export const ProductSection: React.FC = () => {
 
             <div className="flex items-center gap-4 lg:px-6 first:pl-0 last:pr-0">
               <div className="w-12 h-12 rounded-full bg-[#F0F7F4] flex items-center justify-center shrink-0">
-                <Tag className="w-[22px] h-[22px] text-[#1853A8]" />
+                <Tag className="w-[22px] h-[22px] text-brand-primary" />
               </div>
               <div>
                 <h4 className="text-[13px] sm:text-sm font-bold text-[#14304A]">Best Prices Everyday</h4>
@@ -113,7 +113,7 @@ export const ProductSection: React.FC = () => {
 
             <div className="flex items-center gap-4 lg:px-6 first:pl-0 last:pr-0">
               <div className="w-12 h-12 rounded-full bg-[#F0F7F4] flex items-center justify-center shrink-0">
-                <HeartHandshake className="w-[22px] h-[22px] text-[#1853A8]" />
+                <HeartHandshake className="w-[22px] h-[22px] text-brand-primary" />
               </div>
               <div>
                 <h4 className="text-[13px] sm:text-sm font-bold text-[#14304A]">Care You Can Trust</h4>

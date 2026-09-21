@@ -57,7 +57,7 @@ export const PriceBlock: React.FC<PriceBlockProps> = ({
 
       {showBadge && calculatedDiscount && calculatedDiscount > 0 && (
         <span
-          className={`font-bold bg-[#EDF7E9] text-[#559620] rounded-md ${cfg.badge}`}
+          className={`font-bold bg-gradient-to-r from-brand-primary to-brand-secondary text-white rounded-md ${cfg.badge}`}
         >
           {calculatedDiscount}% OFF
         </span>

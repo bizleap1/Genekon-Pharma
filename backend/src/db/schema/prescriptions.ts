@@ -1,5 +1,6 @@
 import { pgTable, uuid, varchar, text, integer, timestamp, index } from "drizzle-orm/pg-core";
 import { users } from "./users";
+import { userAddresses } from "./addresses";
 import { rxStatusEnum } from "./enums";
 
 export const prescriptions = pgTable(
@@ -18,6 +19,8 @@ export const prescriptions = pgTable(
     doctorName: varchar("doctor_name", { length: 150 }),
     patientName: varchar("patient_name", { length: 150 }),
     status: rxStatusEnum("status").default("PENDING").notNull(),
+    customerNote: text("customer_note"),
+    addressId: uuid("address_id").references(() => userAddresses.id, { onDelete: "set null" }),
     rejectionReason: text("rejection_reason"),
     reviewedBy: uuid("reviewed_by").references(() => users.id, { onDelete: "set null" }),
     reviewedAt: timestamp("reviewed_at", { withTimezone: true }),

@@ -3,18 +3,12 @@
 import React from "react";
 import Link from "next/link";
 import { ShieldCheck, Lock, CheckCircle2 } from "lucide-react";
-import { UtilityBar } from "@/components/layout/UtilityBar";
-import { Header } from "@/components/layout/Header";
-import { CategoryNav } from "@/components/layout/CategoryNav";
 import { Footer } from "@/components/layout/Footer";
 import { Container } from "@/components/ui/Container";
 
 export default function PrivacyPolicyPage() {
   return (
     <div className="min-h-screen flex flex-col bg-[#FAFCFA]">
-      <UtilityBar />
-      <Header />
-      <CategoryNav />
 
       <main className="flex-1 py-8 sm:py-12">
         <Container>
@@ -111,3 +105,4 @@ export default function PrivacyPolicyPage() {
     </div>
   );
 }
+

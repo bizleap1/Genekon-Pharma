@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import {
@@ -19,16 +19,17 @@ import {
   ArrowRight,
   AlertCircle,
   X,
-  FileCheck
+  FileCheck,
+  MapPin,
+  ArrowLeft
 } from "lucide-react";
 import { WhatsAppIcon } from "@/components/ui/WhatsAppIcon";
-import { UtilityBar } from "@/components/layout/UtilityBar";
-import { Header } from "@/components/layout/Header";
-import { CategoryNav } from "@/components/layout/CategoryNav";
 import { Footer } from "@/components/layout/Footer";
 import { Container } from "@/components/ui/Container";
 import { useAuthStore } from "@/stores/authStore";
 import { prescriptionService, UploadedPrescriptionRecord } from "@/services/prescriptionService";
+import { usersApi } from "@/api/users";
+import { UserAddress } from "@/types/user";
 
 const FAQS = [
   {
@@ -59,14 +60,36 @@ const FAQS = [
 
 export default function UploadPrescriptionPage() {
   const { user, isLoggedIn, openLoginModal } = useAuthStore();
+  
+  // Step 1: File selection
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [fileError, setFileError] = useState("");
-  const [isUploading, setIsUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
+  
+  // Step 2: Details & Address
+  const [currentStep, setCurrentStep] = useState<1 | 2>(1);
+  const [addresses, setAddresses] = useState<UserAddress[]>([]);
+  const [selectedAddressId, setSelectedAddressId] = useState<string>("");
   const [patientName, setPatientName] = useState(user?.name || "Prerna Sharma");
   const [notes, setNotes] = useState("");
+  const [isUploading, setIsUploading] = useState(false);
+  
+  // Final Result
   const [submittedRecord, setSubmittedRecord] = useState<UploadedPrescriptionRecord | null>(null);
   const [openFaq, setOpenFaq] = useState<number | null>(null);
+
+  useEffect(() => {
+    if (isLoggedIn && currentStep === 2) {
+      // Fetch user addresses when moving to step 2
+      usersApi.getUserAddresses().then(res => {
+        if (res.success && res.data) {
+          setAddresses(res.data);
+          const defaultAddr = res.data.find(a => a.isDefault) || res.data[0];
+          if (defaultAddr) setSelectedAddressId(defaultAddr.id);
+        }
+      });
+    }
+  }, [isLoggedIn, currentStep]);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFileError("");
@@ -79,19 +102,7 @@ export default function UploadPrescriptionPage() {
         return;
       }
       setSelectedFile(file);
-      // Simulate brief upload progress
-      setIsUploading(true);
-      setUploadProgress(15);
-      let p = 15;
-      const interval = setInterval(() => {
-        p += 30;
-        if (p >= 100) {
-          p = 100;
-          clearInterval(interval);
-          setIsUploading(false);
-        }
-        setUploadProgress(p);
-      }, 120);
+      setUploadProgress(100); // Simulate immediate visual progress for file selection
     }
   };
 
@@ -99,10 +110,15 @@ export default function UploadPrescriptionPage() {
     setSelectedFile(null);
     setUploadProgress(0);
     setFileError("");
+    setCurrentStep(1);
   };
 
-  const handleSubmitPrescription = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleContinueToStep2 = () => {
+    if (!selectedFile) {
+      setFileError("Please select a prescription file to upload.");
+      return;
+    }
+    
     if (!isLoggedIn) {
       openLoginModal(
         {
@@ -110,24 +126,37 @@ export default function UploadPrescriptionPage() {
           title: "Upload Prescription",
           redirectUrl: "/prescription/upload",
         },
-        "Login required to submit and verify prescriptions"
+        "Login required to proceed with prescription upload"
       );
       return;
     }
+    
+    setCurrentStep(2);
+  };
 
-    if (!selectedFile) {
-      setFileError("Please select a prescription file to upload.");
+  const handleSubmitPrescription = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!selectedFile || !isLoggedIn) return;
+    if (!selectedAddressId) {
+      setFileError("Please select a delivery address.");
       return;
     }
 
     setIsUploading(true);
-    const record = await prescriptionService.uploadPrescription(
-      selectedFile,
-      { patientName, notes },
-      (pct) => setUploadProgress(pct)
-    );
-    setIsUploading(false);
-    setSubmittedRecord(record);
+    setFileError("");
+    setUploadProgress(0);
+    try {
+      const record = await prescriptionService.uploadPrescription(
+        selectedFile,
+        { patientName, customerNote: notes, addressId: selectedAddressId },
+        (pct) => setUploadProgress(pct)
+      );
+      setSubmittedRecord(record);
+    } catch (err: any) {
+      setFileError(err.message || "Failed to upload prescription");
+    } finally {
+      setIsUploading(false);
+    }
   };
 
   const toggleFaq = (idx: number) => {
@@ -136,9 +165,6 @@ export default function UploadPrescriptionPage() {
 
   return (
     <div className="min-h-screen flex flex-col bg-[#FAFCFA]">
-      <UtilityBar />
-      <Header />
-      <CategoryNav />
 
       <main className="flex-1 py-6 sm:py-8">
         <Container>
@@ -234,7 +260,7 @@ export default function UploadPrescriptionPage() {
                   </div>
 
                   <div className="flex items-start gap-3">
-                    <div className="w-8 h-8 rounded-xl bg-[#EBF3FC] text-[#1853A8] flex items-center justify-center shrink-0">
+                    <div className="w-8 h-8 rounded-xl bg-[#EBF3FC] text-brand-primary flex items-center justify-center shrink-0">
                       <UserCheck className="w-4 h-4" />
                     </div>
                     <div>
@@ -338,43 +364,91 @@ export default function UploadPrescriptionPage() {
                     </div>
                   )}
 
-                  {/* Patient Name & Notes Inputs */}
-                  <form onSubmit={handleSubmitPrescription} className="mt-4 space-y-3 text-left">
-                    <div>
-                      <label className="block text-xs font-bold text-[#14304A] mb-1">
-                        Patient Full Name
-                      </label>
-                      <input
-                        type="text"
-                        value={patientName}
-                        onChange={(e) => setPatientName(e.target.value)}
-                        placeholder="Name on prescription"
-                        className="w-full text-xs px-3 py-2 rounded-xl border border-[#CCDCCD] bg-[#FAFCFB] outline-none focus:border-[#559620]"
-                      />
+                  {currentStep === 1 ? (
+                    <div className="mt-4">
+                      <button
+                        type="button"
+                        onClick={handleContinueToStep2}
+                        disabled={!selectedFile}
+                        className="w-full py-2.5 rounded-xl bg-[#559620] hover:bg-[#467E19] disabled:opacity-50 text-white text-xs font-bold transition-all shadow-xs flex items-center justify-center gap-1.5 cursor-pointer"
+                      >
+                        <span>Continue to Delivery Details</span>
+                        <ArrowRight className="w-3.5 h-3.5" />
+                      </button>
                     </div>
+                  ) : (
+                    <form onSubmit={handleSubmitPrescription} className="mt-4 space-y-4 text-left animate-in slide-in-from-right-4 duration-300">
+                      <div className="flex items-center gap-2 mb-2">
+                        <button type="button" onClick={() => setCurrentStep(1)} className="p-1 rounded hover:bg-slate-100 text-[#687C68]">
+                          <ArrowLeft className="w-4 h-4" />
+                        </button>
+                        <h4 className="text-sm font-bold text-[#14304A]">Step 2: Delivery Details</h4>
+                      </div>
+                      
+                      {/* Address Selection */}
+                      <div>
+                        <label className="block text-xs font-bold text-[#14304A] mb-2">
+                          Select Delivery Address
+                        </label>
+                        {addresses.length === 0 ? (
+                          <div className="text-xs text-[#E02D3C] p-2 bg-[#FEECEB] rounded">No addresses found. Please add an address in your profile first.</div>
+                        ) : (
+                          <div className="space-y-2 max-h-[140px] overflow-y-auto pr-1">
+                            {addresses.map((addr) => (
+                              <label key={addr.id} className={`flex items-start gap-2 p-2.5 rounded-xl border ${selectedAddressId === addr.id ? 'border-[#559620] bg-[#F4F9F2]' : 'border-[#CCDCCD] bg-white'} cursor-pointer`}>
+                                <input 
+                                  type="radio" 
+                                  name="address" 
+                                  checked={selectedAddressId === addr.id}
+                                  onChange={() => setSelectedAddressId(addr.id)}
+                                  className="mt-1"
+                                />
+                                <div>
+                                  <span className="text-xs font-bold text-[#14304A] block">{addr.fullName} <span className="uppercase text-[9px] bg-[#E8F0E5] px-1.5 py-0.5 rounded ml-1">{addr.type || 'HOME'}</span></span>
+                                  <span className="text-[11px] text-[#697C6B] block line-clamp-1">{addr.addressLine}, {addr.city} - {addr.pincode}</span>
+                                </div>
+                              </label>
+                            ))}
+                          </div>
+                        )}
+                      </div>
 
-                    <div>
-                      <label className="block text-xs font-bold text-[#14304A] mb-1">
-                        Special Instructions / Refill Notes (Optional)
-                      </label>
-                      <textarea
-                        rows={2}
-                        value={notes}
-                        onChange={(e) => setNotes(e.target.value)}
-                        placeholder="e.g. Please dispense 30 days quantity only"
-                        className="w-full text-xs px-3 py-2 rounded-xl border border-[#CCDCCD] bg-[#FAFCFB] outline-none focus:border-[#559620] resize-none"
-                      />
-                    </div>
+                      <div>
+                        <label className="block text-xs font-bold text-[#14304A] mb-1">
+                          Patient Full Name
+                        </label>
+                        <input
+                          type="text"
+                          value={patientName}
+                          onChange={(e) => setPatientName(e.target.value)}
+                          placeholder="Name on prescription"
+                          className="w-full text-xs px-3 py-2 rounded-xl border border-[#CCDCCD] bg-[#FAFCFB] outline-none focus:border-[#559620]"
+                        />
+                      </div>
 
-                    <button
-                      type="submit"
-                      disabled={!selectedFile || isUploading}
-                      className="w-full py-2.5 rounded-xl bg-[#559620] hover:bg-[#467E19] disabled:opacity-50 text-white text-xs font-bold transition-all shadow-xs flex items-center justify-center gap-1.5 cursor-pointer"
-                    >
-                      <span>Submit to Pharmacist</span>
-                      <ArrowRight className="w-3.5 h-3.5" />
-                    </button>
-                  </form>
+                      <div>
+                        <label className="block text-xs font-bold text-[#14304A] mb-1">
+                          Special Instructions / Refill Notes (Optional)
+                        </label>
+                        <textarea
+                          rows={2}
+                          value={notes}
+                          onChange={(e) => setNotes(e.target.value)}
+                          placeholder="e.g. Please dispense 30 days quantity only"
+                          className="w-full text-xs px-3 py-2 rounded-xl border border-[#CCDCCD] bg-[#FAFCFB] outline-none focus:border-[#559620] resize-none"
+                        />
+                      </div>
+
+                      <button
+                        type="submit"
+                        disabled={!selectedAddressId || isUploading}
+                        className="w-full py-2.5 rounded-xl bg-[#559620] hover:bg-[#467E19] disabled:opacity-50 text-white text-xs font-bold transition-all shadow-xs flex items-center justify-center gap-1.5 cursor-pointer"
+                      >
+                        {isUploading ? <span>Uploading...</span> : <span>Submit to Pharmacist</span>}
+                        {!isUploading && <ArrowRight className="w-3.5 h-3.5" />}
+                      </button>
+                    </form>
+                  )}
                 </div>
 
                 {/* WhatsApp Alternative */}
@@ -425,7 +499,7 @@ export default function UploadPrescriptionPage() {
                   {/* Direct Contact List */}
                   <div className="space-y-3 pt-3 border-t border-[#D5EAD0] text-xs text-[#14304A]">
                     <div className="flex items-center gap-2.5">
-                      <Phone className="w-4 h-4 text-[#1853A8]" />
+                      <Phone className="w-4 h-4 text-brand-primary" />
                       <div>
                         <span className="text-[#697C6B] block text-[10px]">Call Central Desk</span>
                         <a href="tel:7666168147" className="font-bold hover:underline">
@@ -435,7 +509,7 @@ export default function UploadPrescriptionPage() {
                     </div>
 
                     <div className="flex items-center gap-2.5">
-                      <Mail className="w-4 h-4 text-[#1853A8]" />
+                      <Mail className="w-4 h-4 text-brand-primary" />
                       <div>
                         <span className="text-[#697C6B] block text-[10px]">Email Support</span>
                         <a href="mailto:support@genekonpharma.com" className="font-bold hover:underline">
@@ -505,3 +579,4 @@ export default function UploadPrescriptionPage() {
     </div>
   );
 }
+

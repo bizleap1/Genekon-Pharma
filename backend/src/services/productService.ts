@@ -721,4 +721,147 @@ export const productService = {
 
     return { id: imageId, message: "Image removed successfully" };
   },
+
+  /**
+   * Public: Generic-First Medicine Search
+   */
+  async medicineSearch(query: string, strengthFilter?: string) {
+    if (!query || !query.trim()) {
+      return {
+        query: "",
+        resolvedMedicine: null,
+        genericProducts: [],
+        exactMatches: [],
+        brandedAlternatives: [],
+        otherResults: []
+      };
+    }
+
+    const q = `%${query.trim()}%`;
+    const initialMatches = await db
+      .select()
+      .from(products)
+      .where(
+        and(
+          eq(products.status, "ACTIVE"),
+          or(
+            ilike(products.name, q),
+            ilike(products.composition, q),
+            ilike(products.brand, q)
+          )
+        )
+      );
+
+    if (initialMatches.length === 0) {
+      return {
+        query,
+        resolvedMedicine: null,
+        genericProducts: [],
+        exactMatches: [],
+        brandedAlternatives: [],
+        otherResults: []
+      };
+    }
+
+    // Determine the resolved composition (Preference: Exact name match -> Exact brand match -> Generic match)
+    const exactNameMatch = initialMatches.find(p => p.name.toLowerCase() === query.trim().toLowerCase());
+    const exactBrandMatch = initialMatches.find(p => p.brand.toLowerCase() === query.trim().toLowerCase());
+    const targetBase = exactNameMatch || exactBrandMatch || initialMatches[0];
+
+    const targetComposition = targetBase.composition;
+    
+    // Fetch all products matching this composition
+    const compositionMatches = await db
+      .select()
+      .from(products)
+      .where(
+        and(
+          eq(products.status, "ACTIVE"),
+          eq(products.composition, targetComposition)
+        )
+      );
+
+    const availableStrengths = Array.from(new Set(
+      compositionMatches.map(p => p.strength).filter(Boolean)
+    )) as string[];
+
+    // If strength filter is provided, use it. Otherwise, if there are multiple strengths, use the one from the base match if it has one.
+    let targetStrength = strengthFilter || null;
+    if (!targetStrength && targetBase.strength) {
+       targetStrength = targetBase.strength;
+    } else if (!targetStrength && availableStrengths.length > 0) {
+       targetStrength = availableStrengths[0];
+    }
+
+    // Filter by strength
+    const filteredByStrength = compositionMatches.filter(p => 
+      !targetStrength || p.strength === targetStrength
+    );
+
+    // Grouping
+    const genericProductsRaw: Product[] = [];
+    const exactMatchesRaw: Product[] = [];
+    const brandedAlternativesRaw: Product[] = [];
+
+    const normalizedQuery = query.trim().toLowerCase();
+
+    for (const p of filteredByStrength) {
+      const nameMatches = p.name.toLowerCase().includes(normalizedQuery);
+      const brandMatches = p.brand.toLowerCase().includes(normalizedQuery);
+
+      if (nameMatches || brandMatches) {
+         exactMatchesRaw.push(p);
+      } else if (p.productType === "GENERIC") {
+         genericProductsRaw.push(p);
+      } else {
+         brandedAlternativesRaw.push(p);
+      }
+    }
+
+    // If targetBase was a generic product, make sure it's in exactMatches if it matches name, or generic otherwise
+    
+    // Fetch Images for matched
+    const allIds = [...genericProductsRaw, ...exactMatchesRaw, ...brandedAlternativesRaw].map(p => p.id);
+    let images: ProductImage[] = [];
+    
+    if (allIds.length > 0) {
+       // Since Drizzle inArray requires importing it, we'll manually fetch them or use a loop for small sets, or better, we can import inArray if available at the top. Let's just fetch all images for these IDs using a simple query since it's a small set.
+       const idsStr = allIds.map(id => `'${id}'`).join(',');
+       images = await db.execute(sql`SELECT * FROM "product_images" WHERE "product_id" IN (${sql.raw(idsStr)})`).then(res => res as unknown as ProductImage[]);
+    }
+
+    const attachImages = (prods: Product[]) => prods.map(p => {
+       const prodImages = images.filter(img => img.productId === p.id);
+       return this.formatProduct(p, prodImages);
+    });
+
+    const genericProducts = attachImages(genericProductsRaw);
+    const exactMatches = attachImages(exactMatchesRaw);
+    const brandedAlternatives = attachImages(brandedAlternativesRaw);
+
+    // Other results (stuff matching query but NOT matching the resolved composition)
+    const otherResultsRaw = initialMatches.filter(p => p.composition !== targetComposition);
+    let otherImages: ProductImage[] = [];
+    if (otherResultsRaw.length > 0) {
+       const otherIdsStr = otherResultsRaw.map(id => `'${id}'`).join(',');
+       otherImages = await db.execute(sql`SELECT * FROM "product_images" WHERE "product_id" IN (${sql.raw(otherIdsStr)})`).then(res => res as unknown as ProductImage[]);
+    }
+    
+    const otherResults = otherResultsRaw.map(p => {
+       const prodImages = otherImages.filter(img => img.productId === p.id);
+       return this.formatProduct(p, prodImages);
+    });
+
+    return {
+      query,
+      resolvedMedicine: {
+        composition: targetComposition,
+        availableStrengths
+      },
+      genericProducts,
+      exactMatches,
+      brandedAlternatives,
+      otherResults
+    };
+  }
 };

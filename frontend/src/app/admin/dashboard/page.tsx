@@ -108,7 +108,7 @@ export default function AdminDashboardPage() {
           period="actual orders"
           icon={ShoppingBag}
           iconBg="bg-[#EBF3FC]"
-          iconColor="text-[#1853A8]"
+          iconColor="text-brand-primary"
         />
 
         <DashboardCard
@@ -256,7 +256,7 @@ export default function AdminDashboardPage() {
                       <div className="flex items-center gap-1.5">
                         <Link
                           href={`/admin/orders/${order.id}`}
-                          className="font-mono font-bold text-[#14304A] hover:text-[#1853A8]"
+                          className="font-mono font-bold text-[#14304A] hover:text-brand-primary"
                         >
                           {order.id}
                         </Link>
@@ -368,7 +368,7 @@ export default function AdminDashboardPage() {
           <div>
             <div className="flex items-center justify-between pb-3 mb-3 border-b border-[#EDF3EC]">
               <div className="flex items-center gap-2">
-                <Building2 className="w-4 h-4 text-[#1853A8]" />
+                <Building2 className="w-4 h-4 text-brand-primary" />
                 <h3 className="font-serif text-base font-bold text-[#14304A]">
                   Wholesale Partners
                 </h3>
@@ -428,3 +428,4 @@ export default function AdminDashboardPage() {
     </div>
   );
 }
+

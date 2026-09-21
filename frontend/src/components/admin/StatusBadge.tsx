@@ -17,7 +17,7 @@ export const StatusBadge: React.FC<StatusBadgeProps> = ({ status, size = "md" })
       case "processing":
       case "confirmed":
       case "retail":
-        return "bg-[#EBF3FC] text-[#1853A8] border-[#CFE2F9]";
+        return "bg-[#EBF3FC] text-brand-primary border-[#CFE2F9]";
       case "pending":
       case "pending review":
       case "pending verification":

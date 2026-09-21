@@ -4,9 +4,6 @@ import React from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { ArrowRight, ShieldCheck } from "lucide-react";
-import { UtilityBar } from "@/components/layout/UtilityBar";
-import { Header } from "@/components/layout/Header";
-import { CategoryNav } from "@/components/layout/CategoryNav";
 import { Footer } from "@/components/layout/Footer";
 import { Container } from "@/components/ui/Container";
 
@@ -27,9 +24,6 @@ function getCategoryImage(slug: string) {
 export default function AllCategoriesPage() {
   return (
     <div className="min-h-screen flex flex-col bg-[#FAFCFA]">
-      <UtilityBar />
-      <Header />
-      <CategoryNav />
 
       <main className="flex-1 py-8 sm:py-12">
         <Container>
@@ -75,7 +69,7 @@ export default function AllCategoriesPage() {
                     />
                   </div>
 
-                  <h3 className="font-serif text-lg text-[#14304A] font-bold group-hover:text-[#1853A8] transition-colors text-center">
+                  <h3 className="font-serif text-lg text-[#14304A] font-bold group-hover:text-brand-primary transition-colors text-center">
                     {cat.name}
                   </h3>
                   <p className="text-[11px] text-[#559620] font-bold text-center mt-0.5">
@@ -100,3 +94,4 @@ export default function AllCategoriesPage() {
     </div>
   );
 }
+

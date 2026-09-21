@@ -67,7 +67,7 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({
               <Link href="/admin/dashboard" onClick={onClose} className="block">
                 <div className="relative h-10 w-36 mb-1">
                   <Image
-                    src="/images/genekon-brand-logo.png"
+                    src="/images/genekon-logo-v2.png"
                     alt="Genekon Admin"
                     fill
                     sizes="144px"

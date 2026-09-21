@@ -670,6 +670,29 @@ const SERVER_AUTH_SNAPSHOT: AuthState = {
 
 const getAuthServerSnapshot = () => SERVER_AUTH_SNAPSHOT;
 
+const authActions = {
+  getRoleRedirectPath: authStore.getRoleRedirectPath.bind(authStore),
+  openLoginModal: authStore.openLoginModal.bind(authStore),
+  closeLoginModal: authStore.closeLoginModal.bind(authStore),
+  saveIntendedAction: authStore.saveIntendedAction.bind(authStore),
+  getIntendedAction: authStore.getIntendedAction.bind(authStore),
+  clearIntendedAction: authStore.clearIntendedAction.bind(authStore),
+  getToken: authStore.getToken.bind(authStore),
+  setToken: authStore.setToken.bind(authStore),
+  getRefreshToken: authStore.getRefreshToken.bind(authStore),
+  setRefreshToken: authStore.setRefreshToken.bind(authStore),
+  updateTokens: authStore.updateTokens.bind(authStore),
+  handleSessionExpired: authStore.handleSessionExpired.bind(authStore),
+  requestOtp: authStore.requestOtp.bind(authStore),
+  verifyOtp: authStore.verifyOtp.bind(authStore),
+  loginCustomer: authStore.loginCustomer.bind(authStore),
+  loginWholesalePartner: authStore.loginWholesalePartner.bind(authStore),
+  loginAsAdmin: authStore.loginAsAdmin.bind(authStore),
+  loginWithPassword: authStore.loginWithPassword.bind(authStore),
+  logout: authStore.logout.bind(authStore),
+  checkSessionExpiry: authStore.checkSessionExpiry.bind(authStore),
+};
+
 export function useAuthStore() {
   const snapshot = useSyncExternalStore(
     authStore.subscribe,
@@ -679,26 +702,7 @@ export function useAuthStore() {
 
   return {
     ...snapshot,
-    getRoleRedirectPath: authStore.getRoleRedirectPath.bind(authStore),
-    openLoginModal: authStore.openLoginModal.bind(authStore),
-    closeLoginModal: authStore.closeLoginModal.bind(authStore),
-    saveIntendedAction: authStore.saveIntendedAction.bind(authStore),
-    getIntendedAction: authStore.getIntendedAction.bind(authStore),
-    clearIntendedAction: authStore.clearIntendedAction.bind(authStore),
-    getToken: authStore.getToken.bind(authStore),
-    setToken: authStore.setToken.bind(authStore),
-    getRefreshToken: authStore.getRefreshToken.bind(authStore),
-    setRefreshToken: authStore.setRefreshToken.bind(authStore),
-    updateTokens: authStore.updateTokens.bind(authStore),
-    handleSessionExpired: authStore.handleSessionExpired.bind(authStore),
-    requestOtp: authStore.requestOtp.bind(authStore),
-    verifyOtp: authStore.verifyOtp.bind(authStore),
-    loginCustomer: authStore.loginCustomer.bind(authStore),
-    loginWholesalePartner: authStore.loginWholesalePartner.bind(authStore),
-    loginAsAdmin: authStore.loginAsAdmin.bind(authStore),
-    loginWithPassword: authStore.loginWithPassword.bind(authStore),
-    logout: authStore.logout.bind(authStore),
-    checkSessionExpiry: authStore.checkSessionExpiry.bind(authStore),
+    ...authActions,
   };
 }
 

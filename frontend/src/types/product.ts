@@ -58,6 +58,23 @@ export interface Product {
   tag?: string;
   variants: ProductVariant[];
   "stock status"?: StockStatus;
+
+  // New Generic-First Search fields
+  productType?: "GENERIC" | "BRANDED" | "OTHER";
+  strength?: string;
+  route?: string;
+}
+
+export interface MedicineSearchPayload {
+  query: string;
+  resolvedMedicine: {
+    composition: string;
+    availableStrengths: string[];
+  } | null;
+  genericProducts: Product[];
+  exactMatches: Product[];
+  brandedAlternatives: Product[];
+  otherResults: Product[];
 }
 
 export interface Category {

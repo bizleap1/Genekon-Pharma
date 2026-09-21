@@ -5,6 +5,10 @@ import path from "path";
 (process.env as Record<string, string>).NODE_ENV = "production";
 
 const nextConfig: NextConfig = {
+  devIndicators: {
+    appIsrStatus: false,
+    buildActivity: false,
+  },
   turbopack: {
     root: path.resolve(__dirname),
   },

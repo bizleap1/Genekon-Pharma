@@ -22,9 +22,6 @@ import {
   ShoppingBag
 } from "lucide-react";
 import { WhatsAppIcon } from "@/components/ui/WhatsAppIcon";
-import { UtilityBar } from "@/components/layout/UtilityBar";
-import { Header } from "@/components/layout/Header";
-import { CategoryNav } from "@/components/layout/CategoryNav";
 import { Footer } from "@/components/layout/Footer";
 import { Container } from "@/components/ui/Container";
 import { useCart } from "@/context/CartContext";
@@ -243,9 +240,6 @@ export default function CheckoutPage() {
 
   return (
     <div className="min-h-screen flex flex-col bg-[#FAFCFA]">
-      <UtilityBar />
-      <Header />
-      <CategoryNav />
 
       <main className="flex-1 py-6 sm:py-8">
         <Container>
@@ -292,8 +286,8 @@ export default function CheckoutPage() {
             </div>
             <div className="w-10 h-0.5 bg-[#559620] mx-2" />
 
-            <div className="flex items-center gap-2 text-[#1853A8]">
-              <span className="w-6 h-6 rounded-full bg-[#1853A8] text-white flex items-center justify-center text-[11px]">
+            <div className="flex items-center gap-2 text-brand-primary">
+              <span className="w-6 h-6 rounded-full bg-brand-primary text-white flex items-center justify-center text-[11px]">
                 4
               </span>
               <span>Payment</span>
@@ -475,7 +469,7 @@ export default function CheckoutPage() {
                     <button
                       type="button"
                       onClick={() => setIsEditingAddress(!isEditingAddress)}
-                      className="text-xs font-bold text-[#1853A8] hover:underline inline-flex items-center gap-1 cursor-pointer"
+                      className="text-xs font-bold text-brand-primary hover:underline inline-flex items-center gap-1 cursor-pointer"
                     >
                       <span>{isEditingAddress ? "Use Saved Address" : "Edit / Change Address"}</span>
                     </button>
@@ -513,7 +507,7 @@ export default function CheckoutPage() {
                           <button
                             type="button"
                             onClick={() => setIsEditingAddress(true)}
-                            className="text-xs font-bold text-[#1853A8] hover:underline cursor-pointer shrink-0 ml-2"
+                            className="text-xs font-bold text-brand-primary hover:underline cursor-pointer shrink-0 ml-2"
                           >
                             Change
                           </button>
@@ -910,7 +904,7 @@ export default function CheckoutPage() {
                     <h2 className="font-serif text-lg text-[#14304A]">
                       Order Summary <span className="text-xs text-[#697C6B]">({selectedItems.length} items)</span>
                     </h2>
-                    <Link href="/cart" className="text-xs font-bold text-[#1853A8] hover:underline">
+                    <Link href="/cart" className="text-xs font-bold text-brand-primary hover:underline">
                       Edit Cart
                     </Link>
                   </div>
@@ -1030,3 +1024,4 @@ export default function CheckoutPage() {
     </div>
   );
 }
+

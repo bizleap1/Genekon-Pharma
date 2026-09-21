@@ -44,6 +44,11 @@ router.patch(
   orderController.updateOrderStatus
 );
 router.get(
+  "/admin/prescriptions",
+  authorizeRole("ADMIN"),
+  orderController.getAllAdminPrescriptions
+);
+router.get(
   "/admin/prescriptions/pending",
   authorizeRole("ADMIN"),
   orderController.getPendingPrescriptions

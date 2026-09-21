@@ -16,7 +16,9 @@ export const addressTypeEnum = pgEnum("address_type_enum", [
 export const rxStatusEnum = pgEnum("rx_status_enum", [
   "PENDING",
   "APPROVED",
+  "NEEDS_REUPLOAD",
   "REJECTED",
+  "USED_FOR_ORDER"
 ]);
 
 export const wholesaleStatusEnum = pgEnum("wholesale_status_enum", [
@@ -37,6 +39,12 @@ export const productStatusEnum = pgEnum("product_status_enum", [
   "DRAFT",
   "ARCHIVED",
   "OUT_OF_STOCK",
+]);
+
+export const productTypeEnum = pgEnum("product_type_enum", [
+  "GENERIC",
+  "BRANDED",
+  "OTHER"
 ]);
 
 export const orderStatusEnum = pgEnum("order_status_enum", [

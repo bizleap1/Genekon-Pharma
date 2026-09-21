@@ -15,7 +15,7 @@ export const ComparisonTrustStrip: React.FC<ComparisonTrustStripProps> = ({
       subtitle: "Trusted sourcing & certified batches",
     },
     {
-      icon: <Truck className="w-5 h-5 text-[#1853A8] shrink-0" />,
+      icon: <Truck className="w-5 h-5 text-brand-primary shrink-0" />,
       title: "Fast & Reliable Delivery",
       subtitle: "At your doorstep with cold-chain care",
     },

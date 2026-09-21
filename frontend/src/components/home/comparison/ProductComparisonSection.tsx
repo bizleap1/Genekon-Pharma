@@ -11,7 +11,7 @@ import { ALL_PRODUCTS } from "@/data/products";
 
 export const ProductComparisonSection: React.FC = () => {
   const sliderRef = useRef<HTMLDivElement>(null);
-  const { data: liveProducts } = useProductsQuery({ limit: 100 });
+  const { data: liveProducts } = useProductsQuery({ limit: 500 });
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(true);
   const [activeIndex, setActiveIndex] = useState(0);
@@ -19,6 +19,8 @@ export const ProductComparisonSection: React.FC = () => {
   // Resolve comparison pairs against catalog
   const catalog = liveProducts && liveProducts.length > 0 ? liveProducts : ALL_PRODUCTS;
   const comparisons = getResolvedComparisons(catalog);
+  
+  console.log("ProductComparisonSection: catalog size =", catalog.length, "comparisons =", comparisons.length);
 
   const updateScrollState = useCallback(() => {
     if (!sliderRef.current) return;
@@ -79,7 +81,7 @@ export const ProductComparisonSection: React.FC = () => {
       <Container>
         {/* 1. Section Header (Center Aligned) */}
         <div className="max-w-2xl mx-auto text-center mb-8 sm:mb-10">
-          <span className="inline-block text-[11px] sm:text-xs font-bold uppercase tracking-[0.2em] text-[#559620] mb-2">
+          <span className="inline-block text-[11px] sm:text-xs font-bold uppercase tracking-[0.2em] text-[var(--color-brand-primary)] mb-2">
             SMARTER CHOICES FOR A HEALTHIER YOU
           </span>
 
@@ -101,7 +103,7 @@ export const ProductComparisonSection: React.FC = () => {
             aria-label="Previous comparisons"
             className={`absolute -left-3 sm:-left-5 top-1/2 -translate-y-1/2 z-20 w-9 h-9 sm:w-11 sm:h-11 rounded-full bg-white border border-[#DCE7F0] shadow-[0_4px_12px_rgba(20,48,74,0.12)] flex items-center justify-center text-[#14304A] transition-all duration-200 cursor-pointer ${
               canScrollLeft
-                ? "hover:bg-[#F0F6FB] hover:border-[#1853A8] hover:scale-105 active:scale-95"
+                ? "hover:bg-[#F0F6FB] hover:border-brand-primary hover:scale-105 active:scale-95"
                 : "opacity-30 cursor-not-allowed"
             }`}
           >
@@ -115,7 +117,7 @@ export const ProductComparisonSection: React.FC = () => {
             aria-label="Next comparisons"
             className={`absolute -right-3 sm:-right-5 top-1/2 -translate-y-1/2 z-20 w-9 h-9 sm:w-11 sm:h-11 rounded-full bg-white border border-[#DCE7F0] shadow-[0_4px_12px_rgba(20,48,74,0.12)] flex items-center justify-center text-[#14304A] transition-all duration-200 cursor-pointer ${
               canScrollRight
-                ? "hover:bg-[#F0F6FB] hover:border-[#1853A8] hover:scale-105 active:scale-95"
+                ? "hover:bg-[#F0F6FB] hover:border-brand-primary hover:scale-105 active:scale-95"
                 : "opacity-30 cursor-not-allowed"
             }`}
           >
@@ -148,7 +150,7 @@ export const ProductComparisonSection: React.FC = () => {
               aria-label={`Go to comparison slide ${i + 1}`}
               className={`h-2 rounded-full transition-all duration-300 cursor-pointer ${
                 i === activeIndex
-                  ? "w-7 bg-[#559620]"
+                  ? "w-7 bg-[var(--color-brand-primary)]"
                   : "w-2 bg-[#DCE7F0] hover:bg-[#A8C8E8]"
               }`}
             />

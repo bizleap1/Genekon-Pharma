@@ -54,6 +54,22 @@ export const productController = {
   },
 
   /**
+   * GET /api/v1/products/medicine-search
+   * Generic-First Medicine Search
+   */
+  async medicineSearch(req: Request, res: Response) {
+    try {
+      const q = (req.query.q || req.query.query || req.query.search || "") as string;
+      const strength = (req.query.strength || "") as string;
+      
+      const result = await productService.medicineSearch(q, strength || undefined);
+      return sendSuccess(res, result, "Medicine search resolved successfully");
+    } catch (error: any) {
+      return sendError(res, error.message || "Failed to resolve medicine search", 400);
+    }
+  },
+
+  /**
    * GET /api/v1/products/category/:category
    * Public products by category slug
    */

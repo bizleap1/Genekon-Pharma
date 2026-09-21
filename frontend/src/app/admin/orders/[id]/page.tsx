@@ -488,7 +488,7 @@ export default function AdminOrderDetailsPage({
               <span>+91 {order.customerPhone}</span>
             </p>
             <p className="text-[#5F7361] flex items-center gap-1.5">
-              <Mail className="w-3.5 h-3.5 text-[#1853A8]" />
+              <Mail className="w-3.5 h-3.5 text-brand-primary" />
               <span>{order.customerEmail}</span>
             </p>
           </div>
@@ -650,3 +650,4 @@ export default function AdminOrderDetailsPage({
     </div>
   );
 }
+

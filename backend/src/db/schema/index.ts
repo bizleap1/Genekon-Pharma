@@ -18,6 +18,7 @@ import { cmsBanners } from "./cms";
 import { adminActivityLogs } from "./activityLogs";
 import { wholesaleProfiles } from "./wholesaleProfiles";
 import { cancellationRequests } from "./cancellationRequests";
+import { medicineComparisons } from "./medicineComparisons";
 
 export * from "./enums";
 export * from "./users";
@@ -40,6 +41,7 @@ export * from "./cms";
 export * from "./activityLogs";
 export * from "./wholesaleProfiles";
 export * from "./cancellationRequests";
+export * from "./medicineComparisons";
 
 // Users Relations
 export const usersRelations = relations(users, ({ one, many }) => ({
@@ -261,5 +263,19 @@ export const cancellationRequestsRelations = relations(cancellationRequests, ({ 
     fields: [cancellationRequests.reviewedBy],
     references: [users.id],
   }),
+}));
+
+// Medicine Comparisons Relations
+export const medicineComparisonsRelations = relations(medicineComparisons, ({ one }) => ({
+  brandedProduct: one(products, {
+    fields: [medicineComparisons.brandedProductId],
+    references: [products.id],
+    relationName: "branded_product"
+  }),
+  genericProduct: one(products, {
+    fields: [medicineComparisons.genericProductId],
+    references: [products.id],
+    relationName: "generic_product"
+  })
 }));
 

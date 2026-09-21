@@ -76,7 +76,7 @@ export const HealthArticles: React.FC = () => {
 
           <Link
             href="/articles"
-            className="inline-flex items-center gap-1 text-xs sm:text-sm font-bold text-[#1853A8] hover:text-[#123e7f] transition-colors self-end sm:self-auto"
+            className="inline-flex items-center gap-1 text-xs sm:text-sm font-bold text-brand-primary hover:text-[#123e7f] transition-colors self-end sm:self-auto"
           >
             <span>View All Insights</span>
             <ArrowRight className="w-4 h-4" />
@@ -113,7 +113,7 @@ export const HealthArticles: React.FC = () => {
                     {article.readTime}
                   </span>
 
-                  <Link href={article.slug} className="block group-hover:text-[#1853A8] transition-colors">
+                  <Link href={article.slug} className="block group-hover:text-brand-primary transition-colors">
                     <h3 className="text-sm sm:text-base font-bold text-[#14304A] leading-snug line-clamp-2">
                       {article.title}
                     </h3>
@@ -129,7 +129,7 @@ export const HealthArticles: React.FC = () => {
               <div className="px-4 sm:px-5 pb-4 pt-2 border-t border-[#EBF3E8] flex items-center justify-between">
                 <Link
                   href={article.slug}
-                  className="inline-flex items-center gap-1.5 text-xs font-bold text-[#1853A8] group-hover:text-[#123e7f] group-hover:translate-x-0.5 transition-all"
+                  className="inline-flex items-center gap-1.5 text-xs font-bold text-brand-primary group-hover:text-[#123e7f] group-hover:translate-x-0.5 transition-all"
                 >
                   <span>Read More</span>
                   <ArrowRight className="w-3.5 h-3.5" />

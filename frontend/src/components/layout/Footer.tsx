@@ -17,12 +17,12 @@ export const Footer: React.FC = () => {
           {/* Col 1: Brand & Socials (Span 3) */}
           <div className="col-span-2 md:col-span-4 lg:col-span-3 space-y-3 md:space-y-4">
             <Link href="/" className="inline-block">
-              <div className="relative h-12 w-[170px]">
+              <div className="relative h-16 w-[220px]">
                 <Image
-                  src="/images/genekon-brand-logo.png"
+                  src="/images/genekon-logo.png"
                   alt="GENEKON Pharmaceuticals"
                   fill
-                  sizes="170px"
+                  sizes="220px"
                   className="object-contain object-left"
                 />
               </div>
@@ -38,7 +38,7 @@ export const Footer: React.FC = () => {
               <a
                 href="#"
                 aria-label="Facebook"
-                className="w-7 h-7 rounded-full bg-white border border-[#DDE7DC] flex items-center justify-center hover:text-[#1853A8] hover:border-[#1853A8] transition-colors"
+                className="w-7 h-7 rounded-full bg-white border border-[#DDE7DC] flex items-center justify-center hover:text-brand-primary hover:border-brand-primary transition-colors"
               >
                 <svg className="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24">
                   <path d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z" />
@@ -99,42 +99,42 @@ export const Footer: React.FC = () => {
             </h4>
             <ul className="space-y-1.5 text-xs text-[#596E5C]">
               <li>
-                <Link href="/category/medicines" className="hover:text-[#1853A8] transition-colors">
+                <Link href="/category/medicines" className="hover:text-brand-primary transition-colors">
                   Medicines
                 </Link>
               </li>
               <li>
-                <Link href="/category/healthcare" className="hover:text-[#1853A8] transition-colors">
+                <Link href="/category/healthcare" className="hover:text-brand-primary transition-colors">
                   Healthcare
                 </Link>
               </li>
               <li>
-                <Link href="/category/personal-care" className="hover:text-[#1853A8] transition-colors">
+                <Link href="/category/personal-care" className="hover:text-brand-primary transition-colors">
                   Personal Care
                 </Link>
               </li>
               <li>
-                <Link href="/category/vitamins-nutrition" className="hover:text-[#1853A8] transition-colors">
+                <Link href="/category/vitamins-nutrition" className="hover:text-brand-primary transition-colors">
                   Vitamins &amp; Nutrition
                 </Link>
               </li>
               <li>
-                <Link href="/category/baby-care" className="hover:text-[#1853A8] transition-colors">
+                <Link href="/category/baby-care" className="hover:text-brand-primary transition-colors">
                   Baby Care
                 </Link>
               </li>
               <li>
-                <Link href="/category/ayurveda" className="hover:text-[#1853A8] transition-colors">
+                <Link href="/category/ayurveda" className="hover:text-brand-primary transition-colors">
                   Ayurveda
                 </Link>
               </li>
               <li>
-                <Link href="/category/medical-devices" className="hover:text-[#1853A8] transition-colors">
+                <Link href="/category/medical-devices" className="hover:text-brand-primary transition-colors">
                   Medical Devices
                 </Link>
               </li>
               <li>
-                <Link href="/category/wellness" className="hover:text-[#1853A8] transition-colors">
+                <Link href="/category/wellness" className="hover:text-brand-primary transition-colors">
                   Wellness
                 </Link>
               </li>
@@ -153,32 +153,32 @@ export const Footer: React.FC = () => {
             </h4>
             <ul className="space-y-1.5 text-xs text-[#596E5C]">
               <li>
-                <Link href="/contact" className="hover:text-[#1853A8] transition-colors">
+                <Link href="/contact" className="hover:text-brand-primary transition-colors">
                   Contact Us
                 </Link>
               </li>
               <li>
-                <Link href="/faqs" className="hover:text-[#1853A8] transition-colors">
+                <Link href="/faqs" className="hover:text-brand-primary transition-colors">
                   FAQs
                 </Link>
               </li>
               <li>
-                <Link href="/track-order" className="hover:text-[#1853A8] transition-colors">
+                <Link href="/track-order" className="hover:text-brand-primary transition-colors">
                   Track Order
                 </Link>
               </li>
               <li>
-                <Link href="/returns" className="hover:text-[#1853A8] transition-colors">
+                <Link href="/returns" className="hover:text-brand-primary transition-colors">
                   Returns &amp; Refunds
                 </Link>
               </li>
               <li>
-                <Link href="/shipping" className="hover:text-[#1853A8] transition-colors">
+                <Link href="/shipping" className="hover:text-brand-primary transition-colors">
                   Shipping Policy
                 </Link>
               </li>
               <li>
-                <Link href="/prescription/guidelines" className="hover:text-[#1853A8] transition-colors">
+                <Link href="/prescription/guidelines" className="hover:text-brand-primary transition-colors">
                   Prescription Policy
                 </Link>
               </li>
@@ -192,32 +192,32 @@ export const Footer: React.FC = () => {
             </h4>
             <ul className="space-y-1.5 text-xs text-[#596E5C]">
               <li>
-                <Link href="/about" className="hover:text-[#1853A8] transition-colors">
+                <Link href="/about" className="hover:text-brand-primary transition-colors">
                   About Genekon
                 </Link>
               </li>
               <li>
-                <Link href="/commitment" className="hover:text-[#1853A8] transition-colors">
+                <Link href="/commitment" className="hover:text-brand-primary transition-colors">
                   Our Commitment
                 </Link>
               </li>
               <li>
-                <Link href="/b2b" className="hover:text-[#1853A8] transition-colors">
+                <Link href="/b2b" className="hover:text-brand-primary transition-colors">
                   Wholesale &amp; B2B
                 </Link>
               </li>
               <li>
-                <Link href="/privacy" className="hover:text-[#1853A8] transition-colors">
+                <Link href="/privacy" className="hover:text-brand-primary transition-colors">
                   Privacy Policy
                 </Link>
               </li>
               <li>
-                <Link href="/terms" className="hover:text-[#1853A8] transition-colors">
+                <Link href="/terms" className="hover:text-brand-primary transition-colors">
                   Terms &amp; Conditions
                 </Link>
               </li>
               <li>
-                <Link href="/careers" className="hover:text-[#1853A8] transition-colors">
+                <Link href="/careers" className="hover:text-brand-primary transition-colors">
                   Careers
                 </Link>
               </li>
@@ -231,8 +231,8 @@ export const Footer: React.FC = () => {
             </h4>
             
             <div className="flex items-center gap-2.5">
-              <Phone className="w-4 h-4 text-[#1853A8] shrink-0" />
-              <a href="tel:7666168147" className="font-bold text-[#14304A] hover:text-[#1853A8] transition-colors">
+              <Phone className="w-4 h-4 text-brand-primary shrink-0" />
+              <a href="tel:7666168147" className="font-bold text-[#14304A] hover:text-brand-primary transition-colors">
                 +91 7666168147
               </a>
             </div>
@@ -250,14 +250,14 @@ export const Footer: React.FC = () => {
             </div>
 
             <div className="flex items-center gap-2.5">
-              <Mail className="w-4 h-4 text-[#1853A8] shrink-0" />
-              <a href="mailto:support@genekon.com" className="hover:text-[#1853A8] transition-colors">
+              <Mail className="w-4 h-4 text-brand-primary shrink-0" />
+              <a href="mailto:support@genekon.com" className="hover:text-brand-primary transition-colors">
                 support@genekon.com
               </a>
             </div>
 
             <div className="flex items-start gap-2.5 pt-1">
-              <MapPin className="w-4 h-4 text-[#1853A8] shrink-0 mt-0.5" />
+              <MapPin className="w-4 h-4 text-brand-primary shrink-0 mt-0.5" />
               <span className="leading-relaxed">
                 Gittikhadan, Katol Road, <br />
                 Nagpur, Maharashtra
@@ -273,9 +273,9 @@ export const Footer: React.FC = () => {
         <div className="pt-4 md:pt-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-[10px] md:text-xs text-[#6A7E6C] text-center sm:text-left">
           <p>© 2026 Genekon Pharmaceuticals Pvt. Ltd. All rights reserved.</p>
           <p>
-            Powered by <span className="font-semibold text-[#1853A8]">Bizleap</span>
+            Powered by <span className="font-semibold text-brand-primary">Bizleap</span>
           </p>
-          <p className="font-bold text-[#1853A8] tracking-wide">
+          <p className="font-bold text-brand-primary tracking-wide">
             Trusted medicines. Stronger lives.
           </p>
         </div>

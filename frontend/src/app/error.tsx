@@ -54,9 +54,9 @@ export default function GlobalError({
 
           {/* Support Helpline */}
           <div className="mt-8 pt-5 border-t border-[#EAF2E8] flex items-center justify-center gap-2 text-xs text-[#6B806E]">
-            <Headphones className="w-3.5 h-3.5 text-[#1853A8]" />
+            <Headphones className="w-3.5 h-3.5 text-brand-primary" />
             <span>Need pharmacy help? </span>
-            <Link href="/contact" className="text-[#1853A8] font-bold hover:underline">
+            <Link href="/contact" className="text-brand-primary font-bold hover:underline">
               Contact Support
             </Link>
           </div>

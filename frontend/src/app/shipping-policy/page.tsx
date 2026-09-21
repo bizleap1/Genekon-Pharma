@@ -3,18 +3,12 @@
 import React from "react";
 import Link from "next/link";
 import { Truck, ShieldCheck, MapPin, Clock } from "lucide-react";
-import { UtilityBar } from "@/components/layout/UtilityBar";
-import { Header } from "@/components/layout/Header";
-import { CategoryNav } from "@/components/layout/CategoryNav";
 import { Footer } from "@/components/layout/Footer";
 import { Container } from "@/components/ui/Container";
 
 export default function ShippingPolicyPage() {
   return (
     <div className="min-h-screen flex flex-col bg-[#FAFCFA]">
-      <UtilityBar />
-      <Header />
-      <CategoryNav />
 
       <main className="flex-1 py-8 sm:py-12">
         <Container>
@@ -71,7 +65,7 @@ export default function ShippingPolicyPage() {
                   </div>
 
                   <div className="rounded-2xl border border-[#DCE8D8] bg-[#FAFCFA] p-4">
-                    <div className="flex items-center gap-2 text-[#1853A8] font-bold text-xs mb-1">
+                    <div className="flex items-center gap-2 text-brand-primary font-bold text-xs mb-1">
                       <Truck className="w-4 h-4" />
                       <span>Standard Regional Dispatch</span>
                     </div>
@@ -131,3 +125,4 @@ export default function ShippingPolicyPage() {
     </div>
   );
 }
+

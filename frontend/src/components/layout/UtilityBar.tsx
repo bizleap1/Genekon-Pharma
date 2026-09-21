@@ -26,7 +26,7 @@ export const UtilityBar: React.FC = () => {
         {/* Center: Trust Badges */}
         <div className="hidden md:flex items-center gap-3 lg:gap-4 text-[#3C4E40]">
           <div className="flex items-center gap-1 font-medium">
-            <ShieldCheck className="w-3.5 h-3.5 text-[#69A82F]" />
+            <ShieldCheck className="w-3.5 h-3.5 text-brand-primary" />
             <span>Genuine Medicines</span>
           </div>
           <span className="text-[#C8DCC0]">|</span>
@@ -36,8 +36,8 @@ export const UtilityBar: React.FC = () => {
           </div>
           <span className="text-[#C8DCC0]">|</span>
           <div className="flex items-center gap-1 font-medium">
-            <Truck className="w-3.5 h-3.5 text-[#69A82F]" />
-            <span>Reliable Delivery</span>
+            <Truck className="w-3.5 h-3.5 text-brand-primary" />
+            <span>Free Delivery on ₹500+</span>
           </div>
         </div>
 

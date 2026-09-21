@@ -155,7 +155,7 @@ export default function AdminLoginPage() {
           <Link href="/admin/dashboard" className="inline-block">
             <div className="relative h-10 w-36 sm:w-44">
               <Image
-                src="/images/genekon-brand-logo.png"
+                src="/images/genekon-logo-v2.png"
                 alt="Genekon Pharmaceuticals"
                 fill
                 sizes="(max-width: 640px) 144px, 176px"
@@ -206,7 +206,7 @@ export default function AdminLoginPage() {
                 </div>
 
                 <div className="rounded-2xl border border-[#E0EBE0] bg-white/85 p-3.5 shadow-2xs">
-                  <div className="w-9 h-9 rounded-full bg-[#EBF3FC] text-[#1853A8] flex items-center justify-center mb-2.5">
+                  <div className="w-9 h-9 rounded-full bg-[#EBF3FC] text-brand-primary flex items-center justify-center mb-2.5">
                     <Layers className="w-4 h-4" />
                   </div>
                   <h2 className="text-xs font-bold text-[#14304A]">Inventory</h2>
@@ -255,7 +255,7 @@ export default function AdminLoginPage() {
                 <div className="text-center mb-6">
                   <div className="relative h-9 w-36 mx-auto mb-2.5">
                     <Image
-                      src="/images/genekon-brand-logo.png"
+                      src="/images/genekon-logo-v2.png"
                       alt="Genekon Pharmaceuticals"
                       fill
                       sizes="144px"
@@ -357,7 +357,7 @@ export default function AdminLoginPage() {
                             e.preventDefault();
                             setLoginMode("otp");
                           }}
-                          className="font-bold text-[#1853A8] hover:underline"
+                          className="font-bold text-brand-primary hover:underline"
                         >
                           Forgot Password?
                         </Link>
@@ -469,7 +469,7 @@ export default function AdminLoginPage() {
                       </>
                     ) : (
                       <>
-                        <Lock className="w-4 h-4 text-[#1853A8]" />
+                        <Lock className="w-4 h-4 text-brand-primary" />
                         <span>Login with Password</span>
                       </>
                     )}
@@ -489,9 +489,9 @@ export default function AdminLoginPage() {
                 {/* Support Assistance Footer */}
                 <div className="pt-2 border-t border-[#EDF3EC] flex flex-wrap items-center justify-center gap-2 text-xs text-[#637766]">
                   <span className="flex items-center gap-1">
-                    <Headphones className="w-3.5 h-3.5 text-[#1853A8]" />
+                    <Headphones className="w-3.5 h-3.5 text-brand-primary" />
                     Need help?{" "}
-                    <Link href="/contact" className="text-[#1853A8] font-bold hover:underline">
+                    <Link href="/contact" className="text-brand-primary font-bold hover:underline">
                       Contact Support
                     </Link>
                   </span>
@@ -522,3 +522,4 @@ export default function AdminLoginPage() {
     </div>
   );
 }
+

@@ -1,10 +1,7 @@
-import { UtilityBar } from "@/components/layout/UtilityBar";
-import { Header } from "@/components/layout/Header";
-import { CategoryNav } from "@/components/layout/CategoryNav";
 import { Footer } from "@/components/layout/Footer";
 import { Hero } from "@/components/home/Hero";
-import { QuickActions } from "@/components/home/QuickActions";
-import { CategorySection } from "@/components/home/CategorySection";
+import { AboutUsSection } from "@/components/home/AboutUsSection";
+
 import { ProductSection } from "@/components/home/ProductSection";
 import { OfferBanner } from "@/components/home/OfferBanner";
 import { ProductComparisonSection } from "@/components/home/comparison";
@@ -27,32 +24,26 @@ export default function Home() {
         <div className="absolute left-[20%] bottom-[-10%] h-[500px] w-[500px] rounded-full bg-indigo-400/10 blur-[120px]"></div>
       </div>
 
-      <div className="relative z-50 flex flex-col w-full">
-        {/* Top Header & Navigation (Untouched) */}
-        <UtilityBar />
-        <Header />
-        <CategoryNav />
-      </div>
+
 
       {/* Main Homepage Flow */}
       <main className="flex-1 pb-12 space-y-2 relative z-10">
-        {/* 1. Hero (Untouched) */}
+        {/* 1. Hero (includes QuickActions) */}
         <Hero />
-
-        {/* 2. 4 Quick Action Cards (Untouched) */}
-        <QuickActions />
-
-        {/* 3. Shop By Category (Untouched) */}
-        <CategorySection />
 
         {/* 4. Bestselling Products (Untouched) */}
         <ProductSection />
 
-        {/* 5. Compare Our Products & Prices Section */}
-        <ProductComparisonSection />
-
         {/* 6. Care More. Spend Smarter. Banner */}
         <OfferBanner />
+
+        {/* 2. Premium About Us Section (Hidden)
+        <AboutUsSection />
+        */}
+
+
+        {/* 5. Compare Our Products & Prices Section */}
+        <ProductComparisonSection />
 
         {/* 7. 3-Step Prescription Upload Flow */}
         <PrescriptionSection />
@@ -75,3 +66,4 @@ export default function Home() {
     </div>
   );
 }
+

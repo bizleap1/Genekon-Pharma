@@ -37,9 +37,9 @@ export const ComparisonProduct: React.FC<ComparisonProductProps> = ({
 
   return (
     <div
-      className={`flex flex-col justify-between p-3 sm:p-4 transition-all duration-200 ${
+      className={`relative flex flex-col justify-between p-3 sm:p-4 transition-all duration-200 ${
         isAlternative
-          ? "bg-[#F4F9F2]/80 rounded-r-2xl sm:rounded-r-3xl"
+          ? "bg-[#D6EAF8] rounded-r-2xl sm:rounded-r-3xl overflow-hidden animate-shine"
           : "bg-white rounded-l-2xl sm:rounded-l-3xl"
       } ${className}`}
     >
@@ -48,11 +48,14 @@ export const ComparisonProduct: React.FC<ComparisonProductProps> = ({
         <div className="min-h-[26px] flex items-center justify-between gap-1 mb-2">
           {isAlternative ? (
             <div className="flex items-center justify-between w-full gap-1">
-              <SavingsBadge savingsPercent={savingsPercent} />
-              <span className="inline-flex items-center gap-1 text-[9px] sm:text-[10px] font-bold text-[#1853A8] bg-[#EBF4FB] px-1.5 py-0.5 rounded">
-                <CheckCircle2 className="w-2.5 h-2.5 text-[#1853A8]" />
-                Best Value
-              </span>
+              <div className="flex items-center rounded-full border border-brand-primary/20 bg-white shadow-sm overflow-hidden h-6">
+                <div className="px-2 h-full flex items-center bg-white">
+                  <Image src="/images/genekon-logo.png" alt="Genekon" width={44} height={11} className="h-[11px] w-auto object-contain" />
+                </div>
+                <div className="px-2.5 h-full flex items-center bg-gradient-to-r from-brand-primary to-brand-secondary text-white text-[10px] font-extrabold tracking-wide uppercase">
+                  {savingsPercent}% SAVINGS
+                </div>
+              </div>
             </div>
           ) : (
             <span className="text-[10px] sm:text-[11px] font-semibold text-[#6A7E6E] uppercase tracking-wider">
@@ -83,7 +86,7 @@ export const ComparisonProduct: React.FC<ComparisonProductProps> = ({
           href={`/product/${product.id}`}
           className="block group/title mb-1"
         >
-          <h4 className="font-bold text-xs sm:text-sm text-[#14304A] leading-snug line-clamp-2 group-hover/title:text-[#1853A8] transition-colors">
+          <h4 className="font-bold text-xs sm:text-sm text-[#14304A] leading-snug line-clamp-2 group-hover/title:text-brand-primary transition-colors">
             {product.name}
           </h4>
         </Link>
@@ -183,7 +186,7 @@ export const ComparisonProduct: React.FC<ComparisonProductProps> = ({
                   ? "bg-gray-100 text-gray-400 border border-gray-200 cursor-not-allowed"
                   : isAdded
                   ? "bg-[#2E7D32] text-white"
-                  : "bg-[#347A14] hover:bg-[#1853A8] text-white active:scale-[0.98]"
+                  : "bg-brand-primary hover:bg-[#347A14] text-white active:scale-[0.98]"
               }`}
               aria-label={`Add ${product.name} to cart`}
             >

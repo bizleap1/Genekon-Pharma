@@ -10,7 +10,7 @@ export const OfferBanner: React.FC = () => {
   return (
     <section className="py-5 bg-white">
       <Container>
-        <div className="relative overflow-hidden rounded-3xl border border-[#DCE9D8] bg-gradient-to-r from-[#EBF5E7] via-[#E4F1DF] to-[#E9F4E5] p-6 sm:p-8 lg:p-10 shadow-xs">
+        <div className="relative overflow-hidden rounded-3xl border border-[#D0E3F5] bg-gradient-to-r from-[#EBF4FB] via-[#E4F0F9] to-[#EBF4FB] p-6 sm:p-8 lg:p-10 shadow-xs">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
             
             {/* Left Column: Heading & Button */}
@@ -27,7 +27,7 @@ export const OfferBanner: React.FC = () => {
               <div className="mt-5">
                 <Link
                   href="/offers"
-                  className="inline-flex items-center gap-2 bg-[#559620] hover:bg-[#467f1a] text-white text-xs sm:text-sm font-bold px-5 py-2.5 rounded-full transition-all duration-150 shadow-xs"
+                  className="inline-flex items-center gap-2 bg-brand-primary hover:bg-brand-secondary text-white text-xs sm:text-sm font-bold px-5 py-2.5 rounded-full transition-all duration-150 shadow-xs"
                 >
                   <span>Explore Offers</span>
                   <ArrowRight className="w-4 h-4" />
@@ -48,7 +48,7 @@ export const OfferBanner: React.FC = () => {
               </div>
 
               {/* Floating 30% OFF Circle Badge */}
-              <div className="absolute -top-3 right-4 sm:right-8 w-16 h-16 sm:w-[72px] sm:h-[72px] rounded-full bg-[#1853A8] text-white flex flex-col items-center justify-center shadow-md leading-tight text-center border-2 border-white">
+              <div className="absolute -top-3 right-4 sm:right-8 w-16 h-16 sm:w-[72px] sm:h-[72px] rounded-full bg-gradient-to-br from-brand-primary to-brand-secondary text-white flex flex-col items-center justify-center shadow-md leading-tight text-center border-2 border-white">
                 <span className="text-[9px] uppercase tracking-wider font-semibold opacity-90">
                   UP TO
                 </span>
@@ -63,13 +63,13 @@ export const OfferBanner: React.FC = () => {
 
             {/* Right Column: Wellness Tagline */}
             <div className="lg:col-span-3 flex flex-col items-start lg:items-end text-left lg:text-right justify-center">
-              <div className="w-9 h-9 rounded-xl bg-white/80 border border-[#D5E6D3] flex items-center justify-center text-[#1853A8] mb-3">
-                <Leaf className="w-5 h-5 text-[#1853A8]" />
+              <div className="w-9 h-9 rounded-xl bg-white/80 border border-[#D5E6D3] flex items-center justify-center text-brand-primary mb-3">
+                <Leaf className="w-5 h-5 text-brand-primary" />
               </div>
 
               <h3 className="font-serif font-normal text-xl sm:text-2xl text-[#14304A] leading-snug">
                 Wellness <br />
-                <span className="text-[#1853A8]">For a Brighter</span> <br />
+                <span className="text-brand-primary">For a Brighter</span> <br />
                 Tomorrow
               </h3>
             </div>

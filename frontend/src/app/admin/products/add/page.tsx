@@ -238,6 +238,9 @@ export default function AddProductPage() {
     stockQuantity: "100",
     dosageForm: "1 Strip of 10 Tablets",
     composition: "",
+    strength: "",
+    route: "",
+    productType: "OTHER",
     description: "",
     usage: "",
     precautions: "",
@@ -531,7 +534,7 @@ export default function AddProductPage() {
                   {tpl.prescriptionRequired && (
                     <span
                       className={`text-[9px] font-extrabold px-1 rounded ${
-                        isSelected ? "bg-white/20 text-white" : "bg-[#EBF3FC] text-[#1853A8]"
+                        isSelected ? "bg-white/20 text-white" : "bg-[#EBF3FC] text-brand-primary"
                       }`}
                     >
                       Rx
@@ -698,7 +701,7 @@ export default function AddProductPage() {
                     <span>OTC (No Rx)</span>
                   </label>
 
-                  <label className="flex items-center gap-1.5 text-xs font-semibold text-[#1853A8] cursor-pointer">
+                  <label className="flex items-center gap-1.5 text-xs font-semibold text-brand-primary cursor-pointer">
                     <input
                       type="radio"
                       name="prescriptionRequired"
@@ -765,7 +768,49 @@ export default function AddProductPage() {
                 className="w-full text-xs px-3.5 py-2.5 rounded-xl border border-[#CCDCCD] bg-[#FAFCFB] text-[#14304A] font-semibold outline-none focus:border-[#559620] focus:bg-white transition-all"
               />
             </div>
+            {/* Product Type, Strength & Route */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div>
+                <label className="block text-xs font-bold text-[#14304A] mb-1">
+                  Product Type *
+                </label>
+                <select
+                  value={formData.productType}
+                  onChange={(e) => setFormData({ ...formData, productType: e.target.value })}
+                  className="w-full text-xs px-3.5 py-2.5 rounded-xl border border-[#CCDCCD] bg-[#FAFCFB] text-[#14304A] font-semibold outline-none focus:border-[#559620] focus:bg-white transition-all"
+                >
+                  <option value="BRANDED">Branded Medicine</option>
+                  <option value="GENERIC">Generic Medicine</option>
+                  <option value="OTHER">Other Product</option>
+                </select>
+              </div>
 
+              <div>
+                <label className="block text-xs font-bold text-[#14304A] mb-1">
+                  Strength (e.g. 500 mg)
+                </label>
+                <input
+                  type="text"
+                  placeholder="e.g. 500 mg"
+                  value={formData.strength}
+                  onChange={(e) => setFormData({ ...formData, strength: e.target.value })}
+                  className="w-full text-xs px-3.5 py-2.5 rounded-xl border border-[#CCDCCD] bg-[#FAFCFB] text-[#14304A] font-semibold outline-none focus:border-[#559620] focus:bg-white transition-all"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-[#14304A] mb-1">
+                  Route of Admin
+                </label>
+                <input
+                  type="text"
+                  placeholder="e.g. Oral, Topical"
+                  value={formData.route}
+                  onChange={(e) => setFormData({ ...formData, route: e.target.value })}
+                  className="w-full text-xs px-3.5 py-2.5 rounded-xl border border-[#CCDCCD] bg-[#FAFCFB] text-[#14304A] font-semibold outline-none focus:border-[#559620] focus:bg-white transition-all"
+                />
+              </div>
+            </div>
             {/* Dosage Form & Packaging */}
             <div>
               <label className="block text-xs font-bold text-[#14304A] mb-1">
@@ -1038,7 +1083,7 @@ export default function AddProductPage() {
                 className="object-contain p-4"
               />
               {formData.prescriptionRequired && (
-                <div className="absolute top-3 left-3 bg-[#1853A8] text-white text-[10px] font-extrabold px-2 py-0.5 rounded-md shadow-xs">
+                <div className="absolute top-3 left-3 bg-brand-primary text-white text-[10px] font-extrabold px-2 py-0.5 rounded-md shadow-xs">
                   Rx Required
                 </div>
               )}
@@ -1125,3 +1170,4 @@ export default function AddProductPage() {
     </div>
   );
 }
+

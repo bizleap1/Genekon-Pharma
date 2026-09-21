@@ -120,6 +120,9 @@ function EditProductForm() {
     stockQuantity: "50",
     dosageForm: "10 Tablets / Strip",
     composition: "",
+    strength: "",
+    route: "",
+    productType: "OTHER",
     description: "",
     usage: "",
     precautions: "",
@@ -175,6 +178,9 @@ function EditProductForm() {
               stockQuantity: String(p.stockQuantity !== undefined ? p.stockQuantity : 50),
               dosageForm: p.dosageForm || "10 Tablets / Strip",
               composition: p.composition || "",
+              strength: p.strength || "",
+              route: p.route || "",
+              productType: p.productType || "OTHER",
               description: p.description || "",
               usage: p.usage || "",
               precautions: p.precautions || "",
@@ -235,6 +241,9 @@ function EditProductForm() {
       stockQuantity: Number(formData.stockQuantity) || 0,
       dosageForm: formData.dosageForm || "10 Tablets / Strip",
       composition: formData.composition.trim() || formData.name.trim(),
+      strength: formData.strength.trim(),
+      route: formData.route.trim(),
+      productType: formData.productType,
       description: formData.description.trim(),
       usage: formData.usage.trim(),
       precautions: formData.precautions.trim(),
@@ -481,7 +490,7 @@ function EditProductForm() {
                     <span>OTC (No Rx)</span>
                   </label>
 
-                  <label className="flex items-center gap-1.5 text-xs font-semibold text-[#1853A8] cursor-pointer">
+                  <label className="flex items-center gap-1.5 text-xs font-semibold text-brand-primary cursor-pointer">
                     <input
                       type="radio"
                       name="prescriptionRequired"
@@ -539,7 +548,49 @@ function EditProductForm() {
                 className="w-full text-xs px-3.5 py-2.5 rounded-xl border border-[#CCDCCD] bg-[#FAFCFB] text-[#14304A] font-semibold outline-none focus:border-[#559620] focus:bg-white transition-all"
               />
             </div>
+            {/* Product Type, Strength & Route */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-2">
+              <div>
+                <label className="block text-xs font-bold text-[#14304A] mb-1">
+                  Product Type *
+                </label>
+                <select
+                  value={formData.productType}
+                  onChange={(e) => setFormData({ ...formData, productType: e.target.value })}
+                  className="w-full text-xs px-3.5 py-2.5 rounded-xl border border-[#CCDCCD] bg-[#FAFCFB] text-[#14304A] font-semibold outline-none focus:border-[#559620] focus:bg-white transition-all"
+                >
+                  <option value="BRANDED">Branded Medicine</option>
+                  <option value="GENERIC">Generic Medicine</option>
+                  <option value="OTHER">Other Product</option>
+                </select>
+              </div>
 
+              <div>
+                <label className="block text-xs font-bold text-[#14304A] mb-1">
+                  Strength (e.g. 500 mg)
+                </label>
+                <input
+                  type="text"
+                  placeholder="e.g. 500 mg"
+                  value={formData.strength}
+                  onChange={(e) => setFormData({ ...formData, strength: e.target.value })}
+                  className="w-full text-xs px-3.5 py-2.5 rounded-xl border border-[#CCDCCD] bg-[#FAFCFB] text-[#14304A] font-semibold outline-none focus:border-[#559620] focus:bg-white transition-all"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-[#14304A] mb-1">
+                  Route of Admin
+                </label>
+                <input
+                  type="text"
+                  placeholder="e.g. Oral, Topical"
+                  value={formData.route}
+                  onChange={(e) => setFormData({ ...formData, route: e.target.value })}
+                  className="w-full text-xs px-3.5 py-2.5 rounded-xl border border-[#CCDCCD] bg-[#FAFCFB] text-[#14304A] font-semibold outline-none focus:border-[#559620] focus:bg-white transition-all"
+                />
+              </div>
+            </div>
             {/* Dosage Form */}
             <div>
               <label className="block text-xs font-bold text-[#14304A] mb-1">
@@ -779,7 +830,7 @@ function EditProductForm() {
                 className="object-contain p-4"
               />
               {formData.prescriptionRequired && (
-                <div className="absolute top-3 left-3 bg-[#1853A8] text-white text-[10px] font-extrabold px-2 py-0.5 rounded-md shadow-xs">
+                <div className="absolute top-3 left-3 bg-brand-primary text-white text-[10px] font-extrabold px-2 py-0.5 rounded-md shadow-xs">
                   Rx Required
                 </div>
               )}
@@ -876,3 +927,4 @@ export default function EditProductPage() {
     </Suspense>
   );
 }
+

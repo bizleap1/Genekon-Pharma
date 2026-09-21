@@ -16,9 +16,6 @@ import {
   AlertCircle
 } from "lucide-react";
 import { WhatsAppIcon } from "@/components/ui/WhatsAppIcon";
-import { UtilityBar } from "@/components/layout/UtilityBar";
-import { Header } from "@/components/layout/Header";
-import { CategoryNav } from "@/components/layout/CategoryNav";
 import { Footer } from "@/components/layout/Footer";
 import { Container } from "@/components/ui/Container";
 import { useAuthStore } from "@/stores/authStore";
@@ -202,9 +199,6 @@ export default function TrackOrderPage() {
 
   return (
     <div className="min-h-screen flex flex-col bg-[#FAFCFA]">
-      <UtilityBar />
-      <Header />
-      <CategoryNav />
 
       <main className="flex-1 py-8 sm:py-12">
         <Container>
@@ -347,7 +341,7 @@ export default function TrackOrderPage() {
                             isCompleted
                               ? "bg-[#559620] text-white ring-4 ring-[#EDF7E9]"
                               : isCurrent
-                              ? "bg-[#1853A8] text-white ring-4 ring-[#EBF3FC]"
+                              ? "bg-brand-primary text-white ring-4 ring-[#EBF3FC]"
                               : "bg-[#E3EDE1] text-[#718573]"
                           }`}
                         >
@@ -451,3 +445,4 @@ export default function TrackOrderPage() {
     </div>
   );
 }
+

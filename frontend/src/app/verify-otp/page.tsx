@@ -11,8 +11,6 @@ import {
   CheckCircle2,
   Phone
 } from "lucide-react";
-import { UtilityBar } from "@/components/layout/UtilityBar";
-import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { Container } from "@/components/ui/Container";
 import { useCart } from "@/context/CartContext";
@@ -120,8 +118,6 @@ function VerifyOtpContent() {
 
   return (
     <div className="min-h-screen flex flex-col bg-[#FAFCFA]">
-      <UtilityBar />
-      <Header />
 
       <main className="flex-1 flex items-center justify-center py-12 sm:py-16">
         <Container>
@@ -247,3 +243,4 @@ export default function VerifyOtpPage() {
     </Suspense>
   );
 }
+

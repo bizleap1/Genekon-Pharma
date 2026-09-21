@@ -1,198 +1,134 @@
 "use client";
 
-import React, { useState, useMemo, Suspense } from "react";
-import { useSearchParams } from "next/navigation";
+import React, { useState, useMemo, Suspense, useEffect } from "react";
+import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
 import {
   Search,
   Filter,
   X,
-  ChevronDown,
   SlidersHorizontal,
-  Sparkles,
-  ShieldCheck,
-  RotateCcw
+  RotateCcw,
+  Pill,
+  Info
 } from "lucide-react";
-import { UtilityBar } from "@/components/layout/UtilityBar";
-import { Header } from "@/components/layout/Header";
-import { CategoryNav } from "@/components/layout/CategoryNav";
 import { Footer } from "@/components/layout/Footer";
 import { Container } from "@/components/ui/Container";
 import { ProductCard } from "@/components/ui/ProductCard";
 import { useProductsQuery } from "@/hooks/api/useProductsQuery";
-import { ALL_PRODUCTS } from "@/data/products";
+import { useMedicineSearchQuery } from "@/hooks/api/useMedicineSearchQuery";
 
 function SearchContent() {
   const searchParams = useSearchParams();
+  const router = useRouter();
+  const pathname = usePathname();
+  
   const initialQuery = searchParams.get("q") || "";
+  const initialStrength = searchParams.get("strength") || "";
 
   const [query, setQuery] = useState(initialQuery);
+  const [strengthFilter, setStrengthFilter] = useState(initialStrength);
+  
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
-  const [selectedBrands, setSelectedBrands] = useState<string[]>([]);
   const [priceFilter, setPriceFilter] = useState<string>("all");
-  const [discountFilter, setDiscountFilter] = useState<number>(0);
   const [inStockOnly, setInStockOnly] = useState<boolean>(false);
-  type SearchSortOption = "popularity" | "price-low" | "price-high" | "latest";
-  const [rxFilter, setRxFilter] = useState<"all" | "otc" | "rx">("all");
-  const [sortBy, setSortBy] = useState<SearchSortOption>("popularity");
   const [mobileFilterOpen, setMobileFilterOpen] = useState(false);
 
-  // Dynamic live catalog with fallback
-  const { data: liveCatalog } = useProductsQuery();
-  const catalog = useMemo(() => {
-    return liveCatalog && liveCatalog.length > 0 ? liveCatalog : ALL_PRODUCTS;
-  }, [liveCatalog]);
+  // Sync state with URL if it changes externally
+  useEffect(() => {
+    setQuery(searchParams.get("q") || "");
+    setStrengthFilter(searchParams.get("strength") || "");
+  }, [searchParams]);
 
-  // Extract unique filter facets from catalog
-  const categories = useMemo(() => {
-    const set = new Set<string>();
-    catalog.forEach((p) => set.add(p.category));
-    return Array.from(set);
-  }, [catalog]);
+  // Execute advanced search
+  const { data: medicineSearchData, isLoading: isMedicineLoading } = useMedicineSearchQuery(query, strengthFilter);
 
-  const brands = useMemo(() => {
-    const set = new Set<string>();
-    catalog.forEach((p) => set.add(p.brand));
-    return Array.from(set);
-  }, [catalog]);
+  // Fallback normal search for non-medicine/empty queries
+  const { data: allProducts, isLoading: isAllLoading } = useProductsQuery();
 
-  // Filter & Sort Logic
-  const filteredProducts = useMemo(() => {
-    return catalog.filter((product) => {
-      // Query match
-      if (query.trim()) {
-        const q = query.toLowerCase();
-        const matchesName = product.name.toLowerCase().includes(q);
-        const matchesBrand = product.brand.toLowerCase().includes(q);
-        const matchesCat = product.category.toLowerCase().includes(q);
-        const matchesGeneric = product.genericName?.toLowerCase().includes(q);
-        if (!matchesName && !matchesBrand && !matchesCat && !matchesGeneric) {
-          return false;
-        }
-      }
+  const handleSearchSubmit = (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
+    const params = new URLSearchParams(searchParams.toString());
+    if (query) {
+      params.set("q", query);
+    } else {
+      params.delete("q");
+    }
+    // Reset strength when new query typed
+    if (query !== searchParams.get("q")) {
+      params.delete("strength");
+      setStrengthFilter("");
+    }
+    router.push(`${pathname}?${params.toString()}`);
+  };
 
-      // Category match
-      if (selectedCategories.length > 0 && !selectedCategories.includes(product.category)) {
-        return false;
-      }
+  const handleStrengthSelect = (st: string) => {
+    const params = new URLSearchParams(searchParams.toString());
+    if (st === strengthFilter) {
+      params.delete("strength");
+      setStrengthFilter("");
+    } else {
+      params.set("strength", st);
+      setStrengthFilter(st);
+    }
+    router.push(`${pathname}?${params.toString()}`);
+  };
 
-      // Brand match
-      if (selectedBrands.length > 0 && !selectedBrands.includes(product.brand)) {
-        return false;
-      }
+  const isSearchActive = !!query.trim();
+  
+  // Decide what to display
+  let genericOptions: any[] = [];
+  let exactMatches: any[] = [];
+  let brandedAlternatives: any[] = [];
+  let otherResults: any[] = [];
+  let resolvedMedicine: any = null;
 
-      // Price match
-      if (priceFilter === "under-200" && product.price >= 200) return false;
-      if (priceFilter === "200-500" && (product.price < 200 || product.price > 500)) return false;
-      if (priceFilter === "500-1000" && (product.price < 500 || product.price > 1000)) return false;
-      if (priceFilter === "above-1000" && product.price <= 1000) return false;
+  if (isSearchActive && medicineSearchData) {
+    genericOptions = medicineSearchData.genericProducts || [];
+    exactMatches = medicineSearchData.exactMatches || [];
+    brandedAlternatives = medicineSearchData.brandedAlternatives || [];
+    otherResults = medicineSearchData.otherResults || [];
+    resolvedMedicine = medicineSearchData.resolvedMedicine;
+  } else if (!isSearchActive && allProducts) {
+    otherResults = allProducts;
+  }
 
-      // Discount match
-      if (discountFilter > 0 && (!product.discountPercent || product.discountPercent < discountFilter)) {
-        return false;
-      }
-
-      // In stock match
-      if (inStockOnly && !product.inStock) {
-        return false;
-      }
-
-      // Rx match
-      if (rxFilter === "otc" && product.prescriptionRequired) return false;
-      if (rxFilter === "rx" && !product.prescriptionRequired) return false;
-
-      return true;
-    }).sort((a, b) => {
-      if (sortBy === "price-low") return a.price - b.price;
-      if (sortBy === "price-high") return b.price - a.price;
-      if (sortBy === "latest") return b.id.localeCompare(a.id);
-      // Default: popularity
-      return (b.rating * (b.reviewCount || 100)) - (a.rating * (a.reviewCount || 100));
+  // Common Client-side filtering (applies to ALL sections)
+  const applyFilters = (productsList: any[]) => {
+    if (!productsList) return [];
+    return productsList.filter(p => {
+       if (selectedCategories.length > 0 && !selectedCategories.includes(p.category)) return false;
+       if (inStockOnly && !p.inStock) return false;
+       if (priceFilter === "under-200" && p.price >= 200) return false;
+       if (priceFilter === "200-500" && (p.price < 200 || p.price > 500)) return false;
+       if (priceFilter === "above-500" && p.price <= 500) return false;
+       return true;
     });
-  }, [query, selectedCategories, selectedBrands, priceFilter, discountFilter, inStockOnly, rxFilter, sortBy]);
-
-  const toggleCategory = (cat: string) => {
-    setSelectedCategories((prev) =>
-      prev.includes(cat) ? prev.filter((c) => c !== cat) : [...prev, cat]
-    );
   };
 
-  const toggleBrand = (brand: string) => {
-    setSelectedBrands((prev) =>
-      prev.includes(brand) ? prev.filter((b) => b !== brand) : [...prev, brand]
-    );
-  };
+  genericOptions = applyFilters(genericOptions);
+  exactMatches = applyFilters(exactMatches);
+  brandedAlternatives = applyFilters(brandedAlternatives);
+  otherResults = applyFilters(otherResults);
+
+  const totalResults = genericOptions.length + exactMatches.length + brandedAlternatives.length + otherResults.length;
 
   const clearAllFilters = () => {
     setSelectedCategories([]);
-    setSelectedBrands([]);
     setPriceFilter("all");
-    setDiscountFilter(0);
     setInStockOnly(false);
-    setRxFilter("all");
   };
 
-  const activeFilterCount =
-    selectedCategories.length +
-    selectedBrands.length +
-    (priceFilter !== "all" ? 1 : 0) +
-    (discountFilter > 0 ? 1 : 0) +
-    (inStockOnly ? 1 : 0) +
-    (rxFilter !== "all" ? 1 : 0);
-
-  // Render Sidebar Filter Content
+  // Render Sidebar
   const renderFiltersContent = () => (
     <div className="space-y-6">
-      {/* Active Filter Badges */}
-      {activeFilterCount > 0 && (
-        <div className="pb-4 border-b border-[#E3EDE1]">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-xs font-bold uppercase tracking-wider text-[#14304A]">
-              Active Filters ({activeFilterCount})
-            </span>
-            <button
-              onClick={clearAllFilters}
-              className="text-xs text-[#559620] hover:underline font-bold cursor-pointer"
-            >
-              Clear All
-            </button>
-          </div>
-          <div className="flex flex-wrap gap-1.5">
-            {selectedCategories.map((c) => (
-              <span
-                key={c}
-                className="inline-flex items-center gap-1 text-[11px] bg-[#EDF7E9] text-[#447719] px-2 py-0.5 rounded-full font-semibold"
-              >
-                {c}
-                <X
-                  className="w-3 h-3 cursor-pointer hover:text-red-500"
-                  onClick={() => toggleCategory(c)}
-                />
-              </span>
-            ))}
-            {selectedBrands.map((b) => (
-              <span
-                key={b}
-                className="inline-flex items-center gap-1 text-[11px] bg-[#EDF7E9] text-[#447719] px-2 py-0.5 rounded-full font-semibold"
-              >
-                {b}
-                <X
-                  className="w-3 h-3 cursor-pointer hover:text-red-500"
-                  onClick={() => toggleBrand(b)}
-                />
-              </span>
-            ))}
-          </div>
-        </div>
-      )}
-
       {/* Category Filter */}
       <div>
         <h4 className="text-xs font-bold uppercase tracking-wider text-[#14304A] mb-2.5">
           Categories
         </h4>
         <div className="space-y-1.5 max-h-48 overflow-y-auto pr-1">
-          {categories.map((cat) => {
+          {["Medicines", "Vitamins & Supplements", "Personal Care", "Medical Devices"].map((cat) => {
             const checked = selectedCategories.includes(cat);
             return (
               <label
@@ -202,7 +138,7 @@ function SearchContent() {
                 <input
                   type="checkbox"
                   checked={checked}
-                  onChange={() => toggleCategory(cat)}
+                  onChange={() => setSelectedCategories(prev => prev.includes(cat) ? prev.filter(c => c !== cat) : [...prev, cat])}
                   className="rounded border-[#C5D6C7] text-[#559620] focus:ring-[#559620] h-3.5 w-3.5"
                 />
                 <span>{cat}</span>
@@ -212,33 +148,7 @@ function SearchContent() {
         </div>
       </div>
 
-      {/* Brand Filter */}
-      <div className="pt-4 border-t border-[#E3EDE1]">
-        <h4 className="text-xs font-bold uppercase tracking-wider text-[#14304A] mb-2.5">
-          Brands
-        </h4>
-        <div className="space-y-1.5 max-h-48 overflow-y-auto pr-1">
-          {brands.map((brand) => {
-            const checked = selectedBrands.includes(brand);
-            return (
-              <label
-                key={brand}
-                className="flex items-center gap-2 text-xs text-[#435746] hover:text-[#14304A] cursor-pointer"
-              >
-                <input
-                  type="checkbox"
-                  checked={checked}
-                  onChange={() => toggleBrand(brand)}
-                  className="rounded border-[#C5D6C7] text-[#559620] focus:ring-[#559620] h-3.5 w-3.5"
-                />
-                <span>{brand}</span>
-              </label>
-            );
-          })}
-        </div>
-      </div>
-
-      {/* Price Range Filter */}
+      {/* Price Range */}
       <div className="pt-4 border-t border-[#E3EDE1]">
         <h4 className="text-xs font-bold uppercase tracking-wider text-[#14304A] mb-2.5">
           Price Range
@@ -248,8 +158,7 @@ function SearchContent() {
             { id: "all", label: "All Prices" },
             { id: "under-200", label: "Under ₹200" },
             { id: "200-500", label: "₹200 - ₹500" },
-            { id: "500-1000", label: "₹500 - ₹1,000" },
-            { id: "above-1000", label: "Above ₹1,000" },
+            { id: "above-500", label: "Above ₹500" },
           ].map((item) => (
             <label
               key={item.id}
@@ -268,64 +177,6 @@ function SearchContent() {
         </div>
       </div>
 
-      {/* Prescription Requirement */}
-      <div className="pt-4 border-t border-[#E3EDE1]">
-        <h4 className="text-xs font-bold uppercase tracking-wider text-[#14304A] mb-2.5">
-          Prescription
-        </h4>
-        <div className="space-y-1.5">
-          {[
-            { id: "all", label: "All Medicines" },
-            { id: "otc", label: "Over the Counter (No Rx)" },
-            { id: "rx", label: "Prescription Required (Rx)" },
-          ].map((item) => (
-            <label
-              key={item.id}
-              className="flex items-center gap-2 text-xs text-[#435746] hover:text-[#14304A] cursor-pointer"
-            >
-              <input
-                type="radio"
-                name="rxFilter"
-                checked={rxFilter === item.id}
-                onChange={() => setRxFilter(item.id as "all" | "otc" | "rx")}
-                className="text-[#559620] focus:ring-[#559620] h-3.5 w-3.5"
-              />
-              <span>{item.label}</span>
-            </label>
-          ))}
-        </div>
-      </div>
-
-      {/* Discount Slabs */}
-      <div className="pt-4 border-t border-[#E3EDE1]">
-        <h4 className="text-xs font-bold uppercase tracking-wider text-[#14304A] mb-2.5">
-          Discount
-        </h4>
-        <div className="space-y-1.5">
-          {[
-            { id: 0, label: "All Discounts" },
-            { id: 10, label: "10% and above" },
-            { id: 15, label: "15% and above" },
-            { id: 20, label: "20% and above" },
-          ].map((item) => (
-            <label
-              key={item.id}
-              className="flex items-center gap-2 text-xs text-[#435746] hover:text-[#14304A] cursor-pointer"
-            >
-              <input
-                type="radio"
-                name="discountFilter"
-                checked={discountFilter === item.id}
-                onChange={() => setDiscountFilter(item.id)}
-                className="text-[#559620] focus:ring-[#559620] h-3.5 w-3.5"
-              />
-              <span>{item.label}</span>
-            </label>
-          ))}
-        </div>
-      </div>
-
-      {/* Availability */}
       <div className="pt-4 border-t border-[#E3EDE1]">
         <label className="flex items-center gap-2 text-xs text-[#435746] font-semibold hover:text-[#14304A] cursor-pointer">
           <input
@@ -334,7 +185,7 @@ function SearchContent() {
             onChange={(e) => setInStockOnly(e.target.checked)}
             className="rounded border-[#C5D6C7] text-[#559620] focus:ring-[#559620] h-3.5 w-3.5"
           />
-          <span>In Stock Only</span>
+            <span>In Stock Only</span>
         </label>
       </div>
     </div>
@@ -342,14 +193,9 @@ function SearchContent() {
 
   return (
     <div className="min-h-screen flex flex-col bg-[#FAFCFA]">
-      <UtilityBar />
-      <Header />
-      <CategoryNav />
-
       <main className="flex-1 py-6 sm:py-8">
         <Container>
           
-          {/* Breadcrumb */}
           <nav className="flex items-center gap-1.5 text-xs text-[#6F8271] mb-5">
             <Link href="/" className="hover:text-[#14304A] transition-colors">
               Home
@@ -363,16 +209,18 @@ function SearchContent() {
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
               <div>
                 <h1 className="font-serif text-2xl sm:text-3xl text-[#14304A] tracking-tight">
-                  {query ? `Search Results for "${query}"` : "Search All Healthcare Products"}
+                  {searchParams.get("q") ? `Search Results for "${searchParams.get("q")}"` : "Search All Healthcare Products"}
                 </h1>
                 <p className="text-xs sm:text-sm text-[#596E5C] mt-1">
-                  Showing <span className="font-bold text-[#14304A]">{filteredProducts.length}</span> genuine healthcare items
+                  Showing <span className="font-bold text-[#14304A]">{totalResults}</span> items
                 </p>
               </div>
 
               {/* In-page Search Input */}
-              <div className="w-full md:w-80 relative flex items-center rounded-full border border-[#D5DFE6] bg-[#FAFCFB] px-3.5 py-1.5 focus-within:border-[#1E56A0] focus-within:bg-white transition-all">
-                <Search className="w-4 h-4 text-[#8C9BA5] shrink-0 mr-2" />
+              <form onSubmit={handleSearchSubmit} className="w-full md:w-80 relative flex items-center rounded-full border border-[#D5DFE6] bg-[#FAFCFB] px-3.5 py-1.5 focus-within:border-[#1E56A0] focus-within:bg-white transition-all">
+                <button type="submit" className="shrink-0 mr-2 cursor-pointer">
+                  <Search className="w-4 h-4 text-[#8C9BA5] hover:text-[#1E56A0]" />
+                </button>
                 <input
                   type="text"
                   value={query}
@@ -382,19 +230,57 @@ function SearchContent() {
                 />
                 {query && (
                   <button
-                    onClick={() => setQuery("")}
+                    type="button"
+                    onClick={() => { setQuery(""); setStrengthFilter(""); }}
                     className="p-1 text-[#8C9BA5] hover:text-[#14304A] cursor-pointer"
                   >
                     <X className="w-3.5 h-3.5" />
                   </button>
                 )}
-              </div>
+              </form>
             </div>
+
+            {/* Structured Medicine UI (Strength Selector) */}
+            {resolvedMedicine && (
+              <div className="mt-6 pt-5 border-t border-[#E3EDE1]">
+                <div className="flex flex-col sm:flex-row sm:items-center gap-4">
+                  <div className="flex items-center gap-2">
+                     <div className="w-8 h-8 rounded-full bg-[#EDF7E9] flex items-center justify-center shrink-0">
+                       <Pill className="w-4 h-4 text-[#559620]" />
+                     </div>
+                     <div>
+                       <span className="text-[10px] text-[#637766] font-bold uppercase tracking-wider block">Resolved Active Ingredient</span>
+                       <span className="text-sm font-bold text-[#14304A]">{resolvedMedicine.composition}</span>
+                     </div>
+                  </div>
+
+                  {resolvedMedicine.availableStrengths && resolvedMedicine.availableStrengths.length > 0 && (
+                    <div className="flex items-center gap-2 sm:ml-auto flex-wrap">
+                      <span className="text-xs text-[#637766] mr-1">Select Strength:</span>
+                      {resolvedMedicine.availableStrengths.map((st: string) => {
+                         const isActive = strengthFilter === st || (resolvedMedicine.availableStrengths.length === 1 && !strengthFilter);
+                         return (
+                           <button
+                             key={st}
+                             onClick={() => handleStrengthSelect(st)}
+                             className={`px-3 py-1.5 rounded-full text-[11px] font-bold border transition-colors cursor-pointer ${
+                               isActive 
+                                ? 'bg-[#559620] text-white border-[#559620]' 
+                                : 'bg-[#FAFCFA] text-[#14304A] border-[#DCE8D8] hover:border-[#559620] hover:text-[#559620]'
+                             }`}
+                           >
+                             {st}
+                           </button>
+                         )
+                      })}
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
           </div>
 
-          {/* Layout Grid: Sidebar + Products Grid */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-            
             {/* Desktop Filters Sidebar (Span 3) */}
             <aside className="hidden lg:block lg:col-span-3 rounded-2xl border border-[#DCE8D8] bg-white p-5 shadow-2xs sticky top-24">
               <div className="flex items-center justify-between pb-3.5 mb-4 border-b border-[#E3EDE1]">
@@ -402,75 +288,35 @@ function SearchContent() {
                   <SlidersHorizontal className="w-4 h-4 text-[#559620]" />
                   <span>Filters</span>
                 </div>
-                {activeFilterCount > 0 && (
-                  <button
-                    onClick={clearAllFilters}
-                    className="text-xs text-[#559620] hover:underline font-bold cursor-pointer"
-                  >
-                    Reset
-                  </button>
-                )}
+                <button
+                  onClick={clearAllFilters}
+                  className="text-xs text-[#559620] hover:underline font-bold cursor-pointer"
+                >
+                  Reset
+                </button>
               </div>
               {renderFiltersContent()}
             </aside>
 
-            {/* Mobile Filter Button Bar */}
+            {/* Mobile Filter Button */}
             <div className="lg:hidden flex items-center justify-between bg-white p-3.5 rounded-2xl border border-[#DCE8D8] mb-4">
               <button
                 onClick={() => setMobileFilterOpen(true)}
                 className="flex items-center gap-2 text-xs font-bold text-[#14304A] bg-[#F0F5F2] px-3 py-2 rounded-xl"
               >
                 <Filter className="w-3.5 h-3.5 text-[#559620]" />
-                <span>Filter Products {activeFilterCount > 0 && `(${activeFilterCount})`}</span>
+                <span>Filter Products</span>
               </button>
-
-              <div className="flex items-center gap-2 text-xs">
-                <span className="text-[#687C69]">Sort:</span>
-                <select
-                  value={sortBy}
-                  onChange={(e) => setSortBy(e.target.value as SearchSortOption)}
-                  className="bg-transparent font-bold text-[#14304A] outline-none text-xs"
-                >
-                  <option value="popularity">Popularity</option>
-                  <option value="price-low">Price: Low to High</option>
-                  <option value="price-high">Price: High to Low</option>
-                  <option value="latest">Latest</option>
-                </select>
-              </div>
             </div>
 
             {/* Products Main Area (Span 9) */}
-            <div className="lg:col-span-9 space-y-6">
+            <div className="lg:col-span-9 space-y-10">
               
-              {/* Desktop Sort Header */}
-              <div className="hidden lg:flex items-center justify-between pb-3 border-b border-[#E3EDE1]">
-                <p className="text-xs text-[#687C69]">
-                  Showing <span className="font-bold text-[#14304A]">{filteredProducts.length}</span> results
-                </p>
-
-                <div className="flex items-center gap-2 text-xs">
-                  <span className="text-[#687C69]">Sort By:</span>
-                  <select
-                    value={sortBy}
-                    onChange={(e) => setSortBy(e.target.value as SearchSortOption)}
-                    className="bg-white border border-[#D0DED3] rounded-lg px-2.5 py-1.5 font-bold text-[#14304A] outline-none text-xs focus:border-[#559620]"
-                  >
-                    <option value="popularity">Popularity &amp; Bestselling</option>
-                    <option value="price-low">Price: Low to High</option>
-                    <option value="price-high">Price: High to Low</option>
-                    <option value="latest">Latest</option>
-                  </select>
-                </div>
-              </div>
-
-              {/* Product Grid or Empty State */}
-              {filteredProducts.length > 0 ? (
-                <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-4 gap-3.5 sm:gap-4">
-                  {filteredProducts.map((product) => (
-                    <ProductCard key={product.id} product={product} />
-                  ))}
-                </div>
-              ) : (
+              {isMedicineLoading || isAllLoading ? (
+                 <div className="py-12 flex justify-center">
+                   <div className="w-8 h-8 border-4 border-[#559620] border-t-transparent rounded-full animate-spin"></div>
+                 </div>
+              ) : totalResults === 0 ? (
                 <div className="rounded-3xl border border-dashed border-[#C5D6C7] bg-white p-12 text-center">
                   <div className="w-14 h-14 rounded-full bg-[#F0F6EF] text-[#559620] mx-auto flex items-center justify-center mb-3">
                     <Search className="w-7 h-7" />
@@ -482,20 +328,90 @@ function SearchContent() {
                     We couldn&apos;t find anything matching your search criteria. Try removing filters or searching by generic formula name.
                   </p>
                   <button
-                    onClick={clearAllFilters}
+                    onClick={() => { clearAllFilters(); setQuery(""); setStrengthFilter(""); router.push("/search") }}
                     className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#559620] hover:bg-[#467E19] text-white text-xs font-bold transition-all shadow-xs cursor-pointer"
                   >
                     <RotateCcw className="w-3.5 h-3.5" />
-                    <span>Reset All Filters</span>
+                    <span>Clear Search</span>
                   </button>
                 </div>
+              ) : (
+                <>
+                  {/* Generic Options Group */}
+                  {genericOptions.length > 0 && (
+                    <div>
+                      <div className="flex items-center justify-between mb-4 pb-2 border-b-2 border-[#559620]">
+                        <h2 className="font-serif text-lg font-bold text-[#14304A] flex items-center gap-2">
+                          <span className="w-2.5 h-2.5 rounded-full bg-[#559620]"></span>
+                          Generic Alternatives
+                        </h2>
+                        <span className="text-[10px] text-[#559620] font-bold bg-[#EDF7E9] px-2 py-0.5 rounded-md hidden sm:inline-block">
+                          Max Savings & Verified Composition
+                        </span>
+                      </div>
+                      <div className="grid grid-cols-2 sm:grid-cols-3 gap-3.5 sm:gap-4">
+                        {genericOptions.map((product) => (
+                          <ProductCard key={product.id} product={product} />
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Exact / Searched Brands */}
+                  {exactMatches.length > 0 && (
+                    <div>
+                      <h2 className="font-serif text-lg font-bold text-[#14304A] mb-4 pb-2 border-b border-[#E3EDE1]">
+                        Searched Brand
+                      </h2>
+                      <div className="grid grid-cols-2 sm:grid-cols-3 gap-3.5 sm:gap-4">
+                        {exactMatches.map((product) => (
+                          <ProductCard key={product.id} product={product} />
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Other Branded Options */}
+                  {brandedAlternatives.length > 0 && (
+                    <div>
+                      <h2 className="font-serif text-lg font-bold text-[#14304A] mb-4 pb-2 border-b border-[#E3EDE1] flex items-center gap-2">
+                        Other Branded Options
+                        <div className="group relative cursor-help">
+                           <Info className="w-3.5 h-3.5 text-[#8C9C8F]" />
+                           <div className="absolute left-1/2 -translate-x-1/2 bottom-full mb-2 w-48 p-2 bg-[#14304A] text-white text-[10px] rounded-lg opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity">
+                              These brands contain the same verified active composition and strength.
+                           </div>
+                        </div>
+                      </h2>
+                      <div className="grid grid-cols-2 sm:grid-cols-3 gap-3.5 sm:gap-4">
+                        {brandedAlternatives.map((product) => (
+                          <ProductCard key={product.id} product={product} />
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Other Results (Catch-all) */}
+                  {otherResults.length > 0 && (
+                    <div>
+                      <h2 className="font-serif text-lg font-bold text-[#14304A] mb-4 pb-2 border-b border-[#E3EDE1]">
+                        {isSearchActive ? "Other Relevant Products" : "All Products"}
+                      </h2>
+                      <div className="grid grid-cols-2 sm:grid-cols-3 gap-3.5 sm:gap-4">
+                        {otherResults.map((product) => (
+                          <ProductCard key={product.id} product={product} />
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </>
               )}
 
-              {/* Need Prescription Assistance Promo */}
-              <div className="rounded-2xl border border-[#D7E4D3] bg-[#F3F8F1] p-5 sm:p-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+              {/* Need Prescription Promo */}
+              <div className="rounded-2xl border border-[#D7E4D3] bg-[#F3F8F1] p-5 sm:p-6 flex flex-col sm:flex-row items-center justify-between gap-4 mt-8">
                 <div>
                   <h4 className="text-sm font-bold text-[#14304A]">
-                    Looking for a specific prescription medication?
+                    Can&apos;t find your medication?
                   </h4>
                   <p className="text-xs text-[#5D735F] mt-0.5">
                     Upload your prescription directly. Our licensed pharmacists will locate and prepare your order.
@@ -503,16 +419,13 @@ function SearchContent() {
                 </div>
                 <Link
                   href="/prescription/upload"
-                  className="px-4 py-2.5 rounded-xl bg-[#1853A8] hover:bg-[#123E7F] text-white text-xs font-bold transition-all shadow-xs shrink-0"
+                  className="px-4 py-2.5 rounded-xl bg-brand-primary hover:bg-[#123E7F] text-white text-xs font-bold transition-all shadow-xs shrink-0"
                 >
                   Upload Prescription &rarr;
                 </Link>
               </div>
-
             </div>
-
           </div>
-
         </Container>
       </main>
 
@@ -525,9 +438,7 @@ function SearchContent() {
           />
           <div className="relative ml-auto w-full max-w-xs bg-white h-full p-6 shadow-xl flex flex-col z-10 overflow-y-auto">
             <div className="flex items-center justify-between pb-4 mb-4 border-b border-[#E3EDE1]">
-              <h3 className="font-serif text-lg font-bold text-[#14304A]">
-                Filters
-              </h3>
+              <h3 className="font-serif text-lg font-bold text-[#14304A]">Filters</h3>
               <button
                 onClick={() => setMobileFilterOpen(false)}
                 className="p-1 text-[#8C9C8F] hover:text-[#14304A]"
@@ -543,7 +454,7 @@ function SearchContent() {
                 onClick={() => setMobileFilterOpen(false)}
                 className="w-full py-2.5 rounded-xl bg-[#559620] text-white font-bold text-xs"
               >
-                Apply Filters ({filteredProducts.length} Results)
+                Apply Filters
               </button>
             </div>
           </div>

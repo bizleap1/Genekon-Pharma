@@ -169,13 +169,13 @@ export const productsApi = {
 
       return {
         success: true,
-        data: mapped.length > 0 ? mapped : ALL_PRODUCTS.slice(0, 8),
+        data: mapped.length > 0 ? mapped : ALL_PRODUCTS.slice(0, 16),
         timestamp: new Date().toISOString(),
       };
     } catch {
       return {
         success: true,
-        data: ALL_PRODUCTS.slice(0, 8),
+        data: ALL_PRODUCTS.slice(0, 16),
         timestamp: new Date().toISOString(),
       };
     }
@@ -210,6 +210,37 @@ export const productsApi = {
         success: true,
         data: results,
         timestamp: new Date().toISOString(),
+      };
+    }
+  },
+
+  /**
+   * Advanced Generic-First Medicine Search
+   */
+  async medicineSearch(query: string, strength?: string): Promise<ApiResponse<any>> {
+    try {
+      const res = await apiClient.get<any>("/products/medicine-search", {
+        params: { q: query, strength },
+      });
+      
+      const payload = res.data;
+      if (payload) {
+         payload.genericProducts = (payload.genericProducts || []).map(mapBackendProductToFrontend);
+         payload.exactMatches = (payload.exactMatches || []).map(mapBackendProductToFrontend);
+         payload.brandedAlternatives = (payload.brandedAlternatives || []).map(mapBackendProductToFrontend);
+         payload.otherResults = (payload.otherResults || []).map(mapBackendProductToFrontend);
+      }
+
+      return {
+        success: true,
+        data: payload,
+        timestamp: new Date().toISOString(),
+      };
+    } catch {
+       return {
+        success: false,
+        data: null,
+        message: "Failed to search medicines"
       };
     }
   },

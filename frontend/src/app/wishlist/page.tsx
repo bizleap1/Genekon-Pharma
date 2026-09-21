@@ -3,9 +3,6 @@
 import React from "react";
 import Link from "next/link";
 import { Heart, ArrowRight, ShoppingBag, Trash2 } from "lucide-react";
-import { UtilityBar } from "@/components/layout/UtilityBar";
-import { Header } from "@/components/layout/Header";
-import { CategoryNav } from "@/components/layout/CategoryNav";
 import { Footer } from "@/components/layout/Footer";
 import { Container } from "@/components/ui/Container";
 import { ProductCard } from "@/components/ui/ProductCard";
@@ -25,9 +22,6 @@ export default function WishlistPage() {
 
   return (
     <div className="min-h-screen flex flex-col bg-[#FAFCFA]">
-      <UtilityBar />
-      <Header />
-      <CategoryNav />
 
       <main className="flex-1 py-8 sm:py-12">
         <Container>
@@ -56,7 +50,7 @@ export default function WishlistPage() {
                 <>
                   <button
                     onClick={handleMoveAllToCart}
-                    className="px-4 py-2 rounded-xl bg-[#1853A8] hover:bg-[#123E7F] text-white text-xs font-bold transition-all shadow-xs flex items-center gap-1.5 cursor-pointer"
+                    className="px-4 py-2 rounded-xl bg-brand-primary hover:bg-[#123E7F] text-white text-xs font-bold transition-all shadow-xs flex items-center gap-1.5 cursor-pointer"
                   >
                     <ShoppingBag className="w-3.5 h-3.5" />
                     <span>Move All to Cart</span>
@@ -113,3 +107,4 @@ export default function WishlistPage() {
     </div>
   );
 }
+

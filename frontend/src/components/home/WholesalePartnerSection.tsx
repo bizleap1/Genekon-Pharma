@@ -59,7 +59,7 @@ export const WholesalePartnerSection: React.FC = () => {
           
           {/* Subtle decorative background glow */}
           <div className="absolute top-0 right-0 w-96 h-96 bg-[#559620]/15 rounded-full blur-3xl pointer-events-none" />
-          <div className="absolute bottom-0 left-0 w-80 h-80 bg-[#1853A8]/20 rounded-full blur-3xl pointer-events-none" />
+          <div className="absolute bottom-0 left-0 w-80 h-80 bg-brand-primary/20 rounded-full blur-3xl pointer-events-none" />
 
           <div className="relative z-10">
             

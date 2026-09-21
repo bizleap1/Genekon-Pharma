@@ -58,18 +58,18 @@ const CATEGORIES: CategoryItem[] = [
     ringColor: "ring-[#E8F5E9] group-hover:ring-[#A5D6A7]",
   },
   {
-    id: "cat-7",
-    name: "Medical Devices",
-    slug: "/category/medical-devices",
-    image: "/images/categories/cat-medical-devices-v2.jpg",
-    ringColor: "ring-[#E0F2F1] group-hover:ring-[#80CBC4]",
-  },
-  {
     id: "cat-8",
     name: "Wellness Essentials",
     slug: "/category/wellness",
     image: "/images/categories/cat-wellness-essentials-v2.jpg",
     ringColor: "ring-[#E1F5FE] group-hover:ring-[#81D4FA]",
+  },
+  {
+    id: "cat-7",
+    name: "Medical Devices",
+    slug: "/category/medical-devices",
+    image: "/images/categories/cat-medical-devices-v2.jpg",
+    ringColor: "ring-[#E0F2F1] group-hover:ring-[#80CBC4]",
   },
 ];
 
@@ -89,7 +89,7 @@ export const CategorySection: React.FC = () => {
         {/* Section Header */}
         <div className="flex flex-col items-center text-center mb-8 sm:mb-10">
           <div className="animate-in fade-in slide-in-from-bottom-2 duration-500">
-            <span className="text-[10px] sm:text-xs font-bold tracking-widest text-[#1853A8] uppercase mb-1.5 block">
+            <span className="text-[10px] sm:text-xs font-bold tracking-widest text-brand-primary uppercase mb-1.5 block">
               EXPLORE HEALTH. LIVE BETTER.
             </span>
             <h2 className="text-2xl sm:text-3xl font-extrabold text-[#14304A] tracking-tight">
@@ -129,7 +129,7 @@ export const CategorySection: React.FC = () => {
               </div>
 
               {/* Label */}
-              <span className="mt-4 text-[13px] sm:text-sm font-bold text-[#14304A] group-hover:text-[#1853A8] transition-colors leading-snug line-clamp-2 max-w-[100px] sm:max-w-[110px]">
+              <span className="mt-4 text-[13px] sm:text-sm font-bold text-[#14304A] group-hover:text-brand-primary transition-colors leading-snug line-clamp-2 max-w-[100px] sm:max-w-[110px]">
                 {cat.name}
               </span>
             </Link>
@@ -141,14 +141,14 @@ export const CategorySection: React.FC = () => {
           <button
             onClick={() => scroll("left")}
             aria-label="Previous categories"
-            className="hidden lg:flex w-9 h-9 rounded-full border border-[#D5DFD7] hover:border-[#1853A8] hover:bg-[#F4F9F2] text-[#556958] hover:text-[#1853A8] items-center justify-center transition-all cursor-pointer"
+            className="hidden lg:flex w-9 h-9 rounded-full border border-[#D5DFD7] hover:border-brand-primary hover:bg-[#F4F9F2] text-[#556958] hover:text-brand-primary items-center justify-center transition-all cursor-pointer"
           >
             <ChevronLeft className="w-5 h-5" />
           </button>
           
           <Link
             href="/categories"
-            className="inline-flex items-center justify-center gap-1.5 text-xs sm:text-sm font-bold text-white bg-[#347A14] hover:bg-[#1853A8] px-6 py-2.5 rounded-full transition-colors shadow-xs"
+            className="inline-flex items-center justify-center gap-1.5 text-xs sm:text-sm font-bold text-white bg-[#347A14] hover:bg-brand-primary px-6 py-2.5 rounded-full transition-colors shadow-xs"
           >
             <span>View All Categories</span>
             <ArrowRight className="w-4 h-4" />
@@ -157,7 +157,7 @@ export const CategorySection: React.FC = () => {
           <button
             onClick={() => scroll("right")}
             aria-label="Next categories"
-            className="hidden lg:flex w-9 h-9 rounded-full border border-[#D5DFD7] hover:border-[#1853A8] hover:bg-[#F4F9F2] text-[#556958] hover:text-[#1853A8] items-center justify-center transition-all cursor-pointer"
+            className="hidden lg:flex w-9 h-9 rounded-full border border-[#D5DFD7] hover:border-brand-primary hover:bg-[#F4F9F2] text-[#556958] hover:text-brand-primary items-center justify-center transition-all cursor-pointer"
           >
             <ChevronRight className="w-5 h-5" />
           </button>

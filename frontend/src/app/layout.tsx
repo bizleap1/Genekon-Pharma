@@ -95,7 +95,7 @@ const jsonLd = {
   "@type": "Pharmacy",
   name: "GENEKON Pharmaceuticals Pvt. Ltd.",
   url: "https://genekonpharma.com",
-  logo: "https://genekonpharma.com/images/genekon-logo.png",
+  logo: "https://genekonpharma.com/images/genekon-logo-v2.png",
   description:
     "Care for today. Healthier tomorrow. A wide range of genuine medicines, healthcare products and wellness essentials.",
   telephone: "+91-1800-GENEKON",
@@ -124,6 +124,8 @@ const jsonLd = {
   },
 };
 
+import { StoreHeader } from "@/components/layout/StoreHeader";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -141,7 +143,10 @@ export default function RootLayout({
           id="schema-jsonld"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
-        <Providers>{children}</Providers>
+        <Providers>
+          <StoreHeader />
+          {children}
+        </Providers>
       </body>
     </html>
   );

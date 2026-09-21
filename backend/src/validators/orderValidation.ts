@@ -36,18 +36,18 @@ export const updateOrderStatusSchema = z.object({
 
 export const reviewPrescriptionSchema = z
   .object({
-    status: z.enum(["APPROVED", "REJECTED"]),
+    status: z.enum(["APPROVED", "REJECTED", "NEEDS_REUPLOAD"]),
     rejectionReason: z.string().optional(),
   })
   .refine(
     (data) => {
-      if (data.status === "REJECTED") {
+      if (data.status === "REJECTED" || data.status === "NEEDS_REUPLOAD") {
         return !!data.rejectionReason && data.rejectionReason.trim().length > 0;
       }
       return true;
     },
     {
-      message: "Rejection reason is required when rejecting a prescription",
+      message: "Reason is required when rejecting or requesting re-upload",
       path: ["rejectionReason"],
     }
   );

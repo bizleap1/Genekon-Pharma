@@ -1,16 +1,19 @@
+import { apiClient } from "@/api/client";
+
 export interface UploadedPrescriptionRecord {
   id: string;
   fileName: string;
-  fileSize: string;
-  uploadedAt: string;
+  fileSize: number | string;
+  fileUrl?: string;
+  uploadedAt?: string;
+  createdAt?: string;
   patientName?: string;
   doctorName?: string;
   clinicName?: string;
-  notes?: string;
-  status: "Pending Review" | "Approved" | "Rejected";
+  customerNote?: string;
+  rejectionReason?: string;
+  status: "PENDING" | "APPROVED" | "REJECTED" | "NEEDS_REUPLOAD" | "USED_FOR_ORDER" | string;
 }
-
-const RX_STORAGE_KEY = "genekon_uploaded_prescriptions_v1";
 
 export const prescriptionService = {
   validateFile(file: File): { valid: boolean; error?: string } {
@@ -29,83 +32,78 @@ export const prescriptionService = {
       };
     }
 
-    const maxSizeInBytes = 5 * 1024 * 1024; // 5 MB
+    const maxSizeInBytes = 10 * 1024 * 1024; // 10 MB
     if (file.size > maxSizeInBytes) {
       return {
         valid: false,
         error: `File size (${(file.size / (1024 * 1024)).toFixed(
           1
-        )} MB) exceeds the 5 MB limit. Please upload a smaller file.`,
+        )} MB) exceeds the 10 MB limit. Please upload a smaller file.`,
       };
     }
 
     return { valid: true };
   },
 
-  formatFileSize(bytes: number): string {
-    if (bytes < 1024) return `${bytes} B`;
-    if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
-    return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+  formatFileSize(bytes: number | string): string {
+    const numBytes = typeof bytes === "string" ? parseInt(bytes, 10) : bytes;
+    if (isNaN(numBytes)) return "0 B";
+    if (numBytes < 1024) return `${numBytes} B`;
+    if (numBytes < 1024 * 1024) return `${(numBytes / 1024).toFixed(1)} KB`;
+    return `${(numBytes / (1024 * 1024)).toFixed(1)} MB`;
   },
 
   async uploadPrescription(
     file: File,
-    metadata: { patientName?: string; notes?: string; doctorName?: string },
+    metadata: { patientName?: string; customerNote?: string; doctorName?: string; addressId?: string },
     onProgress?: (percent: number) => void
   ): Promise<UploadedPrescriptionRecord> {
-    return new Promise((resolve) => {
+    const formData = new FormData();
+    formData.append("file", file);
+    if (metadata.patientName) formData.append("patientName", metadata.patientName);
+    if (metadata.doctorName) formData.append("doctorName", metadata.doctorName);
+    if (metadata.customerNote) formData.append("customerNote", metadata.customerNote);
+    if (metadata.addressId) formData.append("addressId", metadata.addressId);
+
+    // Simulate progress if onProgress is provided, as fetch doesn't natively support upload progress easily without XHR
+    if (onProgress) {
       let progress = 0;
       const interval = setInterval(() => {
-        progress += 25;
-        if (onProgress) onProgress(progress);
-
-        if (progress >= 100) {
-          clearInterval(interval);
-          const newRecord: UploadedPrescriptionRecord = {
-            id: `RX-${Math.floor(4500 + Math.random() * 999)}`,
-            fileName: file.name,
-            fileSize: prescriptionService.formatFileSize(file.size),
-            uploadedAt: new Date().toLocaleDateString("en-IN", {
-              month: "short",
-              day: "numeric",
-              year: "numeric",
-              hour: "2-digit",
-              minute: "2-digit",
-            }),
-            patientName: metadata.patientName || "Prerna Sharma",
-            doctorName: metadata.doctorName || "Dr. Deshmukh, MD",
-            clinicName: "General Clinic",
-            notes: metadata.notes || "Uploaded for home delivery refill",
-            status: "Pending Review",
-          };
-
-          // Save to localStorage
-          if (typeof window !== "undefined") {
-            try {
-              const existingStr = localStorage.getItem(RX_STORAGE_KEY);
-              const existing = existingStr ? JSON.parse(existingStr) : [];
-              localStorage.setItem(
-                RX_STORAGE_KEY,
-                JSON.stringify([newRecord, ...existing])
-              );
-            } catch (err) {
-              console.error("Failed to save Rx record", err);
-            }
-          }
-
-          resolve(newRecord);
-        }
-      }, 150);
-    });
-  },
-
-  getStoredPrescriptions(): UploadedPrescriptionRecord[] {
-    if (typeof window === "undefined") return [];
-    try {
-      const stored = localStorage.getItem(RX_STORAGE_KEY);
-      return stored ? JSON.parse(stored) : [];
-    } catch {
-      return [];
+        progress += 20;
+        if (progress > 90) progress = 90;
+        onProgress(progress);
+      }, 200);
+      
+      try {
+        const response = await apiClient.post<UploadedPrescriptionRecord>("/orders/prescriptions/upload", formData);
+        clearInterval(interval);
+        onProgress(100);
+        return response.data;
+      } catch (err) {
+        clearInterval(interval);
+        throw err;
+      }
+    } else {
+      const response = await apiClient.post<UploadedPrescriptionRecord>("/orders/prescriptions/upload", formData);
+      return response.data;
     }
   },
+
+  async getUserPrescriptions(): Promise<UploadedPrescriptionRecord[]> {
+    const response = await apiClient.get<UploadedPrescriptionRecord[]>("/orders/prescriptions/mine");
+    return response.data;
+  },
+  
+  async getAllAdminPrescriptions(): Promise<UploadedPrescriptionRecord[]> {
+    const response = await apiClient.get<UploadedPrescriptionRecord[]>("/orders/admin/prescriptions");
+    return response.data;
+  },
+
+  async reviewPrescription(id: string, status: string, rejectionReason?: string): Promise<UploadedPrescriptionRecord> {
+    const response = await apiClient.patch<UploadedPrescriptionRecord>(`/orders/admin/prescriptions/${id}/review`, {
+      status,
+      rejectionReason
+    });
+    return response.data;
+  }
 };

@@ -192,7 +192,7 @@ export default function AdminReportsPage() {
               onClick={() => handleExport("Genekon_GST_Compliance_Tax_Audit", "PDF")}
               className="px-3.5 py-2 rounded-xl border border-[#CCDCCD] bg-white hover:bg-[#F2F7F2] text-xs font-bold text-[#14304A] transition-colors flex items-center gap-1.5"
             >
-              <FileText className="w-3.5 h-3.5 text-[#1853A8]" />
+              <FileText className="w-3.5 h-3.5 text-brand-primary" />
               <span>Export Tax PDF</span>
             </button>
           </div>
@@ -219,7 +219,7 @@ export default function AdminReportsPage() {
           period="Wholesale AOV: ₹5,400"
           icon={ShoppingBag}
           iconBg="bg-[#EBF3FC]"
-          iconColor="text-[#1853A8]"
+          iconColor="text-brand-primary"
         />
         <DashboardCard
           title="Order Fulfillment SLA"
@@ -384,13 +384,13 @@ export default function AdminReportsPage() {
                   <div>
                     <div className="flex items-center justify-between text-xs mb-1">
                       <span className="font-bold text-[#14304A] flex items-center gap-1.5">
-                        <Building2 className="w-3.5 h-3.5 text-[#1853A8]" />
+                        <Building2 className="w-3.5 h-3.5 text-brand-primary" />
                         Wholesale B2B (Clinics &amp; Stores)
                       </span>
                       <span className="font-mono font-bold text-[#14304A]">₹4,97,000 (33.5%)</span>
                     </div>
                     <div className="w-full h-2 rounded-full bg-[#EBF3FC] overflow-hidden">
-                      <div className="h-full bg-[#1853A8] rounded-full" style={{ width: "33.5%" }} />
+                      <div className="h-full bg-brand-primary rounded-full" style={{ width: "33.5%" }} />
                     </div>
                   </div>
                 </div>
@@ -488,7 +488,7 @@ export default function AdminReportsPage() {
                       <td className="py-3 px-4 text-right">
                         <Link
                           href="/admin/products"
-                          className="text-xs text-[#1853A8] font-bold hover:underline"
+                          className="text-xs text-brand-primary font-bold hover:underline"
                         >
                           View Stock
                         </Link>
@@ -577,7 +577,7 @@ export default function AdminReportsPage() {
                       <span className="text-xs font-bold text-[#14304A] block">Nagpur Rural &amp; MIDC</span>
                       <span className="text-[11px] text-[#637766]">Hingna, Butibori &amp; Kalmeshwar</span>
                     </div>
-                    <span className="font-mono text-sm font-extrabold text-[#1853A8]">6.2 Hours</span>
+                    <span className="font-mono text-sm font-extrabold text-brand-primary">6.2 Hours</span>
                   </div>
 
                   <div className="p-3 rounded-xl bg-[#FAFCFA] border border-[#E2EAE0] flex items-center justify-between">
@@ -600,7 +600,7 @@ export default function AdminReportsPage() {
                 <h3 className="font-serif text-base font-bold text-[#14304A]">Cold-Chain Integrity Check</h3>
                 <p className="text-xs text-[#637766] mt-0.5 mb-3">Temperature records for Insulin and Biologicals (2°C - 8°C)</p>
                 <div className="p-3 rounded-xl bg-[#EBF3FC] border border-[#D0E2F7] text-xs space-y-1">
-                  <div className="flex justify-between font-bold text-[#1853A8]">
+                  <div className="flex justify-between font-bold text-brand-primary">
                     <span>Insulin &amp; Vaccine Shipments:</span>
                     <span>320 Dispatched</span>
                   </div>
@@ -628,7 +628,7 @@ export default function AdminReportsPage() {
 
             <div className="rounded-2xl border border-[#E2EAE0] bg-white p-5 shadow-2xs">
               <span className="text-xs font-bold text-[#637766] uppercase tracking-wider">Inventory Holding Cost</span>
-              <div className="font-serif text-2xl font-bold text-[#1853A8] mt-1">₹12,88,175</div>
+              <div className="font-serif text-2xl font-bold text-brand-primary mt-1">₹12,88,175</div>
               <span className="text-[11px] text-[#637766] mt-0.5 block">Net purchase cost from manufacturer</span>
             </div>
 
@@ -705,3 +705,4 @@ export default function AdminReportsPage() {
     </div>
   );
 }
+

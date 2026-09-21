@@ -50,7 +50,7 @@ export const ToastContainer: React.FC<ToastContainerProps> = ({ toasts, onClose 
               {isSuccess && <CheckCircle2 className="w-5 h-5 text-[#559620]" />}
               {isError && <AlertCircle className="w-5 h-5 text-red-600" />}
               {isWarning && <AlertTriangle className="w-5 h-5 text-amber-600" />}
-              {isInfo && <Info className="w-5 h-5 text-[#1853A8]" />}
+              {isInfo && <Info className="w-5 h-5 text-brand-primary" />}
             </div>
 
             {/* Message Body */}

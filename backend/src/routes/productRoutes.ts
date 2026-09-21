@@ -11,6 +11,7 @@ const router = Router();
 router.get("/", productController.getProducts);
 router.get("/featured", productController.getFeaturedProducts);
 router.get("/search", productController.searchProducts);
+router.get("/medicine-search", productController.medicineSearch);
 router.get("/category", productController.getProductsByCategory);
 router.get("/category/:category", productController.getProductsByCategory);
 router.get("/:idOrSlug", productController.getProductByIdOrSlug);

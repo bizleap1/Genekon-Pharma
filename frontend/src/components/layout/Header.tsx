@@ -106,13 +106,13 @@ export const Header: React.FC = () => {
           {/* Brand Logo */}
           <div className="flex items-center gap-3 shrink-0">
             <Link href="/" className="inline-flex items-center group">
-              <div className="relative h-9 sm:h-12 w-[120px] sm:w-[160px]">
+              <div className="relative h-12 sm:h-16 w-[160px] sm:w-[220px]">
                 <Image
-                  src="/images/genekon-brand-logo.png"
+                  src="/images/genekon-logo.png"
                   alt="GENEKON Pharmaceuticals"
                   fill
                   priority
-                  sizes="(max-width: 640px) 120px, 160px"
+                  sizes="(max-width: 640px) 160px, 220px"
                   className="object-contain object-left group-hover:opacity-95 transition-opacity"
                 />
               </div>
@@ -146,7 +146,7 @@ export const Header: React.FC = () => {
               )}
               <button
                 type="submit"
-                className="h-9 w-11 rounded-full bg-[#1A52A3] hover:bg-[#144285] text-white flex items-center justify-center transition-colors shrink-0 cursor-pointer shadow-xs"
+                className="h-9 w-11 rounded-full bg-brand-primary hover:bg-[#144285] text-white flex items-center justify-center transition-colors shrink-0 cursor-pointer shadow-xs"
                 aria-label="Submit search"
               >
                 <Search className="w-4 h-4" />
@@ -209,7 +209,7 @@ export const Header: React.FC = () => {
 
                         <div
                           onClick={() => handleSearchSubmit()}
-                          className="p-3 bg-[#FAFCFA] hover:bg-[#EDF7E9] text-center text-xs font-bold text-[#1853A8] transition-colors cursor-pointer flex items-center justify-center gap-1.5"
+                          className="p-3 bg-[#FAFCFA] hover:bg-[#EDF7E9] text-center text-xs font-bold text-brand-primary transition-colors cursor-pointer flex items-center justify-center gap-1.5"
                         >
                           <span>See all results for &quot;{searchQuery}&quot;</span>
                           <ArrowRight className="w-3.5 h-3.5" />
@@ -269,7 +269,7 @@ export const Header: React.FC = () => {
                     {/* Popular Trending Suggestions */}
                     <div>
                       <div className="flex items-center gap-1.5 text-xs font-bold text-[#14304A] pb-2 mb-2 border-b border-[#EDF3EC]">
-                        <TrendingUp className="w-3.5 h-3.5 text-[#1853A8]" />
+                        <TrendingUp className="w-3.5 h-3.5 text-brand-primary" />
                         <span>Popular Health Searches</span>
                       </div>
                       <div className="flex flex-wrap gap-2">
@@ -312,7 +312,7 @@ export const Header: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setUserMenuOpen(!userMenuOpen)}
-                  className="flex items-center gap-1.5 hover:text-[#1A52A3] transition-colors cursor-pointer p-1 sm:p-0"
+                  className="flex items-center gap-1.5 hover:text-brand-primary transition-colors cursor-pointer p-1 sm:p-0"
                 >
                   <div className="w-7 h-7 rounded-full bg-[#EDF7E9] text-[#559620] border border-[#D5E6D0] flex items-center justify-center text-xs font-bold shrink-0">
                     {user.name.charAt(0)}
@@ -344,7 +344,7 @@ export const Header: React.FC = () => {
                       onClick={() => setUserMenuOpen(false)}
                       className="flex items-center gap-2 px-4 py-2 text-xs text-[#14304A] hover:bg-[#F2F7F1] transition-colors"
                     >
-                      <ShoppingBag className="w-3.5 h-3.5 text-[#1853A8]" />
+                      <ShoppingBag className="w-3.5 h-3.5 text-brand-primary" />
                       <span>My Orders</span>
                     </Link>
 
@@ -389,7 +389,7 @@ export const Header: React.FC = () => {
             ) : (
               <Link
                 href="/login"
-                className="flex items-center gap-1.5 hover:text-[#1A52A3] transition-colors p-1 sm:p-0"
+                className="flex items-center gap-1.5 hover:text-brand-primary transition-colors p-1 sm:p-0"
               >
                 <User className="w-5 h-5 text-[#14304A]" />
                 <span className="hidden sm:block text-sm">Sign In</span>
@@ -410,7 +410,7 @@ export const Header: React.FC = () => {
                   "Login required to access your saved healthcare wishlist"
                 );
               }}
-              className="relative hidden sm:flex items-center gap-1.5 hover:text-[#69A82F] transition-colors cursor-pointer"
+              className="relative hidden sm:flex items-center gap-1.5 hover:text-brand-primary transition-colors cursor-pointer"
             >
               <Heart className="w-4 h-4 text-[#14304A]" />
               <span className="text-xs sm:text-sm">Wishlist</span>
@@ -421,14 +421,14 @@ export const Header: React.FC = () => {
               )}
             </button>
 
-            {/* Cart with Green Badge */}
+            {/* Cart with Secondary Badge */}
             <Link
               href="/cart"
-              className="relative flex items-center p-1.5 hover:text-[#1A52A3] transition-colors"
+              className="relative flex items-center p-1.5 hover:text-brand-primary transition-colors"
               aria-label="View Shopping Cart"
             >
               <ShoppingCart className="w-5 h-5 text-[#14304A]" />
-              <span className="absolute -top-1 -right-1.5 flex h-4 min-w-[16px] items-center justify-center rounded-full bg-[#69A82F] px-1 text-[10px] font-extrabold text-white leading-none shadow-xs">
+              <span className="absolute -top-1 -right-1.5 flex h-4 min-w-[16px] items-center justify-center rounded-full bg-brand-secondary px-1 text-[10px] font-extrabold text-white leading-none shadow-xs">
                 {cartCount}
               </span>
             </Link>
@@ -462,7 +462,7 @@ export const Header: React.FC = () => {
               />
               <button
                 type="submit"
-                className="h-8 w-9 rounded-full bg-[#1A52A3] text-white flex items-center justify-center shrink-0"
+                className="h-8 w-9 rounded-full bg-brand-primary text-white flex items-center justify-center shrink-0"
                 aria-label="Search"
               >
                 <Search className="w-3.5 h-3.5" />

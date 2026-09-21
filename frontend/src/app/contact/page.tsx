@@ -14,9 +14,6 @@ import {
   Headphones
 } from "lucide-react";
 import { WhatsAppIcon } from "@/components/ui/WhatsAppIcon";
-import { UtilityBar } from "@/components/layout/UtilityBar";
-import { Header } from "@/components/layout/Header";
-import { CategoryNav } from "@/components/layout/CategoryNav";
 import { Footer } from "@/components/layout/Footer";
 import { Container } from "@/components/ui/Container";
 
@@ -37,9 +34,6 @@ export default function ContactPage() {
 
   return (
     <div className="min-h-screen flex flex-col bg-[#FAFCFA]">
-      <UtilityBar />
-      <Header />
-      <CategoryNav />
 
       <main className="flex-1 py-8 sm:py-12">
         <Container>
@@ -109,7 +103,7 @@ export default function ContactPage() {
 
             {/* Email */}
             <div className="rounded-2xl border border-[#DCE8D8] bg-white p-5 shadow-2xs">
-              <div className="w-10 h-10 rounded-xl bg-[#EBF3FC] text-[#1853A8] flex items-center justify-center mb-3">
+              <div className="w-10 h-10 rounded-xl bg-[#EBF3FC] text-brand-primary flex items-center justify-center mb-3">
                 <Mail className="w-5 h-5" />
               </div>
               <h4 className="text-xs font-bold uppercase tracking-wider text-[#14304A]">
@@ -339,3 +333,4 @@ export default function ContactPage() {
     </div>
   );
 }
+

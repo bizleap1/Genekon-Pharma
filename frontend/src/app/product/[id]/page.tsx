@@ -4,6 +4,8 @@ import React, { useState, useMemo } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
+import { ComparisonCard } from "@/components/home/comparison/ComparisonCard";
+import { ResolvedComparison } from "@/types/comparison";
 import {
   Star,
   Heart,
@@ -24,9 +26,6 @@ import {
   AlertTriangle,
   Building2
 } from "lucide-react";
-import { UtilityBar } from "@/components/layout/UtilityBar";
-import { Header } from "@/components/layout/Header";
-import { CategoryNav } from "@/components/layout/CategoryNav";
 import { Footer } from "@/components/layout/Footer";
 import { Container } from "@/components/ui/Container";
 import { ALL_PRODUCTS } from "@/data/products";
@@ -80,6 +79,8 @@ export default function ProductDetailPage() {
   const [pincodeChecked, setPincodeChecked] = useState(false);
   const [pincodeError, setPincodeError] = useState("");
   const [added, setAdded] = useState(false);
+  const [selectedStrength, setSelectedStrength] = useState("5mg");
+  const [selectedPack, setSelectedPack] = useState("10 strips");
 
   const isWishlisted = isInWishlist(product.id);
   const currentStock = selectedVariant.stock !== undefined ? selectedVariant.stock : product.stockQuantity;
@@ -204,11 +205,82 @@ export default function ProductDetailPage() {
     (p) => p.category === product.category && p.id !== product.id
   ).slice(0, 4);
 
+  const mockComparison: ResolvedComparison = useMemo(() => ({
+    id: `comp-${product.id}`,
+    title: "Brand vs Generic Savings",
+    subtitle: `Compare and save on ${product.composition}`,
+    category: product.category,
+    iconName: "pill",
+    referenceProduct: {
+      ...product,
+      id: `${product.id}-branded`,
+      name: `Branded ${product.composition}`,
+      price: Math.round(product.price * 3.5),
+      mrp: Math.round(product.mrp * 3.5),
+      brand: "Leading Market Brand",
+      manufacturer: "Top Pharma Corp",
+    },
+    alternativeProduct: product, // Genekon product is the better alternative
+    savingsPercent: Math.round(((product.price * 3.5 - product.price) / (product.price * 3.5)) * 100),
+    referenceUnitPrice: `₹${((product.price * 3.5) / 10).toFixed(1)} / tab`,
+    alternativeUnitPrice: `₹${(product.price / 10).toFixed(1)} / tab`,
+  }), [product]);
+
+  const renderProductGrid = (products: typeof ALL_PRODUCTS, gridClass = "grid-cols-2 sm:grid-cols-4") => (
+    <div className={`grid gap-4 ${gridClass}`}>
+      {products.map((prod) => (
+        <div
+          key={prod.id}
+          className="rounded-2xl border border-[#E3EDE1] bg-white p-4 flex flex-col justify-between hover:shadow-xs transition-shadow"
+        >
+          <div>
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-[#EDF7E9] text-[#559620]">
+                {prod.discount}% OFF
+              </span>
+              <button
+                onClick={() => toggleWishlist(prod)}
+                aria-label="Wishlist"
+                className="cursor-pointer"
+              >
+                <Heart className={`w-4 h-4 ${isInWishlist(prod.id) ? "fill-red-500 text-red-500" : "text-[#8CA08E]"}`} />
+              </button>
+            </div>
+
+            <Link href={`/product/${prod.id}`} className="block relative w-full aspect-square mb-2">
+              <Image
+                src={prod.images?.[0] || prod.image}
+                alt={prod.name}
+                fill
+                sizes="160px"
+                className="object-contain"
+              />
+            </Link>
+
+            <Link href={`/product/${prod.id}`}>
+              <h4 className="text-xs font-bold text-[#14304A] line-clamp-1 hover:text-[#559620]">{prod.name}</h4>
+            </Link>
+            <p className="text-[11px] text-[#788C7A] mt-0.5">{prod.dosageForm || prod.packSize}</p>
+
+            <div className="flex items-baseline gap-1.5 mt-1.5">
+              <span className="text-sm font-bold text-[#14304A]">₹{prod.price}</span>
+              <span className="text-xs text-[#8E9F90] line-through">₹{prod.mrp}</span>
+            </div>
+          </div>
+
+          <button
+            onClick={() => addToCart(prod, 1)}
+            className="mt-3 w-full py-1.5 rounded-lg border border-[#559620] text-[#559620] hover:bg-[#559620] hover:text-white text-xs font-bold transition-colors cursor-pointer"
+          >
+            + Add to Cart
+          </button>
+        </div>
+      ))}
+    </div>
+  );
+
   return (
     <div className="min-h-screen flex flex-col bg-white">
-      <UtilityBar />
-      <Header />
-      <CategoryNav />
 
       <main className="flex-1 py-5 sm:py-7">
         <Container>
@@ -241,7 +313,7 @@ export default function ProductDetailPage() {
                     </span>
                   )}
                   {product.prescriptionRequired && (
-                    <span className="inline-block px-2 py-0.5 rounded text-[10px] font-bold bg-[#EBF3FC] text-[#1853A8] border border-[#CADCF2]">
+                    <span className="inline-block px-2 py-0.5 rounded text-[10px] font-bold bg-[#EBF3FC] text-brand-primary border border-[#CADCF2]">
                       Rx Required
                     </span>
                   )}
@@ -297,7 +369,7 @@ export default function ProductDetailPage() {
                   <span>100% Authentic</span>
                 </div>
                 <div className="p-2.5 rounded-xl border border-[#E3EDE1] bg-[#F7FAF6] text-[#3D5240] font-semibold flex flex-col items-center gap-1">
-                  <Droplets className="w-4 h-4 text-[#1853A8]" />
+                  <Droplets className="w-4 h-4 text-brand-primary" />
                   <span>Lab Tested</span>
                 </div>
                 <div className="p-2.5 rounded-xl border border-[#E3EDE1] bg-[#F7FAF6] text-[#3D5240] font-semibold flex flex-col items-center gap-1">
@@ -305,7 +377,7 @@ export default function ProductDetailPage() {
                   <span>GMP Certified</span>
                 </div>
                 <div className="p-2.5 rounded-xl border border-[#E3EDE1] bg-[#F7FAF6] text-[#3D5240] font-semibold flex flex-col items-center gap-1">
-                  <CheckCircle2 className="w-4 h-4 text-[#1853A8]" />
+                  <CheckCircle2 className="w-4 h-4 text-brand-primary" />
                   <span>Doctor Choice</span>
                 </div>
               </div>
@@ -322,8 +394,8 @@ export default function ProductDetailPage() {
                     {product.name}
                   </h1>
                   {product.prescriptionRequired && (
-                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-[#EBF3FC] text-[#1853A8] border border-[#CADCF2] text-xs font-bold shadow-2xs">
-                      <ShieldCheck className="w-3.5 h-3.5 text-[#1853A8]" />
+                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-[#EBF3FC] text-brand-primary border border-[#CADCF2] text-xs font-bold shadow-2xs">
+                      <ShieldCheck className="w-3.5 h-3.5 text-brand-primary" />
                       <span>Rx Prescription Required</span>
                     </span>
                   )}
@@ -340,7 +412,7 @@ export default function ProductDetailPage() {
                   </div>
                   <span className="text-[#697C6B]">({product.reviewCount || 450} reviews)</span>
                   <span className="text-[#D0DFD2]">|</span>
-                  <span className="font-semibold text-[#1853A8]">In {product.category}</span>
+                  <span className="font-semibold text-brand-primary">In {product.category}</span>
                 </div>
               </div>
 
@@ -387,8 +459,8 @@ export default function ProductDetailPage() {
 
                 {/* Prescription requirement note near price */}
                 {product.prescriptionRequired && (
-                  <div className="pt-2 border-t border-[#E5EFE3] text-xs text-[#1853A8] flex items-center gap-1.5 font-semibold">
-                    <ShieldCheck className="w-3.5 h-3.5 text-[#1853A8]" />
+                  <div className="pt-2 border-t border-[#E5EFE3] text-xs text-brand-primary flex items-center gap-1.5 font-semibold">
+                    <ShieldCheck className="w-3.5 h-3.5 text-brand-primary" />
                     <span>Prescription required before purchase.</span>
                   </div>
                 )}
@@ -405,9 +477,9 @@ export default function ProductDetailPage() {
                 {/* Exclusive Wholesale Volume Pricing (Visible only for wholesale partners) */}
                 {Boolean(isWholesale || user?.role === "wholesale") && (
                   <div className="mt-3 p-3 rounded-xl bg-[#EBF3FC] border border-[#CADCF2] text-xs space-y-1.5">
-                    <div className="flex items-center justify-between font-bold text-[#1853A8]">
+                    <div className="flex items-center justify-between font-bold text-brand-primary">
                       <span className="flex items-center gap-1.5">
-                        <Building2 className="w-3.5 h-3.5 text-[#1853A8]" />
+                        <Building2 className="w-3.5 h-3.5 text-brand-primary" />
                         Wholesale B2B Partner Rate
                       </span>
                       <span className="text-sm font-black text-[#14304A]">
@@ -422,103 +494,6 @@ export default function ProductDetailPage() {
                 )}
               </div>
 
-              {/* Variants Selector */}
-              {product.variants && product.variants.length > 0 && (
-                <div>
-                  <label className="text-xs font-bold text-[#14304A] block mb-2">
-                    Select Pack / Variant: <strong className="text-[#559620]">{selectedVariant.name}</strong>
-                  </label>
-                  <div className="grid grid-cols-2 gap-2">
-                    {product.variants.map((v) => (
-                      <button
-                        key={v.id}
-                        onClick={() => {
-                          setSelectedVariant(v);
-                          setQuantity(1);
-                        }}
-                        className={`p-2.5 rounded-xl border text-center transition-all cursor-pointer ${
-                          selectedVariant.id === v.id
-                            ? "border-2 border-[#559620] bg-[#F0F8EC] text-[#14304A] font-bold"
-                            : "border-[#DCE7DA] bg-white text-[#556958] hover:bg-slate-50"
-                        }`}
-                      >
-                        <span className="text-xs block">{v.name}</span>
-                        <span className="text-[11px] font-bold text-[#559620]">₹{v.price}</span>
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {/* Rx Prescription Required Notice near Add To Cart */}
-              {product.prescriptionRequired && (
-                <div className="p-3 rounded-xl bg-[#F0F6FF] border border-[#CADCF2] text-xs text-[#1853A8] flex items-start gap-2.5">
-                  <ShieldCheck className="w-4 h-4 text-[#1853A8] shrink-0 mt-0.5" />
-                  <div>
-                    <span className="font-bold block">Rx Prescription Required</span>
-                    <span className="text-[11px] text-[#3D6899] block mt-0.5">
-                      Prescription required before purchase. A valid doctor&apos;s prescription must be uploaded or verified before dispatch.
-                    </span>
-                  </div>
-                </div>
-              )}
-
-              {/* Quantity & Buy Buttons */}
-              <div className="space-y-3 pt-2">
-                <div className="flex items-center gap-3">
-                  <span className="text-xs font-bold text-[#14304A]">Quantity:</span>
-                  <div className="flex items-center rounded-xl border border-[#D5E6D3] bg-[#FAFCFB]">
-                    <button
-                      onClick={handleQuantityDecrease}
-                      disabled={isOutOfStock || quantity <= 1}
-                      className="w-8 h-8 flex items-center justify-center text-[#556958] hover:text-[#559620] disabled:opacity-40"
-                    >
-                      <Minus className="w-3.5 h-3.5" />
-                    </button>
-                    <span className="w-8 text-center text-xs font-bold">{quantity}</span>
-                    <button
-                      onClick={handleQuantityIncrease}
-                      disabled={isOutOfStock || quantity >= currentStock}
-                      className="w-8 h-8 flex items-center justify-center text-[#556958] hover:text-[#559620] disabled:opacity-40"
-                    >
-                      <Plus className="w-3.5 h-3.5" />
-                    </button>
-                  </div>
-                  {isLowStock && (
-                    <span className="text-[11px] text-[#D97706] font-semibold">
-                      Max {currentStock} available
-                    </span>
-                  )}
-                </div>
-
-                <div className="grid grid-cols-2 gap-3">
-                  <button
-                    onClick={handleAddToCart}
-                    disabled={isOutOfStock}
-                    className={`flex items-center justify-center gap-2 font-bold text-xs sm:text-sm py-3 rounded-xl transition-all shadow-2xs ${
-                      isOutOfStock
-                        ? "bg-[#DDE5E0] text-[#8C9C8F] cursor-not-allowed"
-                        : "bg-[#347A14] hover:bg-[#1853A8] text-white cursor-pointer"
-                    }`}
-                  >
-                    <ShoppingCart className="w-4 h-4" />
-                    <span>{isOutOfStock ? "Out of Stock" : added ? "Added ✓" : "Add to Cart"}</span>
-                  </button>
-
-                  <button
-                    onClick={handleBuyNow}
-                    disabled={isOutOfStock}
-                    className={`flex items-center justify-center gap-2 font-bold text-xs sm:text-sm py-3 rounded-xl transition-all shadow-2xs ${
-                      isOutOfStock
-                        ? "bg-[#DDE5E0] text-[#8C9C8F] cursor-not-allowed"
-                        : "bg-[#1853A8] hover:bg-[#123e7f] text-white cursor-pointer"
-                    }`}
-                  >
-                    <Zap className="w-4 h-4 fill-current" />
-                    <span>Buy Now</span>
-                  </button>
-                </div>
-              </div>
 
               {/* Pincode Delivery Check */}
               <div className="pt-3 border-t border-[#E5EFE3]">
@@ -562,59 +537,123 @@ export default function ProductDetailPage() {
 
             {/* RIGHT: Trust Badges & Mini Banner (Span 3) */}
             <div className="lg:col-span-3 space-y-4">
-              
-              {/* Trust Badges */}
-              <div className="rounded-3xl border border-[#E3EDE1] bg-white p-5 space-y-3.5 text-xs text-[#14304A]">
-                <div className="flex items-start gap-2.5">
-                  <div className="w-7 h-7 rounded-lg bg-[#EDF7E9] text-[#559620] flex items-center justify-center shrink-0 mt-0.5">
-                    <ShieldCheck className="w-4 h-4 stroke-[2.2]" />
-                  </div>
-                  <div>
-                    <span className="font-bold block">100% Genuine Products</span>
-                    <span className="text-[11px] text-[#697C6B]">Sourced direct from authorized manufacturers</span>
-                  </div>
-                </div>
-
-                <div className="flex items-start gap-2.5 pt-2 border-t border-[#EDF5EC]">
-                  <div className="w-7 h-7 rounded-lg bg-[#EBF3FC] text-[#1853A8] flex items-center justify-center shrink-0 mt-0.5">
-                    <CreditCard className="w-4 h-4 stroke-[2.2]" />
-                  </div>
-                  <div>
-                    <span className="font-bold block">Secure Payments</span>
-                    <span className="text-[11px] text-[#697C6B]">UPI, Cards, Netbanking &amp; COD</span>
-                  </div>
-                </div>
-
-                <div className="flex items-start gap-2.5 pt-2 border-t border-[#EDF5EC]">
-                  <div className="w-7 h-7 rounded-lg bg-[#EDF7E9] text-[#559620] flex items-center justify-center shrink-0 mt-0.5">
-                    <Truck className="w-4 h-4 stroke-[2.2]" />
-                  </div>
-                  <div>
-                    <span className="font-bold block">Temperature Controlled</span>
-                    <span className="text-[11px] text-[#697C6B]">Safe pharmaceutical delivery</span>
+              {/* Buy Box */}
+              <div className="rounded-3xl border border-[#E3EDE1] bg-white p-5 space-y-5 sticky top-32">
+                {/* Strength Selector */}
+                <div>
+                  <label className="text-[11px] font-bold text-[#14304A] block mb-2 uppercase tracking-wide">
+                    Strength: <strong className="text-brand-primary">{selectedStrength}</strong>
+                  </label>
+                  <div className="flex flex-wrap gap-2">
+                    {["5mg", "10mg"].map((str) => (
+                      <button
+                        key={str}
+                        onClick={() => setSelectedStrength(str)}
+                        className={`px-3 py-2 rounded-lg border text-xs font-bold transition-all cursor-pointer ${
+                          selectedStrength === str
+                            ? "border-brand-primary bg-[#F0F6FF] text-brand-primary"
+                            : "border-[#DCE7DA] bg-white text-[#556958] hover:bg-slate-50"
+                        }`}
+                      >
+                        {str}
+                      </button>
+                    ))}
                   </div>
                 </div>
 
-                <div className="flex items-start gap-2.5 pt-2 border-t border-[#EDF5EC]">
-                  <div className="w-7 h-7 rounded-lg bg-[#FAF2E8] text-[#D97706] flex items-center justify-center shrink-0 mt-0.5">
-                    <RotateCcw className="w-4 h-4 stroke-[2.2]" />
-                  </div>
-                  <div>
-                    <span className="font-bold block">Hassle-Free Returns</span>
-                    <span className="text-[11px] text-[#697C6B]">7 days replacement on damaged items</span>
+                {/* Pack Quantity Selector */}
+                <div>
+                  <label className="text-[11px] font-bold text-[#14304A] block mb-2 uppercase tracking-wide">
+                    Quantity / Pack: <strong className="text-brand-primary">{selectedPack}</strong>
+                  </label>
+                  <div className="flex flex-wrap gap-2">
+                    {["10 strips", "15 strips"].map((pack) => (
+                      <button
+                        key={pack}
+                        onClick={() => setSelectedPack(pack)}
+                        className={`px-3 py-2 rounded-lg border text-xs font-bold transition-all cursor-pointer ${
+                          selectedPack === pack
+                            ? "border-brand-primary bg-[#F0F6FF] text-brand-primary"
+                            : "border-[#DCE7DA] bg-white text-[#556958] hover:bg-slate-50"
+                        }`}
+                      >
+                        {pack}
+                      </button>
+                    ))}
                   </div>
                 </div>
-              </div>
 
-              {/* Promo Card */}
-              <div className="rounded-3xl border border-[#DCE8D8] bg-gradient-to-br from-[#EBF5E7] via-[#E4F1DF] to-[#EFF7EC] p-5">
-                <h3 className="font-serif text-lg text-[#14304A]">
-                  Genekon Pharmacy <br />
-                  <span className="text-[#1853A8]">Care Guarantee.</span>
-                </h3>
-                <p className="text-xs text-[#526657] mt-1">
-                  Every batch verified by licensed pharmacists before dispatch.
-                </p>
+                {/* Rx Prescription Required Notice near Add To Cart */}
+                {product.prescriptionRequired && (
+                  <div className="p-3 rounded-xl bg-[#F0F6FF] border border-[#CADCF2] text-xs text-brand-primary flex items-start gap-2.5">
+                    <ShieldCheck className="w-4 h-4 text-brand-primary shrink-0 mt-0.5" />
+                    <div>
+                      <span className="font-bold block">Rx Prescription Required</span>
+                      <span className="text-[11px] text-[#3D6899] block mt-0.5">
+                        Prescription required before purchase. A valid doctor&apos;s prescription must be uploaded or verified before dispatch.
+                      </span>
+                    </div>
+                  </div>
+                )}
+
+                {/* Quantity & Buy Buttons */}
+                <div className="space-y-4 pt-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-bold text-[#14304A]">Quantity:</span>
+                    <div className="flex items-center gap-3">
+                      <div className="flex items-center rounded-xl border border-[#D5E6D3] bg-[#FAFCFB]">
+                        <button
+                          onClick={handleQuantityDecrease}
+                          disabled={isOutOfStock || quantity <= 1}
+                          className="w-8 h-8 flex items-center justify-center text-[#556958] hover:text-[#559620] disabled:opacity-40"
+                        >
+                          <Minus className="w-3.5 h-3.5" />
+                        </button>
+                        <span className="w-8 text-center text-xs font-bold">{quantity}</span>
+                        <button
+                          onClick={handleQuantityIncrease}
+                          disabled={isOutOfStock || quantity >= currentStock}
+                          className="w-8 h-8 flex items-center justify-center text-[#556958] hover:text-[#559620] disabled:opacity-40"
+                        >
+                          <Plus className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                  {isLowStock && (
+                    <div className="text-[11px] text-[#D97706] font-semibold text-right">
+                      Max {currentStock} available
+                    </div>
+                  )}
+
+                  <div className="grid grid-cols-1 gap-3">
+                    <button
+                      onClick={handleAddToCart}
+                      disabled={isOutOfStock}
+                      className={`flex items-center justify-center gap-2 font-bold text-xs sm:text-sm py-3.5 rounded-xl transition-all shadow-2xs ${
+                        isOutOfStock
+                          ? "bg-[#DDE5E0] text-[#8C9C8F] cursor-not-allowed"
+                          : "bg-[#347A14] hover:bg-brand-primary text-white cursor-pointer"
+                      }`}
+                    >
+                      <ShoppingCart className="w-4 h-4" />
+                      <span>{isOutOfStock ? "Out of Stock" : added ? "Added ✓" : "Add to Cart"}</span>
+                    </button>
+
+                    <button
+                      onClick={handleBuyNow}
+                      disabled={isOutOfStock}
+                      className={`flex items-center justify-center gap-2 font-bold text-xs sm:text-sm py-3.5 rounded-xl transition-all shadow-2xs ${
+                        isOutOfStock
+                          ? "bg-[#DDE5E0] text-[#8C9C8F] cursor-not-allowed"
+                          : "bg-brand-primary hover:bg-[#123e7f] text-white cursor-pointer"
+                      }`}
+                    >
+                      <Zap className="w-4 h-4 fill-current" />
+                      <span>Buy Now</span>
+                    </button>
+                  </div>
+                </div>
               </div>
 
             </div>
@@ -636,7 +675,7 @@ export default function ProductDetailPage() {
             </div>
           </div>
 
-          {/* Detailed Product Tabs & Specifications */}
+          {/* 2. Detailed Product Tabs & Specifications */}
           <div className="mt-8 rounded-3xl border border-[#E3EDE1] bg-white p-6 sm:p-8">
             {/* Tabs Row */}
             <div className="flex items-center gap-4 overflow-x-auto no-scrollbar border-b border-[#EBF3E8] pb-3 mb-6">
@@ -813,66 +852,46 @@ export default function ProductDetailPage() {
             </div>
           </div>
 
-          {/* Frequently Bought Together / Related Products */}
+          {/* 3. Split Section: Similar Products & Comparison */}
+          <div className="mt-12 grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
+            {/* Left Column: Similar Products */}
+            {relatedProducts.length > 0 ? (
+              <div>
+                <h3 className="font-serif text-xl sm:text-2xl text-[#14304A] mb-1">
+                  Similar to {product.name}
+                </h3>
+                <p className="text-xs text-[#556958] mb-5">
+                  Explore alternatives with similar therapeutic benefits.
+                </p>
+                {/* 2x2 grid for half width */}
+                {renderProductGrid(relatedProducts, "grid-cols-2")}
+              </div>
+            ) : <div />}
+
+            {/* Right Column: Comparison Section */}
+            <div>
+              <h3 className="font-serif text-xl sm:text-2xl text-[#14304A] mb-1">
+                Compare & Save
+              </h3>
+              <p className="text-xs text-[#556958] mb-5">
+                See how our generic {product.composition} compares against the leading market brand.
+              </p>
+              <div className="w-full">
+                <ComparisonCard comparison={mockComparison} />
+              </div>
+            </div>
+          </div>
+
+          {/* 4. More Types / Frequently Bought Together */}
           {relatedProducts.length > 0 && (
             <div className="mt-12">
               <h3 className="font-serif text-xl sm:text-2xl text-[#14304A] mb-1">
-                Frequently Bought Together
+                More Like This
               </h3>
               <p className="text-xs text-[#556958] mb-5">
                 Customers who bought this item also purchased
               </p>
-
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-                {relatedProducts.map((prod) => (
-                  <div
-                    key={prod.id}
-                    className="rounded-2xl border border-[#E3EDE1] bg-white p-4 flex flex-col justify-between hover:shadow-xs transition-shadow"
-                  >
-                    <div>
-                      <div className="flex items-center justify-between mb-2">
-                        <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-[#EDF7E9] text-[#559620]">
-                          {prod.discount}% OFF
-                        </span>
-                        <button
-                          onClick={() => toggleWishlist(prod)}
-                          aria-label="Wishlist"
-                          className="cursor-pointer"
-                        >
-                          <Heart className={`w-4 h-4 ${isInWishlist(prod.id) ? "fill-red-500 text-red-500" : "text-[#8CA08E]"}`} />
-                        </button>
-                      </div>
-
-                      <Link href={`/product/${prod.id}`} className="block relative w-full aspect-square mb-2">
-                        <Image
-                          src={prod.images?.[0] || prod.image}
-                          alt={prod.name}
-                          fill
-                          sizes="160px"
-                          className="object-contain"
-                        />
-                      </Link>
-
-                      <Link href={`/product/${prod.id}`}>
-                        <h4 className="text-xs font-bold text-[#14304A] line-clamp-1 hover:text-[#559620]">{prod.name}</h4>
-                      </Link>
-                      <p className="text-[11px] text-[#788C7A] mt-0.5">{prod.dosageForm || prod.packSize}</p>
-
-                      <div className="flex items-baseline gap-1.5 mt-1.5">
-                        <span className="text-sm font-bold text-[#14304A]">₹{prod.price}</span>
-                        <span className="text-xs text-[#8E9F90] line-through">₹{prod.mrp}</span>
-                      </div>
-                    </div>
-
-                    <button
-                      onClick={() => addToCart(prod, 1)}
-                      className="mt-3 w-full py-1.5 rounded-lg border border-[#559620] text-[#559620] hover:bg-[#559620] hover:text-white text-xs font-bold transition-colors cursor-pointer"
-                    >
-                      + Add to Cart
-                    </button>
-                  </div>
-                ))}
-              </div>
+              {renderProductGrid([...relatedProducts].reverse())}
             </div>
           )}
 
@@ -883,3 +902,4 @@ export default function ProductDetailPage() {
     </div>
   );
 }
+
