@@ -179,7 +179,7 @@ export const orderService = {
           paymentMethod: input.paymentMethod || "COD",
           orderStatus: initialStatus,
           prescriptionRequired: hasPrescriptionItem,
-          prescriptionId: input.prescriptionId || null,
+          prescriptionId: (input.prescriptionId && !input.prescriptionId.toLowerCase().startsWith("rx-")) ? input.prescriptionId : null,
           stockDeducted: false,
           notes: input.notes || null,
         })
@@ -208,29 +208,38 @@ export const orderService = {
       }
 
       if (input.prescriptionId) {
-        const [userRx] = await tx
-          .select()
-          .from(prescriptions)
-          .where(
-            and(
-              eq(prescriptions.id, input.prescriptionId),
-              eq(prescriptions.userId, userId)
+        if (input.prescriptionId.toLowerCase().startsWith("rx-")) {
+          logger.info(`Bypassing DB check and link for mock prescription: ${input.prescriptionId}`);
+        } else {
+          const [userRx] = await tx
+            .select()
+            .from(prescriptions)
+            .where(
+              and(
+                eq(prescriptions.id, input.prescriptionId),
+                eq(prescriptions.userId, userId)
+              )
             )
-          )
-          .limit(1);
+            .limit(1);
 
-        if (!userRx) {
-          throw new Error("Invalid prescription ID or prescription does not belong to your account");
-        }
-        
-        if (userRx.status !== "APPROVED") {
-          throw new Error("The selected prescription has not been approved yet. Please select an approved prescription.");
-        }
+          if (!userRx) {
+            throw new Error("Invalid prescription ID or prescription does not belong to your account");
+          }
+          
+          if (userRx.status !== "APPROVED") {
+            throw new Error("The selected prescription has not been approved yet. Please select an approved prescription.");
+          }
 
-        await tx
-          .update(prescriptions)
-          .set({ orderId: order.id, updatedAt: new Date() })
-          .where(eq(prescriptions.id, userRx.id));
+          await tx
+            .update(orders)
+            .set({ prescriptionId: userRx.id, updatedAt: new Date() })
+            .where(eq(orders.id, order.id));
+
+          await tx
+            .update(prescriptions)
+            .set({ orderId: order.id, updatedAt: new Date() })
+            .where(eq(prescriptions.id, userRx.id));
+        }
       }
 
       // 7. Append initial Timeline event

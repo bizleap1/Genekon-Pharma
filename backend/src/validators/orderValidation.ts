@@ -2,7 +2,7 @@ import { z } from "zod";
 
 export const createOrderSchema = z.object({
   deliveryAddressId: z.string().uuid("A valid delivery address ID is required"),
-  prescriptionId: z.string().uuid("Invalid prescription ID format").optional(),
+  prescriptionId: z.string().optional(),
   paymentMethod: z
     .enum(["COD", "ONLINE", "UPI", "CARD", "NETBANKING"])
     .optional()

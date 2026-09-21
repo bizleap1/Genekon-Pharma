@@ -81,7 +81,7 @@ function HeroIntro() {
         Better Health. Brighter Tomorrow.
       </p>
 
-      <h1 className="max-w-full text-[32px] font-bold leading-[1.1] tracking-[-0.045em] md:text-[42px] xl:text-[50px] whitespace-nowrap">
+      <h1 className="max-w-full text-[32px] font-bold leading-[1.1] tracking-[-0.045em] md:text-[42px] xl:text-[50px]">
         <span className="text-brand-secondary">Trusted Medicines </span><span className="text-brand-primary">for a Healthier You.</span>
       </h1>
 
@@ -89,7 +89,7 @@ function HeroIntro() {
         <PrescriptionCard />
       </div>
 
-      <div className="mt-5 grid max-w-[510px] grid-cols-3 gap-3">
+      <div className="mt-5 flex sm:grid max-w-[510px] sm:grid-cols-3 gap-3 overflow-x-auto sm:overflow-visible pb-4 sm:pb-0 -mx-5 px-5 sm:mx-0 sm:px-0 scrollbar-hide snap-x">
         <TrustMini
           icon={<ShieldCheck />}
           title="100%"
@@ -123,7 +123,7 @@ function TrustMini({
   text: string;
 }) {
   return (
-    <div className="flex items-start gap-2 border-r border-slate-200 last:border-r-0">
+    <div className="flex items-start gap-2 shrink-0 snap-start border-r border-slate-200 last:border-r-0 pr-5 sm:pr-0">
       <div className="mt-0.5 [&>svg]:h-6 [&>svg]:w-6 [&>svg]:stroke-[#3C9820]">
         {icon}
       </div>
@@ -384,7 +384,7 @@ function RightColumn() {
   return (
     <div className="flex flex-col gap-4 h-full">
       {/* Top Half: Offer Carousel */}
-      <div className="flex-1 min-h-[250px] relative rounded-[24px] overflow-hidden">
+      <div className="w-full aspect-[2.5/1] sm:aspect-auto sm:flex-1 sm:min-h-[250px] relative rounded-[24px] overflow-hidden">
          <OfferCarousel />
       </div>
 
@@ -486,13 +486,13 @@ function OfferCarousel() {
   const offer = offers[active] || offers[0];
 
   return (
-    <div className="relative flex-1 min-h-[250px] w-full overflow-hidden rounded-[24px] border border-[#E1EAE5] bg-[#F4FAF3] shadow-[0_18px_50px_rgba(30,80,50,0.07)]">
+    <div className="relative w-full h-full overflow-hidden rounded-[24px] border border-[#E1EAE5] bg-[#F4FAF3] shadow-[0_18px_50px_rgba(30,80,50,0.07)]">
       {offers.map((item, idx) => (
         <img
           key={item.id}
           src={item.image}
           alt={item.title}
-          className={`absolute inset-0 h-full w-full object-cover scale-[1.05] transition-opacity duration-700 ${
+          className={`absolute inset-0 h-full w-full object-cover sm:scale-[1.05] transition-opacity duration-700 ${
             active === idx ? "opacity-100 z-0" : "opacity-0 -z-10"
           }`}
         />

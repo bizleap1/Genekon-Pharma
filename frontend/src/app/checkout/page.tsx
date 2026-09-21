@@ -19,7 +19,8 @@ import {
   AlertCircle,
   ArrowRight,
   MapPin,
-  ShoppingBag
+  ShoppingBag,
+  FileText
 } from "lucide-react";
 import { WhatsAppIcon } from "@/components/ui/WhatsAppIcon";
 import { Footer } from "@/components/layout/Footer";
@@ -32,6 +33,8 @@ import { CheckoutFormData, FormValidationErrors } from "@/types/cart";
 import { useToast } from "@/context/ToastContext";
 import { usersApi } from "@/api/users";
 import { UserAddress } from "@/types/user";
+import { prescriptionsApi } from "@/api/prescriptions";
+import { CustomerPrescription } from "@/data/customer";
 
 export default function CheckoutPage() {
   const router = useRouter();
@@ -56,6 +59,29 @@ export default function CheckoutPage() {
   const [savedAddresses, setSavedAddresses] = useState<UserAddress[]>([]);
   const [selectedAddressId, setSelectedAddressId] = useState<string | null>(null);
   const [isEditingAddress, setIsEditingAddress] = useState(false);
+
+  const [prescriptions, setPrescriptions] = useState<CustomerPrescription[]>([]);
+  const [isLoadingPrescriptions, setIsLoadingPrescriptions] = useState(false);
+
+  const selectedItems = items.filter((i) => i.selected);
+  const hasPrescriptionItem = selectedItems.some((item) => item.prescriptionRequired);
+
+  useEffect(() => {
+    if (isLoggedIn && hasPrescriptionItem) {
+      setIsLoadingPrescriptions(true);
+      prescriptionsApi.getUserPrescriptions().then((res) => {
+        if (res.success && res.data) {
+          const approved = res.data.filter((p) => p.status.toLowerCase().includes("verified") || p.status.toLowerCase().includes("approved"));
+          setPrescriptions(approved);
+          if (approved.length > 0 && !formData.prescriptionId) {
+            setFormData(prev => ({ ...prev, prescriptionId: approved[0].id }));
+          }
+        }
+      }).finally(() => {
+        setIsLoadingPrescriptions(false);
+      });
+    }
+  }, [isLoggedIn, hasPrescriptionItem, formData.prescriptionId]);
 
   useEffect(() => {
     if (!isLoggedIn) {
@@ -149,8 +175,6 @@ export default function CheckoutPage() {
   const [isPlacingOrder, setIsPlacingOrder] = useState(false);
   const [placedOrder, setPlacedOrder] = useState<PlacedOrder | null>(null);
 
-  const selectedItems = items.filter((i) => i.selected);
-
   const handlePlaceOrder = async () => {
     if (!isLoggedIn) {
       openLoginModal(
@@ -176,6 +200,12 @@ export default function CheckoutPage() {
 
     if (selectedItems.length === 0) {
       toast.warning("No items selected in cart. Please return to cart and select medicines.");
+      return;
+    }
+
+    if (hasPrescriptionItem && !currentData.prescriptionId) {
+      toast.warning("An approved prescription is required. Please select one or upload a new one.");
+      window.scrollTo({ top: 500, behavior: "smooth" });
       return;
     }
 
@@ -792,11 +822,83 @@ export default function CheckoutPage() {
                   </div>
                 </div>
 
-                {/* 4. Payment Method */}
+                {/* 4. Prescription Selection (Conditional) */}
+                {hasPrescriptionItem && (
+                  <div className="rounded-2xl border border-[#E0ECE0] bg-white p-5 sm:p-6 shadow-2xs">
+                    <div className="flex items-center justify-between mb-4">
+                      <div className="flex items-center gap-3">
+                        <span className="w-7 h-7 rounded-full bg-[#559620] text-white flex items-center justify-center text-xs font-bold">
+                          4
+                        </span>
+                        <div className="flex items-center gap-2">
+                          <FileText className="w-4 h-4 text-[#559620]" />
+                          <h3 className="text-sm sm:text-base font-bold text-[#14304A]">
+                            Select Prescription
+                          </h3>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div className="ml-0 sm:ml-10 space-y-4">
+                      <p className="text-xs text-[#6B7D6D]">
+                        One or more items in your cart require a valid prescription. Please select an approved prescription below.
+                      </p>
+                      
+                      {isLoadingPrescriptions ? (
+                        <div className="text-xs text-[#559620] font-bold animate-pulse">Loading your prescriptions...</div>
+                      ) : prescriptions.length > 0 ? (
+                        <div className="space-y-2">
+                          {prescriptions.map((rx) => (
+                            <label
+                              key={rx.id}
+                              onClick={() => setFormData({ ...formData, prescriptionId: rx.id })}
+                              className={`flex items-start justify-between p-3.5 rounded-xl border cursor-pointer transition-colors ${
+                                formData.prescriptionId === rx.id
+                                  ? "border-[#559620] bg-[#F4FAF1]"
+                                  : "border-[#E3EDE1] hover:bg-slate-50"
+                              }`}
+                            >
+                              <div className="flex items-start gap-3">
+                                <input
+                                  type="radio"
+                                  name="prescription"
+                                  checked={formData.prescriptionId === rx.id}
+                                  onChange={() => setFormData({ ...formData, prescriptionId: rx.id })}
+                                  className="w-4 h-4 mt-0.5 text-[#559620] focus:ring-[#559620]"
+                                />
+                                <div>
+                                  <span className="text-xs font-bold text-[#14304A] block">
+                                    Prescription by {rx.doctorName}
+                                  </span>
+                                  <span className="text-[11px] text-[#697C6B]">
+                                    Uploaded: {rx.uploadDate} &bull; Status: {rx.status}
+                                  </span>
+                                </div>
+                              </div>
+                            </label>
+                          ))}
+                        </div>
+                      ) : (
+                        <div className="p-4 rounded-xl border border-dashed border-[#D97706] bg-[#FFFBEB]">
+                          <p className="text-xs font-bold text-[#D97706] mb-2">No approved prescriptions found.</p>
+                          <p className="text-[11px] text-[#B45309] mb-3">
+                            You need an approved prescription to purchase these items. Please upload one and wait for pharmacist verification.
+                          </p>
+                          <Link href="/prescription/upload" target="_blank" className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#D97706] text-white text-xs font-bold hover:bg-[#B45309] transition-colors">
+                            <FileText className="w-3.5 h-3.5" />
+                            Upload Prescription Now
+                          </Link>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
+
+                {/* Payment Method */}
                 <div className="rounded-2xl border border-[#E0ECE0] bg-white p-5 sm:p-6 shadow-2xs">
                   <div className="flex items-center gap-3 mb-4">
                     <span className="w-7 h-7 rounded-full bg-[#559620] text-white flex items-center justify-center text-xs font-bold">
-                      4
+                      {hasPrescriptionItem ? "5" : "4"}
                     </span>
                     <div className="flex items-center gap-2">
                       <CreditCard className="w-4 h-4 text-[#559620]" />

@@ -137,10 +137,12 @@ export default function ProfilePage() {
                         <label className="text-xs font-bold text-[#14304A]">
                           Registered Mobile
                         </label>
-                        <span className="inline-flex items-center gap-1 text-[10px] font-extrabold text-[#559620] bg-[#EDF7E9] px-2 py-0.5 rounded-full">
-                          <CheckCircle2 className="w-3 h-3" />
-                          Verified
-                        </span>
+                        {profile.phone && (
+                          <span className="inline-flex items-center gap-1 text-[10px] font-extrabold text-[#559620] bg-[#EDF7E9] px-2 py-0.5 rounded-full">
+                            <CheckCircle2 className="w-3 h-3" />
+                            Verified
+                          </span>
+                        )}
                       </div>
                       <div className="flex items-center rounded-xl border border-[#D0DED1] bg-[#F5F8F6] overflow-hidden opacity-75">
                         <span className="px-3 py-2.5 text-xs font-bold text-[#627664] bg-[#EBF0EC] border-r border-[#D0DED1]">

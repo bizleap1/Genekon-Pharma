@@ -134,6 +134,10 @@ export const orderService = {
         })),
       };
 
+      if (formData.prescriptionId) {
+        orderPayload.prescriptionId = formData.prescriptionId;
+      }
+
       if (totals.appliedCoupon?.code) {
         orderPayload.couponCode = totals.appliedCoupon.code;
       }

@@ -48,6 +48,7 @@ export interface CheckoutFormData {
   deliveryType: "standard" | "express";
   paymentMethod: "upi" | "card" | "netbanking" | "cod";
   whatsappUpdates: boolean;
+  prescriptionId?: string;
 }
 
 export interface FormValidationErrors {
