@@ -384,9 +384,7 @@ function RightColumn() {
   return (
     <div className="flex flex-col gap-4 h-full">
       {/* Top Half: Offer Carousel */}
-      <div className="w-full aspect-[2.5/1] sm:aspect-auto sm:flex-1 sm:min-h-[250px] relative rounded-[24px] overflow-hidden">
-         <OfferCarousel />
-      </div>
+      <OfferCarousel />
 
       {/* Bottom Half: 3 Quick Action Items */}
       <div className="flex flex-col gap-3">
@@ -486,13 +484,13 @@ function OfferCarousel() {
   const offer = offers[active] || offers[0];
 
   return (
-    <div className="relative w-full h-full overflow-hidden rounded-[24px] border border-[#E1EAE5] bg-[#F4FAF3] shadow-[0_18px_50px_rgba(30,80,50,0.07)]">
+    <div className="relative w-full aspect-[2/1] lg:aspect-[2.3/1] overflow-hidden rounded-[24px] border border-[#E1EAE5] bg-[#F4FAF3] shadow-[0_18px_50px_rgba(30,80,50,0.07)] shrink-0">
       {offers.map((item, idx) => (
         <img
           key={item.id}
           src={item.image}
           alt={item.title}
-          className={`absolute inset-0 h-full w-full object-cover sm:scale-[1.05] transition-opacity duration-700 ${
+          className={`absolute inset-0 h-full w-full object-cover object-left sm:scale-[1.05] transition-opacity duration-700 ${
             active === idx ? "opacity-100 z-0" : "opacity-0 -z-10"
           }`}
         />
